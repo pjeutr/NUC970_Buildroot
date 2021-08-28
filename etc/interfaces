@@ -1,0 +1,14 @@
+auto lo
+iface lo inet loopback
+
+auto eth0
+
+# Configure eth0 with dhcp IP
+iface eth0 inet dhcp
+#hostname maasland
+
+# Configure eth0 with static IP
+#iface eth0 inet static
+#address 192.168.1.10
+#network 192.168.1.0
+#netmask 255.255.255.0
