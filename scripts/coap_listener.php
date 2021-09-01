@@ -96,7 +96,7 @@ $observer->onModify(function($file_name){
 //maybe adding a newline? or write at a different place. not in sys
 $observer->watch('/var/log/messages');
 $observer->watch('/sys/class/gpio/gpio170/value');
-$observer->watch('/sys/class/gpio/gpio170/value');
+//$observer->watch('/sys/class/gpio/gpio170/value');
 //$observer->watch('/sys/class/gpio/gpio68/value');
 
 /*

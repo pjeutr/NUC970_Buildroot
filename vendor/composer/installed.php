@@ -20,12 +20,14 @@
             'dev_requirement' => false,
         ),
         'calcinai/rubberneck' => array(
-            'pretty_version' => 'v0.1.1',
-            'version' => '0.1.1.0',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'library',
             'install_path' => __DIR__ . '/../calcinai/rubberneck',
-            'aliases' => array(),
-            'reference' => '22cbcfd27c2c587f3e3611b18b79ecf6caba4fe7',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '5e212e7f149a3be2bd911ababe62c9d4f9f7acfe',
             'dev_requirement' => false,
         ),
         'evenement/evenement' => array(

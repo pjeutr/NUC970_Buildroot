@@ -2,18 +2,12 @@
     "packages": [
         {
             "name": "calcinai/rubberneck",
-            "version": "v0.1.1",
-            "version_normalized": "0.1.1.0",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/calcinai/rubberneck.git",
-                "reference": "22cbcfd27c2c587f3e3611b18b79ecf6caba4fe7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/calcinai/rubberneck/zipball/22cbcfd27c2c587f3e3611b18b79ecf6caba4fe7",
-                "reference": "22cbcfd27c2c587f3e3611b18b79ecf6caba4fe7",
-                "shasum": ""
+                "url": "https://github.com/pjeutr/rubberneck",
+                "reference": "5e212e7f149a3be2bd911ababe62c9d4f9f7acfe"
             },
             "require": {
                 "evenement/evenement": "^2.0",
@@ -22,15 +16,15 @@
             "suggest": {
                 "ext-inotify": "*"
             },
-            "time": "2016-02-06T01:54:39+00:00",
+            "time": "2018-04-09T20:38:22+00:00",
+            "default-branch": true,
             "type": "library",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-4": {
                     "Calcinai\\Rubberneck\\": "src/Rubberneck"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -41,10 +35,6 @@
                 }
             ],
             "description": "Utility to monitor file system changes",
-            "support": {
-                "issues": "https://github.com/calcinai/rubberneck/issues",
-                "source": "https://github.com/calcinai/rubberneck/tree/master"
-            },
             "install-path": "../calcinai/rubberneck"
         },
         {
