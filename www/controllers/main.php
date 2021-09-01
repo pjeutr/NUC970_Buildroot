@@ -59,9 +59,9 @@ function gpio_state() {
 }
 function door_open() {
 	$id = filter_var(params('id'), FILTER_VALIDATE_INT);
-    $controller = filter_var(params('controller'), FILTER_VALIDATE_INT);
+    $controllerId = filter_var(params('controller'), FILTER_VALIDATE_INT);
     saveReport("WebAdmin", "Opened door ".$id);
-    $r = openDoor($id, $controller);
+    $r = openDoor($id, $controllerId);
     return (json(array($r)));
 }
 

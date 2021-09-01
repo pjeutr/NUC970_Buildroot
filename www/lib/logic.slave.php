@@ -22,6 +22,18 @@ class GVAR
     public static $BUZZER_PIN = 79;  //NUC980_PC15  //buzzer output
 }
 
+function resolveInput($gpioPath) {
+    $inputArray = [
+        1 => "/var/log/messages",
+        3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
+        4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
+        5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
+        6 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS2."/value"
+    ];
+    return array_search($gpioPath,$inputArray);
+    //if($gpioPath == "/sys/class/gpio/gpio170/value") return 3;
+    //if($gpioPath == "/sys/class/gpio/gpio169/value") return 4;
+}
 /*
 *   Slaveside methods, also used by the master.
 *   - has knowledge which GPIO's belong to what
@@ -98,6 +110,26 @@ function checkIfMaster() {
     return (getGPIO(GVAR::$GPIO_S1) == 0);
 }
 
+function getMasterControllerIP() {
+    return "192.168.178.137";
+}
+
+function inputReceived($input, $data) {
+    mylog("inputReceived:".$input);
+    if ( checkIfMaster() ) {
+        return handleInput(getMasterControllerIP(), $input, $data);
+    } else {
+        return makeInputCoapCall($doorId."/".$duration."/".implode("-",$gpios));
+    }
+}
+
+function makeInputCoapCall($uri) {
+    //input events are always going to the master
+    $cmd = "coap-client -m get coap://".getMasterControllerIP()."/input/".$uri;
+    mylog("makeInputCoapCall:".$cmd);
+    return shell_exec($cmd);
+}
+
 /*
 *   Get GPIO value for a door relais
 *   $doorId : doors.id in database in accordance with physical connection
@@ -109,6 +141,11 @@ function getDoorGPIO($doorId) {
     return 0;
 }
 
+
+
+function getInputValue($gpioPath) {
+    return exec("cat ".$gpioPath);
+}
 /*
 *   GPIO setter and getter
 */

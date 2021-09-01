@@ -21,8 +21,8 @@ For now we used composer require ekongyun/php-coap (https://github.com/cfullelov
 Which pulls in react/react: 0.4.*
 https://github.com/reactphp/reactphp/tree/v0.4.1
 
-.git/tests/examples where removed in the vendor directory to save space. 
-also
-vendor/react/react/resources/
 
+composer req ekongyun/php-coap -> pjeutr/php-coap, remove react requirement which pulls in to much bloat
+composer require calcinai/rubberneck -> react/event-loop v0.4.3 (only react thing we need)
+#composer req devgiants/filesystem-gpio (not usable)
 

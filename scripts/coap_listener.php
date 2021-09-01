@@ -65,6 +65,41 @@ function readOption($option, $i) {
 }
 
 /*
+* Listen for input changes 
+*/
+$observer = new \Calcinai\Rubberneck\Observer($loop);
+
+$observer->onModify(function($file_name){
+	mylog("Modified:". $file_name);
+	$input = resolveInput($file_name);
+	$value = getInputValue($file_name);
+	//check if this is a wiegand reader
+	if($input == 1) {
+		$lastline = exec("tail -n1 /var/log/messages");
+		if(strpos($lastline,"keycode") > 0){
+			//TODO can't go searching in log, change wiegand driver!
+			$parts = explode(' ',$lastline);
+			$keycode = explode('=',$parts[8])[1];
+			$reader = explode('=',$parts[9])[1];
+			mylog(json_encode($parts));
+			mylog("Modified:". $keycode.":".$reader);
+			$result =  inputReceived($reader, $keycode);
+		}
+	}
+	//take action if a button is pressed
+	if($value == 1) { 	
+		$result =  inputReceived($input, "");
+		mylog(json_encode($result));
+	}    
+});
+//$observer->watch('/sys/kernel/wiegand/read'); werkt niet, dan maar via messages...
+//maybe adding a newline? or write at a different place. not in sys
+$observer->watch('/var/log/messages');
+$observer->watch('/sys/class/gpio/gpio170/value');
+$observer->watch('/sys/class/gpio/gpio170/value');
+//$observer->watch('/sys/class/gpio/gpio68/value');
+
+/*
 * Run server / listener
 * TODO integrate with match_listener
 */	
@@ -77,7 +112,8 @@ $server->on( 'request', function( $req, $res, $handler ) use ($loop){
 		$input = readOption($o,1);
 		$data = readOption($o,2);
 		mylog("coapServer: ".checkIfMaster()." input=".$input." data=".$data);
-		$result = checkIfMaster() ? handleInput($from, $input, $data) : "can only be called on master";
+		//$result = checkIfMaster() ? handleInput($from, $input, $data) : "can only be called on master";
+		$result =  inputReceived($input, $data);
 	/*
 	* TODO split up?
 	* Above requests will only happen on master

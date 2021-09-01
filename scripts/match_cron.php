@@ -51,14 +51,14 @@ if($now->format('i') == 45) { //every hour
 
 $doors = find_doors();
 foreach ($doors as $door) {
-	echo "Door=".$door->name." - ".$door->timezone_id."\n";
+	mylog("Door=".$door->name." - ".$door->timezone_id."\n");
 	//
 	if(checkDoorSchedule($door)) {
-		$changed = openLock($door->id, 1);
+		$changed = openLock($door, 1);
 		$action = "Scheduled ".$door->name." opened";
 		if($changed) saveReport($actor, $action);
 	} else {
-		$changed = openLock($door->id, 0);
+		$changed = openLock($door, 0);
 		$action = "Scheduled  ".$door->name." closed";
 		if($changed) saveReport($actor, $action);
 	}

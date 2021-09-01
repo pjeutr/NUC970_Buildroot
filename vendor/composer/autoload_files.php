@@ -6,6 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'ad155f8f1cf0d418fe49e248db8c661b' => $vendorDir . '/react/promise/src/functions_include.php',
-    'bdee636d8692f2ef4dff469ab2887bbe' => $vendorDir . '/ekongyun/php-coap/src/PhpCoap/functions.php',
+    '22a70d35fac589a181d9d09199b8d16a' => $vendorDir . '/pjeutr/php-coap/src/PhpCoap/functions.php',
 );

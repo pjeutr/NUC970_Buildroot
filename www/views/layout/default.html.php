@@ -274,7 +274,7 @@ $message = flash_now();
 <script src="/assets/js/app.js?2"></script>
 <script type="text/javascript">
     // TODO PHP Notice:  Array to string conversion in /maasland_app/www/views/layout/default.html.php on line 276
-    <?= isset($message) ? 'swal( '.$message.');' : "" ?>
+    <?= empty($message) ? '' : 'swal( '.$message.');' ?>
 </script>
 </html>
 

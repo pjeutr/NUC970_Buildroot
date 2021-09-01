@@ -33,7 +33,7 @@ function keyToHex($key) {
     mylog("keyToHex called key=".$key);
     if((int)$key > 9999) {
         $value = strtoupper(dechex((int)$key));
-        mylog("converted to ".value);
+        mylog("converted to ".$value);
         return $value;
         //return dec2hex($key);
     }

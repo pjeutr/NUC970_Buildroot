@@ -1,5 +1,5 @@
 <?php
-
+require_once '/maasland_app/www/lib/logic.slave.php';
 
 function resolveController($ip) {
     mylog("resolveController ip=".$ip);
@@ -28,6 +28,7 @@ function handleInput($from, $input, $keycode) {
     mylog("handleInput Controller=".$controller->name." input=".$input." keycode=".$keycode);
 
     $actor = "somebody";
+    $result = "nothing";
     switch ($input) {
         case 1:
         case 2:
@@ -36,7 +37,7 @@ function handleInput($from, $input, $keycode) {
             $user = find_user_by_keycode($keycode);
             if($user) {
                 $actor = $user->name;
-                $result = handleUserAccess($user, $input, $controller->id);
+                $result = handleUserAccess($user, $input, $controller);
             } 
             break;
         case 3:
@@ -68,7 +69,7 @@ function handleInput($from, $input, $keycode) {
     );
 }
 
-function checkAndHandleSensor($gpio, $id, $controllerId) {
+function checkAndHandleSensor($gpio, $id, $controller) {
     if(getGPIO($gpio) == 1) {
         $name = "Sensor ".$id;
         mylog("handleSensor ".$name);
@@ -79,7 +80,7 @@ function checkAndHandleSensor($gpio, $id, $controllerId) {
         sleep($doorSensorTriggerTime);
         if(getGPIO($gpio) == 1) {
             //find what alarm to open
-            $alarm = find_alarm_for_sensor_id($id,$controllerId);
+            $alarm = find_alarm_for_sensor_id($id,$controller->id);
             $gid = ($alarm == 1) ? GVAR::$GPIO_ALARM1 :GVAR::$GPIO_ALARM1;
             setGPIO($gid, 1);
             //save report
@@ -105,7 +106,7 @@ function checkAndHandleSensor($gpio, $id, $controllerId) {
 *   $controllerId : id in the db
 *   Used by match_listener 
 */
-function handleUserAccess($user, $readerId, $controllerId = 1) {
+function handleUserAccess($user, $readerId, $controller) {
     mylog("handleUserAccess user".$user->name." readerId=".$readerId);
     //Check maximum visits for user 
     if(!empty($user->max_visits) && $user->visit_count > $user->max_visits) {
@@ -130,7 +131,7 @@ function handleUserAccess($user, $readerId, $controllerId = 1) {
     }
 
     //Determine what door to open
-    $door = find_door_for_input_device("reader_".$readerId, $controllerId);
+    $door = find_door_for_input_device("reader_".$readerId, $controller->id);
 
     //Don't open the door if it is scheduled to be open
     if(checkDoorSchedule($door)) {
@@ -165,7 +166,7 @@ function handleUserAccess($user, $readerId, $controllerId = 1) {
     update_user_statistics($user);
 
     //open the door 
-    $msg = openDoor($door->id, $controllerId);
+    $msg = openDoor($door->id, $controller->id);
     
     return $msg;    
 }
@@ -202,16 +203,12 @@ function checkDoorSchedule($door) {
     return false;
 }
 
-
-
-
-
 /*
 * Old method, should be replace with a timer somewhere else
 *   $doorId : id in the db
 *   Used by match_listener and webinterface
 */
-function openDoor($doorId, $controllerId = 1) {
+function openDoor($doorId, $controllerId) {
     $duration=find_setting_by_name("door_open");
     $soundBuzzer=find_setting_by_name("sound_buzzer");
 
@@ -255,20 +252,30 @@ function openDoor($doorId, $controllerId = 1) {
 *   returns true if state was changed
 */
 
-function openLock($doorId, $open) { 
-    $gid = getDoorGPIO($doorId);
+function openLock($door, $open) { 
+    mylog("door= ".json_encode($door));
 
-    $currentValue = getGPIO($gid);
-    //mylog("openLock ".$currentValue."=".$open."\n");
+    if( checkIfMaster() ) {
+    //if( $door->controller_id ) {
+        $gid = getDoorGPIO($door->id);
 
-    //check if lock state has changed
-    if($currentValue != $open) {
-        //mylog("STATE CHANGED=".$open);
-        setGPIO($gid, $open);
-        return true;
+        $currentValue = getGPIO($gid);
+        //mylog("openLock ".$currentValue."=".$open."\n");
+
+        //check if lock state has changed
+        if($currentValue != $open) {
+            //mylog("STATE CHANGED=".$open);
+            setGPIO($gid, $open);
+            return true;
+        }
+        //TODO open locks on other controllers
+        return false;
+    } else {
+        $controller = find_controller_by_id($door->controller_id );
+        $cmd = "coap-client -m get coap://".$controller->ip."/activate/".$doorId."/".$duration."/".implode("-",$gpios);
+        $msg = shell_exec($cmd);
     }
-    //TODO open locks on other controllers
-    return false;
+    return $msg;
 }
 
 
