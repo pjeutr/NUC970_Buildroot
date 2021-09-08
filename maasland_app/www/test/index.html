@@ -1,0 +1,19 @@
+<html>
+    <head>
+        <title> Welcome on an Armadeus Board </title>
+    </head>
+
+    <body>
+        <h1> Welcome on your APF ! :-)</h1>
+        <a href=ip.sh> Get the board IP config </a><br><br>
+	<a href="/info.php">php</a><br><br>
+
+        <form action="form.sh" method="get">
+            Choose backlight value: <br>
+            <input id="slider1" type="range" name="pwm" min="0" max="7" step="1" onchange="textbox1.value = slider1.value" /><br>
+            <input id="textbox1" type="text" /><br>
+            <input type="submit" value="Change it!">
+        </form>
+    </body>
+</html>
+

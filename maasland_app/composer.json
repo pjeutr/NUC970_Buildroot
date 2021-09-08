@@ -1,0 +1,12 @@
+{
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/pjeutr/php-coap"
+        }
+    ], 
+    "require": {
+	"pjeutr/php-coap": "dev-master",
+        "calcinai/rubberneck": "^0.1.1"
+    }
+}

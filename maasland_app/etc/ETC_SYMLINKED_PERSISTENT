@@ -1,0 +1,3 @@
+This is the only way to keep changes over a reboot
+Files are symlinked from /etc
+ln -s ../maasland_app/etc/interfaces interfaces

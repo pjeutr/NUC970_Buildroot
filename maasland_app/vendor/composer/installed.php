@@ -1,0 +1,63 @@
+<?php return array(
+    'root' => array(
+        'pretty_version' => '1.0.0+no-version-set',
+        'version' => '1.0.0.0',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'reference' => NULL,
+        'name' => '__root__',
+        'dev' => true,
+    ),
+    'versions' => array(
+        '__root__' => array(
+            'pretty_version' => '1.0.0+no-version-set',
+            'version' => '1.0.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => NULL,
+            'dev_requirement' => false,
+        ),
+        'calcinai/rubberneck' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../calcinai/rubberneck',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '5e212e7f149a3be2bd911ababe62c9d4f9f7acfe',
+            'dev_requirement' => false,
+        ),
+        'evenement/evenement' => array(
+            'pretty_version' => 'v2.1.0',
+            'version' => '2.1.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../evenement/evenement',
+            'aliases' => array(),
+            'reference' => '6ba9a777870ab49f417e703229d53931ed40fd7a',
+            'dev_requirement' => false,
+        ),
+        'pjeutr/php-coap' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../pjeutr/php-coap',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '8a34b4d347981bbc4b8b57e23e23f7c147185614',
+            'dev_requirement' => false,
+        ),
+        'react/event-loop' => array(
+            'pretty_version' => 'v0.4.3',
+            'version' => '0.4.3.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../react/event-loop',
+            'aliases' => array(),
+            'reference' => '8bde03488ee897dc6bb3d91e4e17c353f9c5252f',
+            'dev_requirement' => false,
+        ),
+    ),
+);
