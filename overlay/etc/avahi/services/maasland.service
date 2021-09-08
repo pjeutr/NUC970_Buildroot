@@ -6,9 +6,9 @@
   <name replace-wildcards="yes">%h</name>
 
   <service>
-    <type>_maasland._tcp</type>
-    <port>80</port>
-    <txt-record>Master=192.168.178.12</txt-record>ip
+    <type>_maasland._udp</type>
+    <port>5683</port>
+    <txt-record>"output1=1" "output2=0"</txt-record>
   </service>
 
 </service-group>

@@ -7,7 +7,7 @@ index 71825ad..cf53055 100644
  /*#define CONFIG_HW_WATCHDOG*/
  
 -#define CONFIG_SYS_BOOTM_LEN		0x1000000 /* 16MB max kernel size */
-+#define CONFIG_SYS_BOOTM_LEN		0x1900000 /* 25MB max kernel size */
++#define CONFIG_SYS_BOOTM_LEN		0x1E00000 /* 30MB max kernel size */
  
  /*#define CONFIG_BOOTDELAY	3*/
  
