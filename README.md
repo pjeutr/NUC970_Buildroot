@@ -6,7 +6,7 @@ https://github.com/sofadesign/limonade/
 CRUD example from
 https://github.com/apankov/library.dev/
 
-Bootstrap theme used
+Bootstrap v4 theme used
 https://www.creative-tim.com/product/light-bootstrap-dashboard
 https://github.com/creativetimofficial/light-bootstrap-dashboard
 
