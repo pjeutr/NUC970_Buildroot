@@ -58,10 +58,12 @@ function gpio_state() {
     return (json(array($r)));
 }
 function door_open() {
-	$id = filter_var(params('id'), FILTER_VALIDATE_INT);
+	$doorId = filter_var(params('door'), FILTER_VALIDATE_INT);
     $controllerId = filter_var(params('controller'), FILTER_VALIDATE_INT);
-    saveReport("WebAdmin", "Opened door ".$id);
-    $r = openDoor($id, $controllerId);
-    return (json(array($r)));
+    saveReport("WebAdmin", "Opened door ".$doorId." on controller ".$controllerId);
+    //$r = openDoor($doorId, $controllerId);
+    $controller = find_controller_by_id($controllerId);
+    $result = openDoor($doorId, $controller);
+    return (json(array($result)));
 }
 

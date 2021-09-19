@@ -2,6 +2,7 @@
 
 require_once('lib/limonade.php');
 require_once 'lib/i18n.class.php';
+require_once '/maasland_app/vendor/autoload.php';
 
 function configure() {
     $env = $_SERVER['HTTP_HOST'] == 'library.dev' ? ENV_DEVELOPMENT : ENV_PRODUCTION;
@@ -45,11 +46,14 @@ function before($route = array())
     //Allow login POST to submit. TODO needs check on uri=login?
     if(request_method() != "POST") {
       //need session to get in dashboard
-      if(isset($_SESSION['login'])) { //session is ok
+      if(! checkIfMaster()) { //session is ok
+        //} elseif(strpos(request_uri(), '/door/') !== false) { //allow cli
+        //} elseif(request_uri() == "/door/1") { //allow cli
+        echo slave_page();
+        //layout('layout/default.html.php');
+        stop_and_exit();
+      } elseif(isset($_SESSION['login'])) { //check if user is logged in
         layout('layout/default.html.php');
-      } elseif(strpos(request_uri(), '/door/') !== false) { //allow cli
-      //} elseif(request_uri() == "/door/1") { //allow cli
-        //go with the flow
       } else { //force login
         echo login_page();
         stop_and_exit();
@@ -92,6 +96,9 @@ dispatch_post('login', 'login_page_post');
 function login_page() {
   return html('login.html.php');
   //return render('login.html.php', 'splash_layout.php');
+}
+function slave_page() {
+  return html('slave.html.php');
 }
 function login_page_post() {
   //TODO geen sanitize check
@@ -142,13 +149,22 @@ dispatch_get   ('settings',   'settings_index');
 dispatch_put   ('settings/:id', 'settings_update');
 
 //ajax
-dispatch_get   ('door/:id/',      'door_open');
+dispatch_get   ('door/:controller/:door/',  'door_open'); //->coap
 dispatch_get   ('last_reports',   'last_reports');
 dispatch_get   ('last_scanned_key.json',   'last_scanned_key');
+dispatch_get   ('available_controllers.json',   'available_controllers');
 
 // controllers controller
 dispatch_get   ('controller/:id/input/:input/', 'controller_input');
 dispatch_put   ('controller/:id', 'input_update');
+
+dispatch_get   ('controllers',          'controllers_index');
+dispatch_post  ('controllers',          'controllers_create');
+dispatch_get   ('controllers/new',      'controllers_new');
+dispatch_get   ('controllers/:id/edit', 'controllers_edit');
+dispatch_get   ('controllers/:id',      'controllers_show');
+dispatch_put   ('controllers/:id',      'controllers_update');
+dispatch_delete('controllers/:id',      'controllers_destroy');
 
 // doors controller
 dispatch_get   ('doors',          'doors_index');

@@ -107,11 +107,18 @@ function activateOutput($doorId, $duration, $gpios) {
 *   if Master => S1 Value is 0
 */
 function checkIfMaster() {
+    mylog("checkIfMaster:".getGPIO(GVAR::$GPIO_S1));
     return (getGPIO(GVAR::$GPIO_S1) == 0);
 }
 
 function getMasterControllerIP() {
+    //TODO get real master ip
     return "192.168.178.137";
+}
+
+function getMasterURL() {
+    //TODO make dynamic, called form slave error page
+    return "http://".getMasterControllerIP()."/";
 }
 
 function inputReceived($input, $data) {

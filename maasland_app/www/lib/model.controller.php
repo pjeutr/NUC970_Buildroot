@@ -1,7 +1,7 @@
 <?php
 
 function find_controllers() {
-    return find_objects_by_sql("SELECT * FROM `controllers`");
+    return find_objects_by_sql("SELECT * FROM controllers");
 }
 
 function find_controller_by_id($id) {
@@ -41,7 +41,17 @@ function update_controller_obj($controller_obj) {
 }
 
 function create_controller_obj($controller_obj) {
-    return create_object($controller_obj, 'controllers', controller_columns());
+    $columns = controller_columns();
+    $controller_obj->reader_1 = 1;
+    $controller_obj->reader_2 = 1;
+    $controller_obj->button_1 = 1;
+    $controller_obj->button_2 = 1;
+    $controller_obj->sensor_1 = 1;
+    $controller_obj->sensor_2 = 1;
+    mylog("1");
+    mylog(json_encode($controller_obj));
+    mylog("2");
+    return create_object($controller_obj, 'controllers', $columns);
 }
 
 function delete_controller_obj($man_obj) {
@@ -52,10 +62,18 @@ function delete_controller_by_id($controller_id) {
     delete_object_by_id($controller_id, 'controllers');
 }
 
+function delete_door_by_controller_id($controller_id) {
+    $db = option('db_conn');
+    $stmt = $db->prepare("DELETE FROM doors WHERE controller_id = ?");
+    $stmt->execute(array($controller_id));
+}
+
 function make_controller_obj($params, $obj = null) {
     return make_model_object($params, $obj);
 }
 
 function controller_columns() {
-    return array('name', 'created_at', 'updated_at');
+    return array('name', 'ip', 'remarks', 
+        'reader_1', 'reader_2', 'button_1', 'button_2', 'sensor_1', 'sensor_2', 
+        'created_at', 'updated_at');
 }

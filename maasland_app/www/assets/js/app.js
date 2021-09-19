@@ -31,10 +31,72 @@ $().ready(function() {
         }
     });
 
+    if ($("#controllerForm").length != 0) {
+        $("#controller_chooser").click(function () {
+            //Get text or inner html of the selected option
+            var item = $("#controller_chooser option:selected").val();
+            console.log(item);
+            var jsonData = JSON.parse(item);
+            console.log(jsonData);
+            $("#controller_name").val(jsonData[6]);
+            $("#controller_ip").val(jsonData[7]);
+            $("#controller_remarks").val(jsonData);
+        });
+
+        $("#scan_key").click(function () {
+            console.log("kees");
+            $button_text = 'Search for controllers';
+            //$('.loaderImage').show();
+            app.addSpinnerToButton(this, true, $button_text);
+            var self = this;
+
+            $.ajax({
+                //url: endpoint + "?key=" + apiKey + " &q=" + $( this ).text(),
+                //contentType: "application/json",
+                //dataType: 'json',
+                url: "/?/available_controllers.json",
+                success: function(result){
+                    var jsonData = JSON.parse(result);
+                    console.log(jsonData);
+                    // $.each(JSON.parse(jsonData), function (idx, obj) {
+                    //     console.log(obj);
+                    //     $("#controller_ip").append('<option value="' + obj[1] + '">' + obj[2] + '</option>').selectpicker('refresh');
+                    // });
+
+// var jsonData2 = [
+//     ["=","eth0","IPv4","FlexessDuo","_maasland._tcp","local","FlexessDuo.local","192.168.178.137","80","\"Master=192.168.178.12\""],
+//     ["=","eth0","IPv4","FlexessDuo-2","_maasland._tcp","local","FlexessDuo-2.local","192.168.178.165","80","\"Master=192.168.178.12\""],
+//     ["=","eth0","IPv4","ubu-2","_maasland._tcp","local","ubu-2.local","192.168.178.118","80","\"SENSOR2=0\" \"SENSOR1=0\" \"BUTTON2=0\" \"BUTTON1=0\" \"DOOR2=0\" \"DOOR1=1\""]
+// ];
+// console.log(jsonData2);
+
+                    $("#controller_chooser").append($.map(jsonData, function(o) {
+                        console.log(o);
+                      return $('<option>', {
+                        class: "list_item", 
+                        value: JSON.stringify(o),
+                        text: o[6]+ " (" +o[7] + ")"
+                      });
+                    }));
+
+                    //$("#controller_ip").val(result);
+                    //$('.loaderImage').hide();
+                    app.addSpinnerToButton(self, false, $button_text);
+                },
+                error: function (response) {
+                   //Handle error
+                   //$('.loaderImage').hide();
+                   app.addSpinnerToButton(self, false, $button_text);
+                }
+            });
+        });
+    };
+
     if ($("#userForm").length != 0) {
         $("#scan_key").click(function () {
+            $button_text = 'Use scanned key';
             //$('.loaderImage').show();
-            app.addSpinnerToButton(this, true);
+            app.addSpinnerToButton(this, true, $button_text);
             var self = this;
 
             $.ajax({
@@ -45,12 +107,12 @@ $().ready(function() {
                 success: function(result){
                     $("#user_keycode").val(result);
                     //$('.loaderImage').hide();
-                    app.addSpinnerToButton(self, false);
+                    app.addSpinnerToButton(self, false, $button_text);
                 },
                 error: function (response) {
                    //Handle error
                    //$('.loaderImage').hide();
-                   app.addSpinnerToButton(self, false);
+                   app.addSpinnerToButton(self, false, $button_text);
                 }
             });
         });
@@ -287,10 +349,10 @@ $().ready(function() {
 
 app = {
     //Button spinner
-    addSpinnerToButton: function(button, showSpinner) {
+    addSpinnerToButton: function(button, showSpinner, $text) {
         console.log("buttonSpinner="+showSpinner);
         button.disabled=showSpinner; 
-        button.innerHTML=showSpinner ? '<i class="fa fa-spinner fa-spin"></i> Loading…':'Use scanned key';
+        button.innerHTML=showSpinner ? '<i class="fa fa-spinner fa-spin"></i> Loading…':$text;
         console.log(button);
     },
 

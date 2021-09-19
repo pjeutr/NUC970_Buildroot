@@ -11,13 +11,24 @@ $controller = $controllers[0];
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header ">
-                    	<!-- <?= iconLink_to('New door', 'doors/new', 'btn-outline') ?> -->
+                    	<?= iconLink_to('Add controller', 'controllers/new', 'btn-outline') ?>
                     </div>
+
+                <?php 
+
+                foreach ($controllers as $controller) { 
+
+                ?>   
                     <div class="card-body table-responsive">
                         <div class="container-fluid border rounded">
                             <div class="row border">
                                 <div class="col-sm-4 custom-header-head border-left-0">
-                                        <?= $controller->name ?> Controller                               
+                                   <div class="float-left">
+                                        <?= $controller->name ?> <sub>Controller</sub>
+                                    </div>
+                                    <div class="float-right">
+                                        <?= iconLink_to("Change", 'controllers/'.$controller->id.'/edit', 'btn-link text-success', null) ?>
+                                    </div>                           
                                 </div>
                                 <?php 
 
@@ -106,7 +117,7 @@ $controller = $controllers[0];
                             </form>
                         </div>
                     </div>
-
+                <?php } ?>
                 </div>
             </div>               
         </div>

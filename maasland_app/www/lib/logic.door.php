@@ -45,7 +45,7 @@ function handleInput($from, $input, $keycode) {
             $inputName = ($input == 3) ? "button_1":"button_2";
             $door = find_door_for_input_device($inputName, $controller->id);
             $action = $inputName.":".$door->name;
-            $result = openDoor($door->id, $controller->id);
+            $result = openDoor($door->id, $controller);
             break;
         case 5:
         case 6:
@@ -103,7 +103,7 @@ function checkAndHandleSensor($gpio, $id, $controller) {
 *   Handle user access by reader
 *   $user : object 
 *   $readerId : id in the db
-*   $controllerId : id in the db
+*   $controller : controller object
 *   Used by match_listener 
 */
 function handleUserAccess($user, $readerId, $controller) {
@@ -166,7 +166,7 @@ function handleUserAccess($user, $readerId, $controller) {
     update_user_statistics($user);
 
     //open the door 
-    $msg = openDoor($door->id, $controller->id);
+    $msg = openDoor($door->id, $controller);
     
     return $msg;    
 }
@@ -208,11 +208,11 @@ function checkDoorSchedule($door) {
 *   $doorId : id in the db
 *   Used by match_listener and webinterface
 */
-function openDoor($doorId, $controllerId) {
+function openDoor($doorId, $controller) {
     $duration=find_setting_by_name("door_open");
     $soundBuzzer=find_setting_by_name("sound_buzzer");
 
-    mylog("Open Door ".$doorId." sound_buzzer=".$soundBuzzer." duration=".$duration);
+    mylog("Open Door ".$doorId." cid=".$controller->id." duration=".$duration." sound_buzzer=".$soundBuzzer);
 
     //$gpios = array(getDoorGPIO($doorId));
     $gpios = array();
@@ -220,11 +220,11 @@ function openDoor($doorId, $controllerId) {
     if($soundBuzzer) $gpios[] = GVAR::$BUZZER_PIN;
 
     //add the right wiegand reader leds for a door
-    $door = find_door_for_reader_id(1,$controllerId);
+    $door = find_door_for_reader_id(1,$controller->id);
     if($doorId = $door->id){
         $gpios[] = GVAR::$RD1_GLED_PIN;
     }
-    $door = find_door_for_reader_id(2,$controllerId);
+    $door = find_door_for_reader_id(2,$controller->id);
     if($doorId = $door->id){
         $gpios[] = GVAR::$RD2_GLED_PIN;
     }
@@ -233,12 +233,13 @@ function openDoor($doorId, $controllerId) {
 
     //TODO functionality in openlock to prevent closing a scheduled thingy
 
-    if( checkIfMaster() ) {
+    if( $controller->id == 1 ) {
         //call method on master, is quicker and more reliable
         //and nesting coap-client calls is not working currently
         $msg = activateOutput($doorId, $duration, $gpios);
     } else {
-        $cmd = "coap-client -m get coap://192.168.178.137/activate/".$doorId."/".$duration."/".implode("-",$gpios);
+        $cmd = "coap-client -m get coap://".$controller->ip."/activate/".$doorId."/".$duration."/".implode("-",$gpios);
+        mylog($cmd);
         $msg = shell_exec($cmd);
     }
     

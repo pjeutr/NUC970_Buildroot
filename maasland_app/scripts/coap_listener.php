@@ -20,6 +20,7 @@ option('db_conn', $db);
 option('debug', true);
 
 echo setupGPIOInputs();
+
 if( checkIfMaster() ) {
 	require_once '/maasland_app/www/lib/logic.door.php';
 	//load models for used db methods
@@ -31,14 +32,32 @@ if( checkIfMaster() ) {
 	require_once '/maasland_app/www/lib/model.timezone.php';
 	require_once '/maasland_app/www/lib/model.rule.php';
 	echo "Extra Master requirements loaded\n";
+
+	//anounce as master server
+	$r = mdnsPublish();
+	mylog("mdnsPublish return=".json_encode($r));
 }
 
+//get ip
+$ifconfig = shell_exec('/sbin/ifconfig eth0');
+preg_match('/addr:([\d\.]+)/', $ifconfig, $match);
+$thisControllerIp = $match[1];
+mylog("thisControllerIp=".$thisControllerIp."\n");
+
+//start coap server
 $loop = React\EventLoop\Factory::create();
-
 $server = new PhpCoap\Server\Server( $loop );
-
-$thisControllerIp = '192.168.178.137';
 $server->receive( 5683, $thisControllerIp);
+
+//get master ip
+$masterControllerIp = $thisControllerIp;
+if( !checkIfMaster() ) {
+	$result = mdnsBrowse("_master._sub._maasland._udp");
+	mylog(json_encode($result)."\n");
+	$masterControllerIp = $result[0][7];
+}
+mylog("masterControllerIp=".$masterControllerIp."\n");
+
 
 /*
 * coap-client -m get coap://192.168.178.137/status/170-169 = print button status 
