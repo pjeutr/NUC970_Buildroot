@@ -46,7 +46,7 @@ function before($route = array())
     //Allow login POST to submit. TODO needs check on uri=login?
     if(request_method() != "POST") {
       //need session to get in dashboard
-      if(! checkIfMaster()) { //session is ok
+      if(! checkIfMaster()) { //if not master, show slave page
         //} elseif(strpos(request_uri(), '/door/') !== false) { //allow cli
         //} elseif(request_uri() == "/door/1") { //allow cli
         echo slave_page();

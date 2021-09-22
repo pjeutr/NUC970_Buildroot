@@ -1,9 +1,14 @@
 #!/usr//bin/php
 <?php
 
-// recieves coap request from the master controller
-// 1 or 2 opens door
-// 3 or 4 sound alarm
+/*
+* Runs on all controllers
+* - detects input changes (readers/buttons/sensors)
+* - listen for coap messages (to open door)
+* If master controller
+* - publish through mDNS as master
+* - listen for coap messages (button was pressed)
+*/
 
 require_once '/maasland_app/vendor/autoload.php';
 require_once '/maasland_app/www/lib/limonade.php';;
@@ -49,14 +54,12 @@ $loop = React\EventLoop\Factory::create();
 $server = new PhpCoap\Server\Server( $loop );
 $server->receive( 5683, $thisControllerIp);
 
-//get master ip
-$masterControllerIp = $thisControllerIp;
-if( !checkIfMaster() ) {
-	$result = mdnsBrowse("_master._sub._maasland._udp");
-	mylog(json_encode($result)."\n");
-	$masterControllerIp = $result[0][7];
-}
-mylog("masterControllerIp=".$masterControllerIp."\n");
+//get master ip TODO not used?
+// $masterControllerIp = $thisControllerIp;
+// if( !checkIfMaster() ) {
+// 	$masterControllerIp = getMasterControllerIP();
+// }
+// mylog("masterControllerIp=".$masterControllerIp."\n");
 
 
 /*
@@ -84,13 +87,15 @@ function readOption($option, $i) {
 }
 
 /*
-* Listen for input changes 
+* Listen for input changes (matchListener)
 */
 $observer = new \Calcinai\Rubberneck\Observer($loop);
 
 $observer->onModify(function($file_name){
 	mylog("Modified:". $file_name);
+	//determine the input number for this file
 	$input = resolveInput($file_name);
+	//find the value
 	$value = getInputValue($file_name);
 	//check if this is a wiegand reader
 	if($input == 1) {
@@ -102,7 +107,7 @@ $observer->onModify(function($file_name){
 			$reader = explode('=',$parts[9])[1];
 			mylog(json_encode($parts));
 			mylog("Modified:". $keycode.":".$reader);
-			$result =  inputReceived($reader, $keycode);
+			$result = inputReceived($reader, $keycode);
 		}
 	}
 	//take action if a button is pressed
@@ -111,6 +116,7 @@ $observer->onModify(function($file_name){
 		mylog(json_encode($result));
 	}    
 });
+//Declare inputs to observe
 //$observer->watch('/sys/kernel/wiegand/read'); werkt niet, dan maar via messages...
 //maybe adding a newline? or write at a different place. not in sys
 $observer->watch('/var/log/messages');
@@ -118,9 +124,11 @@ $observer->watch('/sys/class/gpio/gpio170/value');
 //$observer->watch('/sys/class/gpio/gpio170/value');
 //$observer->watch('/sys/class/gpio/gpio68/value');
 
+
+
+
 /*
-* Run server / listener
-* TODO integrate with match_listener
+* Run coapServer / coapListener
 */	
 $server->on( 'request', function( $req, $res, $handler ) use ($loop){
 	$o = $req->GetOptions();
@@ -136,7 +144,7 @@ $server->on( 'request', function( $req, $res, $handler ) use ($loop){
 	/*
 	* TODO split up?
 	* Above requests will only happen on master
-	* Following request will happen on slave and master (match_listener/coap_lister)
+	* Following request will happen on slave and master 
 	*/	
 	} elseif($type == 'output') {
 		$from = $handler->getPeerHost(); //will allways be master
@@ -150,7 +158,7 @@ $server->on( 'request', function( $req, $res, $handler ) use ($loop){
 		$door_id = readOption($o,1);
 		$duration = readOption($o,2);
 		$gpios = explode("-", readOption($o,3));
-		mylog("coapListener: Open door ".$door_id." for ".$duration."s gpios=".json_encode($gpios));
+		mylog("coapListener: Activate door ".$door_id." for ".$duration."s gpios=".json_encode($gpios));
 		$result = activateOutput($door_id, $duration, $gpios);
 	} elseif($type == 'status') { 
 		$from = $handler->getPeerHost(); //will allways be master

@@ -2,7 +2,6 @@
 set('id', 3);
 set('title', 'Doors');
 
-$controller = $controllers[0];
 ?>
 
 <div class="content">
@@ -24,7 +23,8 @@ $controller = $controllers[0];
                             <div class="row border">
                                 <div class="col-sm-4 custom-header-head border-left-0">
                                    <div class="float-left">
-                                        <?= $controller->name ?> <sub>Controller</sub>
+                                        <sub>Controller</sub>
+                                        <?= $controller->name ?> 
                                     </div>
                                     <div class="float-right">
                                         <?= iconLink_to("Change", 'controllers/'.$controller->id.'/edit', 'btn-link text-success', null) ?>
@@ -33,17 +33,19 @@ $controller = $controllers[0];
                                 <?php 
 
                                 foreach ($doors as $row) { 
-
+                                    if($row->controller_id == $controller->id) {
                                 ?>
                                 <div class="col-sm-4 custom-header">
                                     <div class="float-left">
+                                        <sub>Door</sub>
                                         <?= $row->name ?> <?= $row->timezone_id ?>
                                     </div>
                                     <div class="float-right">
                                         <?= iconLink_to("Change", 'doors/'.$row->id.'/edit', 'btn-link text-success', null) ?>
                                     </div>
                                 </div>
-                                <?php } ?>
+                                <?php }
+                                } ?>
                             </div>
                             <form class="doorForm" id="row" action="<?= url_for('controller', 1) ?>" method="POST">
                             <input type="hidden" name="_method" id="_method" value="PUT">
