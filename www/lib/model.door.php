@@ -56,7 +56,7 @@ function make_door_obj($params, $obj = null) {
 }
 
 function door_columns() {
-    return array('name','controller_id','timezone_id');
+    return array('name','enum','controller_id','timezone_id');
 }
 
 

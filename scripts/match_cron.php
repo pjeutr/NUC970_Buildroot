@@ -13,6 +13,12 @@ require_once '/maasland_app/www/lib/model.door.php';
 require_once '/maasland_app/www/lib/model.controller.php';
 require_once '/maasland_app/www/lib/model.timezone.php';
 
+//Quit quickly if not master
+if( !checkIfMaster() ) {
+	mylog("Stop Cron, this controller is not master");
+	exit();
+}
+
 //initialize database connection
 $dsn = "sqlite:/maasland_app/www/db/dev.db";
 $db = new PDO($dsn);
@@ -30,7 +36,7 @@ $action = "Systemcheck ";
 //if($now->format('H:i') == "2:00") { //every night at 2
 if($now->format('i') == 45) { //every hour
 
-	exec("ps -o pid,user,comm,stat,args | grep -i 'match_listener' | grep -v grep", $pids);
+	exec("ps -o pid,user,comm,stat,args | grep -i 'coap_listener' | grep -v grep", $pids);
 	// D Uninterruptible sleep (usually IO)
 	// R Running or runnable (on run queue)
 	// S Interruptible sleep (waiting for an event to complete)
@@ -40,9 +46,9 @@ if($now->format('i') == 45) { //every hour
 	// Z Defunct ("zombie") process, terminated but not reaped by its parent.
 
 	if(empty($pids)) {
-		$action = "match_listener not running!";
+		$action = "coap_listener not running!";
 	} else {
-	    $action = "Systemcheck, match_listener OK. ".count($pids)." pids:".join(',', $pids);
+	    $action = "Systemcheck, coap_listener OK. ".count($pids)." pids:".join(',', $pids);
 	}
 
 	//check if listener still running?
@@ -51,16 +57,19 @@ if($now->format('i') == 45) { //every hour
 
 $doors = find_doors();
 foreach ($doors as $door) {
-	mylog("Door=".$door->name." - ".$door->timezone_id."\n");
+	mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->id.":".$door->name." tz=".$door->timezone_id."\n");
 	//
-	if(checkDoorSchedule($door)) {
-		$changed = openLock($door, 1);
-		$action = "Scheduled ".$door->name." opened";
-		if($changed) saveReport($actor, $action);
-	} else {
-		$changed = openLock($door, 0);
-		$action = "Scheduled  ".$door->name." closed";
-		if($changed) saveReport($actor, $action);
+	if( $door->timezone_id ) {
+		if(checkDoorSchedule($door)) {
+			$changed = operateDoor($door, 1);
+			$action = "Scheduled ".$door->name." opened";
+			if($changed) saveReport($actor, $action);
+		} else {
+			$changed = operateDoor($door, 0);
+			$action = "Scheduled  ".$door->name." closed";
+			if($changed) saveReport($actor, $action);
+		}
+		mylog($action);
 	}
 }
 

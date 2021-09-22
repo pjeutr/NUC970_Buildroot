@@ -45,7 +45,7 @@ function handleInput($from, $input, $keycode) {
             $inputName = ($input == 3) ? "button_1":"button_2";
             $door = find_door_for_input_device($inputName, $controller->id);
             $action = $inputName.":".$door->name;
-            $result = openDoor($door->id, $controller);
+            $result = openDoor($door, $controller);
             break;
         case 5:
         case 6:
@@ -166,7 +166,7 @@ function handleUserAccess($user, $readerId, $controller) {
     update_user_statistics($user);
 
     //open the door 
-    $msg = openDoor($door->id, $controller);
+    $msg = openDoor($door, $controller);
     
     return $msg;    
 }
@@ -184,8 +184,8 @@ function handleUserAccess($user, $readerId, $controller) {
 */
 function checkDoorSchedule($door) {
     $tz = find_timezone_by_id($door->timezone_id);
-    mylog("checkDoorSchedule=".$door->timezone_id);
-    if($door->timezone_id) {
+    // mylog("checkDoorSchedule door=".$door->id." tz=".$door->timezone_id);
+    // if($door->timezone_id) {
         $now = new DateTime();
         //check if it is the right day of the week
         $weekday = $now->format('w');//0 (for Sunday) through 6 (for Saturday) 
@@ -199,46 +199,49 @@ function checkDoorSchedule($door) {
                 return true;
             }
         }
-    }
+    //}
     return false;
 }
 
 /*
-* Old method, should be replace with a timer somewhere else
-*   $doorId : id in the db
-*   Used by match_listener and webinterface
+* Open a door
+*   $door : Door object
+*   $controller : Controller object
+*   returns  
+*
+* Used by match_listener and webinterface
 */
-function openDoor($doorId, $controller) {
+function openDoor($door, $controller) {
     $duration=find_setting_by_name("door_open");
     $soundBuzzer=find_setting_by_name("sound_buzzer");
+    mylog(json_encode($door));
+    mylog(json_encode($controller));
+    mylog("Open Door ".$door->id." cid=".$controller->id." duration=".$duration." sound_buzzer=".$soundBuzzer);
 
-    mylog("Open Door ".$doorId." cid=".$controller->id." duration=".$duration." sound_buzzer=".$soundBuzzer);
-
-    //$gpios = array(getDoorGPIO($doorId));
     $gpios = array();
     //aggegrate gpios to switch on/off
     if($soundBuzzer) $gpios[] = GVAR::$BUZZER_PIN;
 
     //add the right wiegand reader leds for a door
-    $door = find_door_for_reader_id(1,$controller->id);
-    if($doorId = $door->id){
+    $door1 = find_door_for_reader_id(1,$controller->id);
+    mylog("Reader1 does door=".$door1->id." Now doing door=".$door->enum);
+    if($door1->id === $door->enum){
         $gpios[] = GVAR::$RD1_GLED_PIN;
     }
-    $door = find_door_for_reader_id(2,$controller->id);
-    if($doorId = $door->id){
+    $door2 = find_door_for_reader_id(2,$controller->id);
+    mylog("Reader2 does door=".$door2->id." Now doing door=".$door->enum);
+    if($door2->id ===  $door->enum){
         $gpios[] = GVAR::$RD2_GLED_PIN;
     }
     //mylog("extra gpios=".json_encode($gpios));
     mylog("extra gpios=".json_encode($gpios));
 
-    //TODO functionality in openlock to prevent closing a scheduled thingy
-
-    if( $controller->id == 1 ) {
+    if( $controller->id === 1 ) {
         //call method on master, is quicker and more reliable
         //and nesting coap-client calls is not working currently
-        $msg = activateOutput($doorId, $duration, $gpios);
+        $msg = activateOutput($door->id, $duration, $gpios);
     } else {
-        $cmd = "coap-client -m get coap://".$controller->ip."/activate/".$doorId."/".$duration."/".implode("-",$gpios);
+        $cmd = "coap-client -m get coap://".$controller->ip."/activate/".$door->enum."/".$duration."/".implode("-",$gpios);
         mylog($cmd);
         $msg = shell_exec($cmd);
     }
@@ -247,17 +250,19 @@ function openDoor($doorId, $controller) {
 }
 
 /*
-*   Open a lock given a doorId 
-*   $doorId : id in the db
+* Operate a door 
+*   $door : Door object
 *   $open : 1=open, 0=close
 *   returns true if state was changed
+*
+* Only used by cron / scheduler
 */
 
-function openLock($door, $open) { 
+function operateDoor($door, $open) {
     mylog("door= ".json_encode($door));
 
-    if( checkIfMaster() ) {
-    //if( $door->controller_id ) {
+    //if( checkIfMaster() ) {
+    if( $door->controller_id === 1) { //Master = 1
         $gid = getDoorGPIO($door->id);
 
         $currentValue = getGPIO($gid);
@@ -269,11 +274,13 @@ function openLock($door, $open) {
             setGPIO($gid, $open);
             return true;
         }
-        //TODO open locks on other controllers
         return false;
     } else {
         $controller = find_controller_by_id($door->controller_id );
-        $cmd = "coap-client -m get coap://".$controller->ip."/activate/".$doorId."/".$duration."/".implode("-",$gpios);
+
+        $duration =1;
+        $gpios = array();
+        $cmd = "coap-client -m get coap://".$controller->ip."/operate/".$door->id;
         $msg = shell_exec($cmd);
     }
     return $msg;

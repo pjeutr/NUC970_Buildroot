@@ -56,7 +56,7 @@ function saveReport($user, $msg, $key = "empty") { //empty => null
 
 
 /* 
-    Avahi
+*   mDNS/Avahi functions 
 */
 $serviceTypeUdp = "_maasland._udp 5683"; //created by avahi deamon
 $serviceTypeTcp = "_maasland._tcp 80"; //created by coap_listener (avahi publish)
@@ -87,7 +87,7 @@ function mdnsBrowse($type) {
 }
 
 /* 
-    View functions 
+*   HTML View functions 
 */
 function buttonLink_to($params = null) {
     $params = func_get_args();

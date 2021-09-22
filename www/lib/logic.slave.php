@@ -1,12 +1,17 @@
 <?php
+/*
+*   GVAR (gpio variables)
+*   contains software to hardware tranlations
+*/
 class GVAR
 {
+    //outputs
     public static $GPIO_DOOR1 = 68; //NUC980_PC4
     public static $GPIO_DOOR2 = 66; //NUC980_PC2
     public static $GPIO_ALARM1 = 65; //NUC980_PC2
     public static $GPIO_ALARM2 = 66; //fake same as door
-    public static $DOOR_TIMER = 2; //Door lock stays open for 2s
 
+    //inputs
     public static $GPIO_BUTTON1 = 170; //NUC980_PF10
     public static $GPIO_BUTTON2 = 169; //NUC980_PF9 - CAT_PIN //contact input
     public static $GPIO_DOORSTATUS1 = 170;//168; //NUC980_PF8 - PSU_PIN //psu input
@@ -14,29 +19,16 @@ class GVAR
 
     public static $GPIO_S1 = 140; //NUC980_PE12 - Master Slave switch
 
-    //$RD1_RLED_PIN = 3; //NUC980_PA3   //reader1 rled output
     public static $RD1_GLED_PIN = 2; //NUC980_PA2   //reader1 gled output
-    //$RD2_RLED_PIN = 11; //NUC980_PA11  //reader2 rled output
     public static $RD2_GLED_PIN = 10;  //NUC980_PA10  //reader2 gled output
 
     public static $BUZZER_PIN = 79;  //NUC980_PC15  //buzzer output
 }
 
-function resolveInput($gpioPath) {
-    $inputArray = [
-        1 => "/var/log/messages",
-        3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
-        4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
-        5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
-        6 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS2."/value"
-    ];
-    return array_search($gpioPath,$inputArray);
-    //if($gpioPath == "/sys/class/gpio/gpio170/value") return 3;
-    //if($gpioPath == "/sys/class/gpio/gpio169/value") return 4;
-}
 /*
 *   Slaveside methods, also used by the master.
 *   - has knowledge which GPIO's belong to what
+*   - has functions that call the local hardware
 *   - has NO knowledge about content in the database
 */
 function setupGPIOInputs() {
@@ -53,6 +45,29 @@ function setupGPIOInputs() {
 }
 
 /*
+*   Give an input number for a gpio path 
+*   1,2 wiegand reader
+*   3,4 button
+*   5,6 door sensor
+*/
+function resolveInput($gpioPath) {
+    $inputArray = [
+        1 => "/var/log/messages",
+        3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
+        4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
+        5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
+        6 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS2."/value"
+    ];
+    return array_search($gpioPath,$inputArray);
+    //if($gpioPath == "/sys/class/gpio/gpio170/value") return 3;
+    //if($gpioPath == "/sys/class/gpio/gpio169/value") return 4;
+}
+
+function getInputValue($gpioPath) {
+    return exec("cat ".$gpioPath);
+}
+
+/*
 *   Operate a door/alarm given a doorId 
 *   $doorId : id in the db
 *   $state : 0 or 1
@@ -61,6 +76,7 @@ function setupGPIOInputs() {
 */
 function operateOutput($doorId, $state, $gpios = array()) {
     mylog("operateOutput ".$doorId." state=".$state);
+
     $gid = getDoorGPIO($doorId);
 
     //add gpio for the door to gpios
@@ -112,14 +128,25 @@ function checkIfMaster() {
 }
 
 function getMasterControllerIP() {
-    //TODO get real master ip
-    return "192.168.178.137";
+    //TODO cache / make singleton?
+    //TODO to errorprone fishing from an array
+
+    //if( !checkIfMaster() ) {
+        $result = mdnsBrowse("_master._sub._maasland._udp");
+        mylog(json_encode($result)."\n");
+        $masterControllerIp = $result[0][7];
+        return $masterControllerIp;
+    //}
+
+    //TODO get real master ip, through d
+    //return "192.168.178.137";
 }
 
 function getMasterURL() {
     //TODO make dynamic, called form slave error page
     return "http://".getMasterControllerIP()."/";
 }
+
 
 function inputReceived($input, $data) {
     mylog("inputReceived:".$input);
@@ -148,11 +175,6 @@ function getDoorGPIO($doorId) {
     return 0;
 }
 
-
-
-function getInputValue($gpioPath) {
-    return exec("cat ".$gpioPath);
-}
 /*
 *   GPIO setter and getter
 */

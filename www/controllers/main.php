@@ -61,9 +61,9 @@ function door_open() {
 	$doorId = filter_var(params('door'), FILTER_VALIDATE_INT);
     $controllerId = filter_var(params('controller'), FILTER_VALIDATE_INT);
     saveReport("WebAdmin", "Opened door ".$doorId." on controller ".$controllerId);
-    //$r = openDoor($doorId, $controllerId);
+    $door = find_door_by_id($doorId);
     $controller = find_controller_by_id($controllerId);
-    $result = openDoor($doorId, $controller);
+    $result = openDoor($door, $controller);
     return (json(array($result)));
 }
 
