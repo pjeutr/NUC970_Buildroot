@@ -184,7 +184,7 @@ function handleUserAccess($user, $readerId, $controller) {
 */
 function checkDoorSchedule($door) {
     $tz = find_timezone_by_id($door->timezone_id);
-    // mylog("checkDoorSchedule door=".$door->id." tz=".$door->timezone_id);
+    mylog("checkDoorSchedule door=".$door->id." tz=".$door->timezone_id);
     // if($door->timezone_id) {
         $now = new DateTime();
         //check if it is the right day of the week
@@ -262,11 +262,11 @@ function operateDoor($door, $open) {
     mylog("door= ".json_encode($door));
 
     //if( checkIfMaster() ) {
-    if( $door->controller_id === 1) { //Master = 1
+    if( $door->controller_id == 1) { //Master = 1
         $gid = getDoorGPIO($door->id);
 
         $currentValue = getGPIO($gid);
-        //mylog("openLock ".$currentValue."=".$open."\n");
+        mylog("openLock ".$currentValue."=".$open."\n");
 
         //check if lock state has changed
         if($currentValue != $open) {
@@ -280,10 +280,31 @@ function operateDoor($door, $open) {
 
         $duration =1;
         $gpios = array();
-        $cmd = "coap-client -m get coap://".$controller->ip."/operate/".$door->id;
+        //TODO could also use leds? see openDoor
+        // $gpios[] = GVAR::$RD1_GLED_PIN;
+        // $gpios[] = GVAR::$RD2_GLED_PIN;
+
+/*
+        $cmd = "coap-client -m get coap://".$controller->ip."/status/".getDoorGPIO($door->enum);
         $msg = shell_exec($cmd);
+        mylog("----------");
+        mylog(json_decode($msg)[0]);
+        mylog("----------");
+        //TODO find a way nice way to pick the value
+        $currentValue = 1;
+        mylog("openLock ".$currentValue."=".$open."\n");
+
+        if($currentValue != $open) { */
+        if(true) {
+            //mylog("STATE CHANGED=".$open);
+            $cmd = "coap-client -m get coap://".$controller->ip."/output/".$door->enum."/".$open."/".implode("-",$gpios);
+            mylog($cmd);
+            $msg = shell_exec($cmd);
+            return true;
+        }
+        
     }
-    return $msg;
+    return false;
 }
 
 

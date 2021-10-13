@@ -38,6 +38,7 @@ class Observer {
      * @var Driver\DriverInterface[]
      */
     static $drivers = [
+        Driver\EpollWait::class,
         Driver\InotifyWait::class,
         Driver\Filesystem::class
     ];
@@ -46,7 +47,7 @@ class Observer {
      * Observer constructor
      * @param LoopInterface $loop
      */
-    public function __construct(LoopInterface $loop) {
+    public function X__construct(LoopInterface $loop) {
 
         $this->loop = $loop;
 
@@ -54,6 +55,14 @@ class Observer {
         $this->driver = new $driver_class($this);
     }
 
+    public function __construct(LoopInterface $loop, $driver_nr) {
+        $this->loop = $loop;
+
+        $driver_class = self::$drivers[$driver_nr];
+        mylog($driver_class);
+        //$this->driver = new $driver_class($this);
+        $this->driver = new $driver_class($this);
+    }
 
     public function watch($path) {
         $this->driver->watch($path);

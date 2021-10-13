@@ -23,7 +23,7 @@ set('title', 'Doors');
                             <div class="row border">
                                 <div class="col-sm-4 custom-header-head border-left-0">
                                    <div class="float-left">
-                                        <sub>Controller</sub>
+                                        <div class="tabsub">Controller</div>
                                         <?= $controller->name ?> 
                                     </div>
                                     <div class="float-right">
@@ -37,11 +37,12 @@ set('title', 'Doors');
                                 ?>
                                 <div class="col-sm-4 custom-header">
                                     <div class="float-left">
-                                        <sub>Door</sub>
-                                        <?= $row->name ?> <?= $row->timezone_id ?>
+                                        <div class="tabsub">Door</div>
+                                        <?= $row->name ?> 
                                     </div>
                                     <div class="float-right">
                                         <?= iconLink_to("Change", 'doors/'.$row->id.'/edit', 'btn-link text-success', null) ?>
+                                        <?= $row->timezone_id ?>
                                     </div>
                                 </div>
                                 <?php }
