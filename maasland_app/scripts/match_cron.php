@@ -57,7 +57,7 @@ if($now->format('i') == 45) { //every hour
 
 $doors = find_doors();
 foreach ($doors as $door) {
-	mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->id.":".$door->name." tz=".$door->timezone_id."\n");
+	mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->enum.":".$door->id.":".$door->name." tz=".$door->timezone_id."\n");
 	//
 	if( $door->timezone_id ) {
 		if(checkDoorSchedule($door)) {

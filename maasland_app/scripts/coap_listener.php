@@ -89,38 +89,51 @@ function readOption($option, $i) {
 /*
 * Listen for input changes (matchListener)
 */
-$observer = new \Calcinai\Rubberneck\Observer($loop);
-
-$observer->onModify(function($file_name){
-	mylog("Modified:". $file_name);
+//TODO class meegeven werkte niet, daarom maar de index van array
+//$inputObserver = new \Calcinai\Rubberneck\Observer($loop, EpollWait::class);
+$wiegandObserver = new \Calcinai\Rubberneck\Observer($loop, 0);
+$wiegandObserver->onModify(function($file_name){
+	mylog("Modified:". $file_name. "\n");
 	//determine the input number for this file
 	$input = resolveInput($file_name);
 	//find the value
 	$value = getInputValue($file_name);
-	//check if this is a wiegand reader
-	if($input == 1) {
-		$lastline = exec("tail -n1 /var/log/messages");
-		if(strpos($lastline,"keycode") > 0){
-			//TODO can't go searching in log, change wiegand driver!
-			$parts = explode(' ',$lastline);
-			$keycode = explode('=',$parts[8])[1];
-			$reader = explode('=',$parts[9])[1];
-			mylog(json_encode($parts));
-			mylog("Modified:". $keycode.":".$reader);
-			$result = inputReceived($reader, $keycode);
-		}
-	}
+	mylog("value:". $value. "\n");
+
+	$parts = explode(':',$value);
+	$nr = $parts[0];
+	$keycode = $parts[1];
+	$reader = $parts[2];
+	mylog("Modified:". $keycode.":".$reader);
+	//$result = inputReceived($reader, $keycode);
+
+});	
+//$inputObserver = new \Calcinai\Rubberneck\Observer($loop, InotifyWait::class);
+$inputObserver = new \Calcinai\Rubberneck\Observer($loop, 1);
+$inputObserver->onModify(function($file_name){
+	mylog("Modified:". $file_name. "\n");
+	//determine the input number for this file
+	$input = resolveInput($file_name);
+	//find the value
+	$value = getInputValue($file_name);
+	mylog("value:". $value. "\n");
 	//take action if a button is pressed
-	if($value == 1) { 	
+	if($value == 1) { 
+		mylog("GO\n");
 		$result =  inputReceived($input, "");
 		mylog(json_encode($result));
-	}    
+	}   
+	//TODO sleep / prevent klapperen 
+	sleep(1);
 });
 //Declare inputs to observe
-//$observer->watch('/sys/kernel/wiegand/read'); werkt niet, dan maar via messages...
+//$observer->watch('/dev/wiegand'); 
+//$observer->watch('/sys/kernel/wiegand/read'); 
+//$observer->watch('/sys/class/wiegand/value'); 
 //maybe adding a newline? or write at a different place. not in sys
-$observer->watch('/var/log/messages');
-$observer->watch('/sys/class/gpio/gpio170/value');
+//$observer->watch('/var/log/messages');
+$wiegandObserver->watch('/sys/class/gpio/gpio170/value');
+$inputObserver->watch('/sys/class/gpio/gpio170/value');
 //$observer->watch('/sys/class/gpio/gpio170/value');
 //$observer->watch('/sys/class/gpio/gpio68/value');
 

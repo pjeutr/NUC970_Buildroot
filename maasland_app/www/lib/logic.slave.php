@@ -10,19 +10,16 @@ class GVAR
     public static $GPIO_DOOR2 = 66; //NUC980_PC2
     public static $GPIO_ALARM1 = 65; //NUC980_PC2
     public static $GPIO_ALARM2 = 66; //fake same as door
+    public static $RD1_GLED_PIN = 2; //NUC980_PA2   //reader1 gled output
+    public static $RD2_GLED_PIN = 10;  //NUC980_PA10  //reader2 gled output
+    public static $BUZZER_PIN = 79;  //NUC980_PC15  //buzzer output
 
     //inputs
     public static $GPIO_BUTTON1 = 170; //NUC980_PF10
     public static $GPIO_BUTTON2 = 169; //NUC980_PF9 - CAT_PIN //contact input
     public static $GPIO_DOORSTATUS1 = 170;//168; //NUC980_PF8 - PSU_PIN //psu input
     public static $GPIO_DOORSTATUS2 = 45; //NUC980_PB13 - TAMPER_PIN //tamp input
-
     public static $GPIO_S1 = 140; //NUC980_PE12 - Master Slave switch
-
-    public static $RD1_GLED_PIN = 2; //NUC980_PA2   //reader1 gled output
-    public static $RD2_GLED_PIN = 10;  //NUC980_PA10  //reader2 gled output
-
-    public static $BUZZER_PIN = 79;  //NUC980_PC15  //buzzer output
 }
 
 /*
@@ -33,15 +30,21 @@ class GVAR
 */
 function setupGPIOInputs() {
     //
-    initGPIO(GVAR::$GPIO_BUTTON1);
-    initGPIO(GVAR::$GPIO_BUTTON2);
-    initGPIO(GVAR::$GPIO_DOORSTATUS1);
-    initGPIO(GVAR::$GPIO_DOORSTATUS2);
-    initGPIO(GVAR::$BUZZER_PIN);
-    initGPIO(GVAR::$GPIO_S1);
+    initGPIO(GVAR::$GPIO_DOOR1);
+    initGPIO(GVAR::$GPIO_DOOR2);
+    initGPIO(GVAR::$GPIO_ALARM1);
+    initGPIO(GVAR::$GPIO_ALARM2);
     initGPIO(GVAR::$RD1_GLED_PIN);
     initGPIO(GVAR::$RD2_GLED_PIN);
-    return "GPIOInputs initialized: Controller configured as ".(checkIfMaster() ? "Master" : "Slave")."\n"  ;
+    initGPIO(GVAR::$BUZZER_PIN);
+
+    initGPIO(GVAR::$GPIO_BUTTON1, false);
+    initGPIO(GVAR::$GPIO_BUTTON2, false);
+    initGPIO(GVAR::$GPIO_DOORSTATUS1, false);
+    initGPIO(GVAR::$GPIO_DOORSTATUS2, false);
+    initGPIO(GVAR::$GPIO_S1, false);
+    
+    return "GPIOInputs initialized: Controller configured as ".(checkIfMaster() ? "Master" : "Slave")."\n";
 }
 
 /*
@@ -123,7 +126,7 @@ function activateOutput($doorId, $duration, $gpios) {
 *   if Master => S1 Value is 0
 */
 function checkIfMaster() {
-    mylog("checkIfMaster:".getGPIO(GVAR::$GPIO_S1));
+    mylog("checkIfMaster: S=".getGPIO(GVAR::$GPIO_S1));
     return (getGPIO(GVAR::$GPIO_S1) == 0);
 }
 
@@ -168,10 +171,10 @@ function makeInputCoapCall($uri) {
 *   Get GPIO value for a door relais
 *   $doorId : doors.id in database in accordance with physical connection
 */
-function getDoorGPIO($doorId) { 
-    mylog("getDoorGPIO=".$doorId);
-    if($doorId == "1") return GVAR::$GPIO_DOOR1;
-    if($doorId == "2") return GVAR::$GPIO_DOOR2;
+function getDoorGPIO($doorEnum) { 
+    mylog("getDoorGPIO=".$doorEnum);
+    if($doorEnum == "1") return GVAR::$GPIO_DOOR1;
+    if($doorEnum == "2") return GVAR::$GPIO_DOOR2;
     return 0;
 }
 
@@ -187,11 +190,17 @@ function setGPIO($gpio, $state) {
 function getGPIO($gpio) {
     return exec("cat /sys/class/gpio/gpio".$gpio."/value");
 }
-function initGPIO($gpio) {
+function initGPIO($gpio, $out = true) {
     if(! file_exists("/sys/class/gpio/gpio".$gpio)) {
         mylog("init gid=".$gpio."\t");
         exec("echo ".$gpio." > /sys/class/gpio/export");
-        exec("echo out >/sys/class/gpio/gpio".$gpio."/direction");    
+        if($out) {
+            exec("echo out >/sys/class/gpio/gpio".$gpio."/direction"); 
+        } else {
+           exec("echo in >/sys/class/gpio/gpio".$gpio."/direction"); 
+           //input edge needs to be set to both, so inotify can be used
+           exec("echo both >/sys/class/gpio/gpio".$gpio."/edge"); 
+        }
     }
 }
 
