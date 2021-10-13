@@ -150,6 +150,7 @@ static unsigned char wiegand_unkown_to_keycode(unsigned long *data)
 
 	*data = pid;
 
+
 	print_debug(data);
 
 	//enable readers
@@ -343,7 +344,7 @@ ssize_t wiegand_read(struct file *file, char __user *buf, size_t size, loff_t *p
 	}
 
 	bit_count = 0;
-	keycode= 0;
+	//keycode= 0;
 
 	//disable_irq_nosync(gpio_to_irq(wiegand_set[0].pin_num));
 	//disable_irq_nosync(gpio_to_irq(wiegand_set[1].pin_num));
