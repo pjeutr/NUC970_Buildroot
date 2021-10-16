@@ -12,12 +12,12 @@ use Calcinai\Rubberneck\Observer;
 class EpollWait extends AbstractDriver implements DriverInterface {
 
 
-    private $cli_command = '/root/epoll_userspace';
+    static $cli_command = '/scripts/epoll_userspace';
 
     public function watch($path) {
         // dev/wiegand is where the epoll is attached to
         //$subprocess_cmd = sprintf($cli_command.' %s 2>/dev/null', '/dev/wiegand');
-        $subprocess_cmd = sprintf('/root/epoll_userspace %s 2>/dev/null', '/dev/wiegand');
+        $subprocess_cmd = sprintf(self::$cli_command.' %s 2>/dev/null', '/dev/wiegand');
 
         $this->observer->getLoop()->addReadStream(popen($subprocess_cmd, 'r'), [$this, 'onData']);
 
@@ -43,8 +43,9 @@ class EpollWait extends AbstractDriver implements DriverInterface {
     }
 
     public static function hasDependencies() {
-        //return `command -v {$cli_command}` !== null;
-        return true;
-        //return `command -v /root/epoll_userspace` !== null;
+        $cmd = self::$cli_command;
+        return `command -v {$cmd}` !== null;
+        //return true;
+        //return `command -v /scripts/epoll_userspace` !== null;
     }
 }

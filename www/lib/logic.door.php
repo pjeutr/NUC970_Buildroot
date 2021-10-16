@@ -1,6 +1,18 @@
 <?php
 require_once '/maasland_app/www/lib/logic.slave.php';
 
+/*
+*   Masterside methods.
+*   - has NO knowledge which GPIO's belong to what
+*   - has NO functions that call the local hardware
+*   - has knowledge about content in the database
+inputReceived -> (coap) -> handleInput -> handleUserAccess -> openDoor -> (coap) -> activateOutput
+
+handleInput (resolves user information)
+handleUserAccess (resolves logic configuration)
+openDoor (aggregate hardware information and translate to gpio numbers)
+*/
+
 function resolveController($ip) {
     mylog("resolveController ip=".$ip);
     return find_controller_by_ip($ip);
@@ -19,7 +31,18 @@ function resolveController($ip) {
     // door_2 = 66
     // alarm_1 = 65
     // alarm_2 = 66
-
+/*
+*   Handle incomming input 
+*   resolve user information
+*
+*   $user : object 
+*   $readerId : id in the db
+*   $controller : controller object
+*
+*   return json
+*
+*   Used by inputListener 
+*/
 function handleInput($from, $input, $keycode) {
     $controller = resolveController($from);
     if(empty($controller)) {
@@ -101,9 +124,12 @@ function checkAndHandleSensor($gpio, $id, $controller) {
 
 /*
 *   Handle user access by reader
+*   resolves logic configuration
+*
 *   $user : object 
 *   $readerId : id in the db
 *   $controller : controller object
+*
 *   Used by match_listener 
 */
 function handleUserAccess($user, $readerId, $controller) {
@@ -171,12 +197,6 @@ function handleUserAccess($user, $readerId, $controller) {
     return $msg;    
 }
 
-
-
-
-/*** Output functionality ***/
-
-
 /*
 *   Check if a door is in a Schedule
 *   $doorId : id in the db
@@ -204,7 +224,8 @@ function checkDoorSchedule($door) {
 }
 
 /*
-* Open a door
+* Open a door 
+* aggregate hardware information and translate to gpio numbers
 *   $door : Door object
 *   $controller : Controller object
 *   returns  
@@ -214,9 +235,9 @@ function checkDoorSchedule($door) {
 function openDoor($door, $controller) {
     $duration=find_setting_by_name("door_open");
     $soundBuzzer=find_setting_by_name("sound_buzzer");
-    mylog(json_encode($door));
-    mylog(json_encode($controller));
-    mylog("Open Door ".$door->id." cid=".$controller->id." duration=".$duration." sound_buzzer=".$soundBuzzer);
+    mylog("\nDoor=".json_encode($door));
+    mylog("\nCon=".json_encode($controller));
+    mylog("\nOpen Door ".$door->id." cid=".$controller->id." duration=".$duration." sound_buzzer=".$soundBuzzer);
 
     $gpios = array();
     //aggegrate gpios to switch on/off
@@ -236,16 +257,14 @@ function openDoor($door, $controller) {
     //mylog("extra gpios=".json_encode($gpios));
     mylog("extra gpios=".json_encode($gpios));
 
-    if( $controller->id === 1 ) {
+    if( $controller->id == 1 ) {
         //call method on master, is quicker and more reliable
         //and nesting coap-client calls is not working currently
         $msg = activateOutput($door->id, $duration, $gpios);
     } else {
-        $cmd = "coap-client -m get coap://".$controller->ip."/activate/".$door->enum."/".$duration."/".implode("-",$gpios);
-        mylog($cmd);
-        $msg = shell_exec($cmd);
+        $uri = "activate/".$door->enum."/".$duration."/".implode("-",$gpios);
+        $msg = apiCall($controller->ip, $uri);
     }
-    
     return $msg;
 }
 

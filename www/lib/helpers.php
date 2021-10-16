@@ -30,10 +30,10 @@ function make_empty_obj($values) {
 //Typed in code is max 999999
 //if it is bigger, it's a tag and we need to translate to hex value
 function keyToHex($key) {
-    mylog("keyToHex called key=".$key);
+    //mylog("keyToHex called key=".$key);
     if((int)$key > 9999) {
         $value = strtoupper(dechex((int)$key));
-        mylog("converted to ".$value);
+        //mylog("converted to ".$value);
         return $value;
         //return dec2hex($key);
     }
@@ -54,6 +54,34 @@ function saveReport($user, $msg, $key = "empty") { //empty => null
     return create_object($report, 'reports', null);
 }
 
+
+function apiCall($host, $uri) {
+    $msg = "dummy";
+    if(true) {
+        $url = "http://".$host."/?/api/".$uri;
+        mylog("apiCall:".$url);
+        $msg = file_get_contents($url);
+    } else {
+        $cmd = "coap-client -m get coap://".$host."/".$uri;
+        mylog("coapCall:".$cmd);
+        //TODO hangs here shell_exec alternative
+        $msg = shell_exec($cmd);//." 2>/dev/null &");
+        mylog("shell_exec returns");
+    }
+    return $msg;
+
+/*
+$client = new GuzzleHttp\Client();
+$res = $client->get('https://api.github.com/user', [
+    'auth' =>  ['user', 'pass']
+]);
+mylog($res->getStatusCode());           // 200
+mylog($res->getHeader('content-type')); // 'application/json; charset=utf8'
+mylog($res->getBody());                 // {"type":"User"...'
+mylog($res->json());             // Outputs the JSON decoded data
+*/    
+    
+}
 
 /* 
 *   mDNS/Avahi functions 

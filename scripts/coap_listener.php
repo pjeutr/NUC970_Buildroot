@@ -7,7 +7,7 @@
 * - listen for coap messages (to open door)
 * If master controller
 * - publish through mDNS as master
-* - listen for coap messages (button was pressed)
+* - listen for coap messages (reader was used)
 */
 
 require_once '/maasland_app/vendor/autoload.php';
@@ -24,7 +24,7 @@ option('dsn', $dsn);
 option('db_conn', $db);
 option('debug', true);
 
-echo setupGPIOInputs();
+echo configureGPIO();
 
 if( checkIfMaster() ) {
 	require_once '/maasland_app/www/lib/logic.door.php';
@@ -87,39 +87,39 @@ function readOption($option, $i) {
 }
 
 /*
-* Listen for input changes (matchListener)
+* Listen for input changes (inputListener)
 */
 //TODO class meegeven werkte niet, daarom maar de index van array
 //$inputObserver = new \Calcinai\Rubberneck\Observer($loop, EpollWait::class);
 $wiegandObserver = new \Calcinai\Rubberneck\Observer($loop, 0);
 $wiegandObserver->onModify(function($file_name){
-	mylog("Modified:". $file_name. "\n");
+	//mylog("Modified:". $file_name. "\n");
 	//determine the input number for this file
 	$input = resolveInput($file_name);
 	//find the value
 	$value = getInputValue($file_name);
-	mylog("value:". $value. "\n");
+	//mylog("value:". $value. "\n");
 
 	$parts = explode(':',$value);
 	$nr = $parts[0];
 	$keycode = $parts[1];
 	$reader = $parts[2];
-	mylog("Modified:". $keycode.":".$reader);
-	//$result = inputReceived($reader, $keycode);
-
+	mylog("Wiegand:". $reader.":".$keycode);
+	$result = inputReceived($reader, $keycode);
+	mylog(json_encode($result));
 });	
 //$inputObserver = new \Calcinai\Rubberneck\Observer($loop, InotifyWait::class);
 $inputObserver = new \Calcinai\Rubberneck\Observer($loop, 1);
 $inputObserver->onModify(function($file_name){
-	mylog("Modified:". $file_name. "\n");
+	//mylog("Modified:". $file_name. "\n");
 	//determine the input number for this file
 	$input = resolveInput($file_name);
 	//find the value
 	$value = getInputValue($file_name);
-	mylog("value:". $value. "\n");
+	//mylog("value:". $value. "\n");
 	//take action if a button is pressed
 	if($value == 1) { 
-		mylog("GO\n");
+		mylog("Button:". $input);
 		$result =  inputReceived($input, "");
 		mylog(json_encode($result));
 	}   
@@ -132,7 +132,7 @@ $inputObserver->onModify(function($file_name){
 //$observer->watch('/sys/class/wiegand/value'); 
 //maybe adding a newline? or write at a different place. not in sys
 //$observer->watch('/var/log/messages');
-$wiegandObserver->watch('/sys/class/gpio/gpio170/value');
+$wiegandObserver->watch('/sys/kernel/wiegand/read');
 $inputObserver->watch('/sys/class/gpio/gpio170/value');
 //$observer->watch('/sys/class/gpio/gpio170/value');
 //$observer->watch('/sys/class/gpio/gpio68/value');
@@ -152,8 +152,7 @@ $server->on( 'request', function( $req, $res, $handler ) use ($loop){
 		$input = readOption($o,1);
 		$data = readOption($o,2);
 		mylog("coapServer: ".checkIfMaster()." input=".$input." data=".$data);
-		//$result = checkIfMaster() ? handleInput($from, $input, $data) : "can only be called on master";
-		$result =  inputReceived($input, $data);
+		$result = handleInput($from, $input, $data);
 	/*
 	* TODO split up?
 	* Above requests will only happen on master
