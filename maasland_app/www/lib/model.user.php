@@ -25,7 +25,7 @@ function find_user_by_id($id) {
 function find_user_by_keycode($key) {
     //translate key TODO right place?
     $keycode = keyToHex($key);
-    
+    mylog("find_user_by_keycode ".$key);
     $sql =
         "SELECT " .
         "b.id as id, b.name as name, b.last_seen as last_seen, b.group_id as group_id, " .

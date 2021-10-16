@@ -59,8 +59,10 @@ class Observer {
         $this->loop = $loop;
 
         $driver_class = self::$drivers[$driver_nr];
-        mylog($driver_class);
-        //$this->driver = new $driver_class($this);
+        if(!$driver_class::hasDependencies()) {
+            die ("ERROR: system driver not found for :".$driver_class."\n");
+        }
+        
         $this->driver = new $driver_class($this);
     }
 

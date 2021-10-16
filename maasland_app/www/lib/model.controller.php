@@ -21,7 +21,7 @@ function find_controller_by_ip($ip) {
 }
 
 function find_door_for_input_device($id, $cid) {
-    $sql = "SELECT d.id, d.name, d.timezone_id FROM controllers c, doors d WHERE c.id = ".$cid." AND d.id = c.".$id;
+    $sql = "SELECT d.id, d.name, d.enum, d.timezone_id FROM controllers c, doors d WHERE c.id = ".$cid." AND d.id = c.".$id;
     return find_object_by_sql($sql);
 }
 

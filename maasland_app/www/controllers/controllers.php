@@ -50,7 +50,7 @@ function controllers_create() {
     mylog("controllers_create id=".$controllerId);
     //When creating a controller, we also create the 2 doors
     create_door_obj(make_door_obj(array('name' => 'Door 1','enum' => 1,'controller_id' => $controllerId,'timezone_id' => null )));
-    create_door_obj(make_door_obj(array('name' => 'Door 1','enum' => 2,'controller_id' => $controllerId,'timezone_id' => null) ));
+    create_door_obj(make_door_obj(array('name' => 'Door 2','enum' => 2,'controller_id' => $controllerId,'timezone_id' => null) ));
 
     redirect('controllers');
 }

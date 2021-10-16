@@ -66,4 +66,26 @@ function door_open() {
     $result = openDoor($door, $controller);
     return (json(array($result)));
 }
-
+function output() {
+    $door = filter_var(params('door'), FILTER_VALIDATE_INT);
+    $open = filter_var(params('open'), FILTER_VALIDATE_INT);
+    mylog("output");
+    $result = operateDoor($door, $open);
+    return (json(array($result)));
+}
+function activate() {
+    $door = filter_var(params('door'), FILTER_VALIDATE_INT);
+    $duration = filter_var(params('duration'), FILTER_VALIDATE_INT);
+    $gpios = filter_var(params('gpios'), FILTER_VALIDATE_INT);
+    mylog("activte");
+    $result = activateOutput($door, $duration, $gpios);
+    return (json(array($result)));
+}
+function input() {
+    $from = $_SERVER['REMOTE_ADDR'];
+    $input = filter_var(params('input'), FILTER_VALIDATE_INT);
+    $keycode = filter_var(params('keycode'), FILTER_VALIDATE_INT);
+    mylog("input ".$from);
+    $result = handleInput($from, $input, $keycode);
+    return (json(array($result)));
+}

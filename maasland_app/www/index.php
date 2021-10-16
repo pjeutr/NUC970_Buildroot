@@ -45,8 +45,14 @@ function before($route = array())
     error_log("l=".request_method()."_".request_uri()."_".php_sapi_name());
     //Allow login POST to submit. TODO needs check on uri=login?
     if(request_method() != "POST") {
+      if (strpos(request_uri(), "api") !== false) {
+          //TODO authentication 
+          //ajax page, do nothing
+          return;
+      }
       //need session to get in dashboard
       if(! checkIfMaster()) { //if not master, show slave page
+
         //} elseif(strpos(request_uri(), '/door/') !== false) { //allow cli
         //} elseif(request_uri() == "/door/1") { //allow cli
         echo slave_page();
@@ -147,6 +153,11 @@ dispatch_get   ('gpio_key',  'gpio_key');
 
 dispatch_get   ('settings',   'settings_index');
 dispatch_put   ('settings/:id', 'settings_update');
+
+ //webapi / coap alternatives
+dispatch_get   ('api/output/:door/:state/', 'output');
+dispatch_get   ('api/activate/:door/:duration/:gpios/', 'activate');
+dispatch_get   ('api/input/:input/:keycode/', 'input');
 
 //ajax
 dispatch_get   ('door/:controller/:door/',  'door_open'); //->coap
