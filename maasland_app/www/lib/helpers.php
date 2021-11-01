@@ -8,6 +8,8 @@ date_default_timezone_set($tz);
 
 //Custom log
 function mylog($message) {
+    //add milliseconds timestamp for 'permance' profiling
+    $message = mdate('H:i:s-u')."_".$message;
     if(true) {
     //if(option('debug') && option('env') > ENV_PRODUCTION) {
         if(php_sapi_name() === 'cli') {
@@ -174,3 +176,13 @@ function option_tag($id, $title, $act_id) {
     return $s;
 }
 
+function mdate($format = 'u', $utimestamp = null) {
+    if (is_null($utimestamp))
+        $utimestamp = microtime(true);
+
+    $timestamp = floor($utimestamp);
+    //$milliseconds = round(($utimestamp - $timestamp) * 1000000);
+    $milliseconds = round(($utimestamp - $timestamp) * 1000);
+
+    return date(preg_replace('`(?<!\\\\)u`', $milliseconds, $format), $timestamp);
+}

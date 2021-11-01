@@ -2,6 +2,9 @@
 <?php
 
 /*
+
+* First script, combines inputListner + coapServer & Listener
+
 * Runs on all controllers
 * - detects input changes (readers/buttons/sensors)
 * - listen for coap messages (to open door)

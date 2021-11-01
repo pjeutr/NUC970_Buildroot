@@ -48,7 +48,7 @@ set('title', 'Doors');
                                 <?php }
                                 } ?>
                             </div>
-                            <form class="doorForm" id="row" action="<?= url_for('controller', 1) ?>" method="POST">
+                            <form class="doorForm" id="row" action="<?= url_for('controller', $controller->id) ?>" method="POST">
                             <input type="hidden" name="_method" id="_method" value="PUT">
 
                             <?php foreach (["Reader 1","Reader 2","Button 1","Button 2"] as $key=>$value) { 

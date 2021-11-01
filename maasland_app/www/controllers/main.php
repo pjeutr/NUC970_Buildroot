@@ -76,7 +76,9 @@ function output() {
 function activate() {
     $door = filter_var(params('door'), FILTER_VALIDATE_INT);
     $duration = filter_var(params('duration'), FILTER_VALIDATE_INT);
-    $gpios = filter_var(params('gpios'), FILTER_VALIDATE_INT);
+    $gpiosString = filter_var(params('gpios'), FILTER_VALIDATE_INT);
+    //put gpios in an array
+    $gpios = explode("-",$gpiosString);
     mylog("activte");
     $result = activateOutput($door, $duration, $gpios);
     return (json(array($result)));
