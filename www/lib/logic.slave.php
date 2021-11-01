@@ -29,6 +29,15 @@ class GVAR
     } 
 }
 
+$masterControllerIp = null;
+$inputArray = [
+    1 => "/sys/class/gpio/gpio".GVAR::$GPIO_S1."/value",
+    3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
+    4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
+    5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
+    6 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS2."/value"
+];
+
 /*
 *   Slaveside methods, also used by the master.
 *   - has knowledge which GPIO's belong to what
@@ -57,13 +66,15 @@ getInputValue
 *   returns true if state was changed
 */
 function operateOutput($doorId, $state, $gpios = array()) {
-    mylog("operateOutput ".$doorId." state=".$state);
+    mylog("operateOutput ".$doorId." state=".$state." gpios=".json_encode($gpios));
 
     $gid = getDoorGPIO($doorId);
 
     //add gpio for the door to gpios
-    $gpios[] = $gid;
-    mylog("operateOutput door=".$doorId." open=".$state."s gpios=".json_encode($gpios));
+    //$gpios[] = $gid;
+    array_push($gpios, $gid);
+
+    mylog("operateOutput door=".$doorId." state=".$state." gpios=".json_encode($gpios));
 
     //check if the state has already been set / door is already open
     $currentValue = getGPIO($gid);
@@ -77,8 +88,8 @@ function operateOutput($doorId, $state, $gpios = array()) {
 }
 
 /*
-* This function will become obsolete
-* The timer can be block a request move timer to coap/react server, with a promise?
+* This function 
+* 
 */
 function activateOutput($doorId, $duration, $gpios) {
     mylog("activateOutput door=".$doorId." duration=".$duration." gpios=".json_encode($gpios));
@@ -86,6 +97,7 @@ function activateOutput($doorId, $duration, $gpios) {
     $hasChanged = operateOutput($doorId, 1, $gpios);
     //if the state was not changed, the door was already open. Presumably by the scheduler, or another reader/button
     if($hasChanged) {
+        //TODO React here is too much, need simpeler timout?
         $loop = React\EventLoop\Factory::create();
         $loop->addTimer($duration, function () use ($doorId, $gpios) {
             //close door
@@ -110,10 +122,11 @@ function checkIfMaster() {
 }
 
 function getMasterControllerIP() {
-    //TODO cache / make singleton?
-    //TODO too errorprone fishing from an array
+    //return "192.168.178.137";
+    global $masterControllerIp;
 
-    //if( !checkIfMaster() ) {
+    if( $masterControllerIp == null ) {
+        //TODO too errorprone fishing from an array?
         $result = mdnsBrowse("_master._sub._maasland._udp");
         mylog(json_encode($result)."\n");
         $masterControllerIp = $result[0][7];
@@ -122,9 +135,9 @@ function getMasterControllerIP() {
             //TODO restart coap_listener.php
         }
         return $masterControllerIp;
-    //}
-
-    //return "192.168.178.137";
+    } else {
+        return $masterControllerIp;
+    }
 }
 
 function getMasterURL() {
@@ -132,31 +145,6 @@ function getMasterURL() {
     //return "http://flexessduo.local/";
     return "http://".getMasterControllerIP()."/";
 }
-
-
-function inputReceived($input, $data) {
-    mylog((checkIfMaster() ? 'Master' : 'Slave' )." inputReceived:".$input);
-    if ( checkIfMaster() ) {
-        return handleInput(getMasterControllerIP(), $input, $data);
-    } else {
-        //tunnel through coap to the master where handleInput is called
-        return makeInputCoapCall($input."/".$data);
-    }
-}
-
-//TODO ^
-function makeInputCoapCall($uri) {
-    $url = "input/".$uri;
-    mylog($url);
-    $msg = apiCall(getMasterControllerIP(), $url);
-    mylog($msg);
-    return $msg;
-}
-
-
-
-
-
 
 /*
 *   Hardware translate functions 
@@ -179,14 +167,8 @@ function getDoorGPIO($doorEnum) {
 *   3,4 button
 *   5,6 door sensor
 */
-function resolveInput($gpioPath) {
-    $inputArray = [
-        1 => "/var/log/messages",
-        3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
-        4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
-        5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
-        6 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS2."/value"
-    ];
+function resolveInput($gpioPath) {    
+    global $inputArray;
     return array_search($gpioPath,$inputArray);
     //if($gpioPath == "/sys/class/gpio/gpio170/value") return 3;
     //if($gpioPath == "/sys/class/gpio/gpio169/value") return 4;

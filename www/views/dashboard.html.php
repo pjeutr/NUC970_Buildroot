@@ -16,7 +16,7 @@ $doors = find_doors();
                         <div class="row">
                             <div class="col-3">
                                 <div class="icon-mid text-center icon-warning">
-                                    <i class="nc-icon nc-vector text-danger"></i>
+                                    <i class="nc-icon nc-vector text-success"></i>
                                 </div>
                             </div>
                             <div class="col-7">

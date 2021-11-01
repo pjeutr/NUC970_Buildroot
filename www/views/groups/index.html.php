@@ -27,9 +27,12 @@ set('title', 'Groups');
                             </div>
                             <div class="col-sm-8 border rounded-right">
                                 <div class="card-body">
-                                    <?php foreach ($rules as $rule) { 
+                                <?php 
+                                $counter = 0;
+                                foreach ($rules as $rule) { 
                                     //only show rules for current group, this means the result must be sorted in the right order!
-                                    if($group->id == $rule->group_id) { ?>
+                                    if($group->id == $rule->group_id) { 
+                                    $counter++;  ?>
                                     <form class="validateForm" id="row<?= $rule->id ?>" action="<?= url_for('grules', $rule->id) ?>" method="POST">
                                         <input type="hidden" name="_method" id="_method" value="PUT">
                                         <input type="hidden" name="rule[group_id]" value="<?= $group->id ?>">    
@@ -69,6 +72,10 @@ set('title', 'Groups');
                                     </form>
                                     <?php }} ?>
 
+                                    <?php 
+                                    //only show 'New Rule' if there less than 2 defined
+                                    if($counter < 2) { ?>
+
                                     <form class="validateForm" id="row0" action="<?= url_for('grules') ?>" method="POST">
                                         <input type="hidden" name="_method" id="_method" value="POST">
                                         <input type="hidden" name="rule[group_id]" value="<?= $group->id ?>"> 
@@ -102,7 +109,7 @@ set('title', 'Groups');
                                             </div>
                                         </div>
                                     </form>
-
+                                    <?php } ?>
                                 </div>
                              </div>
                         </div>

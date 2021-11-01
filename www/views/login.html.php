@@ -58,7 +58,7 @@
             </div>
         </nav>
         <!-- End Navbar -->
-        <div class="full-page  section-image" data-color="green" data-image="../../assets/img/bg.jpg" ;>
+        <div class="full-page  section-image" data-color="black" data-image="../../assets/img/bg.jpg" ;>
             <div class="content">
                 <div class="container">
                     <div class="col-md-4 col-sm-6 ml-auto mr-auto">

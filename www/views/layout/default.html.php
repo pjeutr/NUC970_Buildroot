@@ -40,7 +40,7 @@ $message = flash_now();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.1a" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="/assets/css/app.css?9" rel="stylesheet" />
+    <link href="/assets/css/app.css?1" rel="stylesheet" />
     <script type="text/javascript">
         //calculate clock with php server time
         var serverTime = <?php echo $serverTime;?>,
@@ -59,7 +59,7 @@ $message = flash_now();
         <div class="loaderImage" style="display: none;">
             <img src="/assets/img/spinner.gif">
         </div>  
-        <div class="sidebar" data-image="../assets/img/sidebar-5.jpg" data-color="green">
+        <div class="sidebar" data-image="../assets/img/sidebar.jpg" data-color="black">
             <div class="sidebar-wrapper">
                 <div class="logo">
                     <a href="./" class="simple-text logo-mini">
@@ -84,13 +84,13 @@ $message = flash_now();
                     </li>
                     <li <?php echo ($id == 2) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/groups">
-                            <i class="nc-icon nc-circle-09"></i>
+                            <i class="nc-icon nc-badge"></i>
                             <p><?php echo L::groups; ?></p>
                         </a>
                     </li>
                     <li <?php echo ($id == 3) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/doors">
-                            <i class="nc-icon nc-bank"></i>
+                            <i class="nc-icon nc-lock-circle-open"></i>
                             <p><?php echo L::doors; ?></p>
                         </a>
                     </li>
@@ -102,20 +102,20 @@ $message = flash_now();
                     </li>
                     <li <?php echo ($id == 5) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/reports">
-                            <i class="nc-icon nc-ruler-pencil"></i>
+                            <i class="nc-icon nc-notes"></i>
                             <p>Reports</p>
                         </a>
                     </li>
                     <li <?php echo ($id == 7) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/settings">
-                            <i class="nc-icon nc-settings-90"></i>
+                            <i class="nc-icon nc-settings-gear-64"></i>
                             <p>Settings</p>
                         </a>
                     </li>
                     <hr>
                     <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/gpio">
-                            <i class="nc-icon nc-settings-gear-64"></i>
+                            <i class="nc-icon nc-settings-90"></i>
                             <p>GPIO</p>
                         </a>
                     </li>
@@ -134,7 +134,7 @@ $message = flash_now();
                     <a class="btn btn-success btn-sm" href="./?/lang/en"><i class="icon-flag-gb"></i> EN</a>                 
                 </div>
                 <div class="sidebar-footer">
-                    Flexess Duo v0.4.3
+                    Flexess Duo v0.5.0
                 </div>
             </div>
         </div>

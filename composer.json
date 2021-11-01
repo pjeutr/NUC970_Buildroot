@@ -7,6 +7,8 @@
     ], 
     "require": {
 	"pjeutr/php-coap": "dev-master",
-        "calcinai/rubberneck": "^0.1.1"
+        "calcinai/rubberneck": "^0.1.1",
+        "react/promise": "^2.8",
+        "react/http-client": "^0.5.11"
     }
 }
