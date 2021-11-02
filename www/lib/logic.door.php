@@ -14,6 +14,13 @@ openDoor (aggregate hardware information and translate to gpio numbers)
 */
 
 function resolveController($ip) {
+    /*
+    //master controller has no ip in db
+    if($ip == "master") {
+        //return master controller
+        return find_controller_by_id(1);
+    }
+    */
     mylog("resolveController ip=".$ip);
     return find_controller_by_ip($ip);
 }
@@ -45,7 +52,9 @@ function resolveController($ip) {
 */
 function handleInput($from, $input, $keycode) {
     $controller = resolveController($from);
+    mylog(json_encode($controller));
     if(empty($controller)) {
+        saveReport($from, $input, "unkown controller");
         return "unkown controller";
     }
     mylog("handleInput Controller=".$controller->name." input=".$input." keycode=".$keycode);
@@ -84,7 +93,6 @@ function handleInput($from, $input, $keycode) {
     }    
     //save report
     saveReport($actor, $action, keyToHex($keycode));
-    mylog("INPUT@SLAVE ".$input);
     mylog($result);
     return array(
         "actor" =>$actor, 
