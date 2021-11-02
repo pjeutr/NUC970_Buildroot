@@ -50,13 +50,18 @@ function callApi($input, $data) {
 	global $loop;
 
     mylog((checkIfMaster() ? 'Master' : 'Slave' )." inputReceived:".$input." data=".$data);
+/* 	remove local calls on master, because it's not multitasking
+	everything goes through the webserver that can handle multiple calls
+	untill there is a good coapserver?
     if ( checkIfMaster() ) {
-        return handleInput(getMasterControllerIP(), $input, $data);
+        //return handleInput(getMasterControllerIP(), $input, $data);
+        return handleInput("master", $input, $data);
     } else {
         //tunnel through coap to the master where handleInput is called
         //return makeInputCoapCall($input."/".$data);
 
     	if(true) {
+*/		
 	    	$url = "http://".getMasterControllerIP()."/?/api/input/".$input."/".$data;
 	        mylog("apiCall:".$url);
 
@@ -69,6 +74,7 @@ function callApi($input, $data) {
 			    });
 			});
 			$request->end();
+/*
     	} else {
 	        $url = "coap://".getMasterControllerIP()."/input/".$input."/".$data;
 	        mylog("coapCall:".$url);
@@ -82,6 +88,7 @@ function callApi($input, $data) {
 			});
 		}
     }
+*/    
 }
 
 $loop = React\EventLoop\Factory::create();
