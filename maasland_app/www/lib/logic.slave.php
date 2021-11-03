@@ -124,7 +124,15 @@ function checkIfMaster() {
 function getMasterControllerIP() {
     //return "192.168.178.137";
     global $masterControllerIp;
-
+    if(checkIfMaster()) {
+        //Design decision not to put the network IP in the db for Master
+        //This means, the Master does not know it's own IP at start
+        //And will even work if it get's an other IP through DHCP 
+        //Announcement of this IP too the slave wil be through mDNS
+        //This makes the setup flexible. 
+        //But also means Master needs to call localhost, when doing an apiCall.        
+        return "127.0.0.1";
+    }
     if( $masterControllerIp == null ) {
         //TODO too errorprone fishing from an array?
         $result = mdnsBrowse("_master._sub._maasland._udp");

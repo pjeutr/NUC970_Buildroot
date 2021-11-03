@@ -14,13 +14,6 @@ openDoor (aggregate hardware information and translate to gpio numbers)
 */
 
 function resolveController($ip) {
-    /*
-    //master controller has no ip in db
-    if($ip == "master") {
-        //return master controller
-        return find_controller_by_id(1);
-    }
-    */
     mylog("resolveController ip=".$ip);
     return find_controller_by_ip($ip);
 }
@@ -64,12 +57,13 @@ function handleInput($from, $input, $keycode) {
     switch ($input) {
         case 1:
         case 2:
-            $action = "Reader ".$input." key:".$keycode;
+            $action = "Reader ".$input;
             //get User for the key
             $user = find_user_by_keycode($keycode);
             if($user) {
                 $actor = $user->name;
                 $result = handleUserAccess($user, $input, $controller);
+                $action = $action." ".$result;
             } 
             break;
         case 3:

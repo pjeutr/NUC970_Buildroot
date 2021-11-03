@@ -50,7 +50,7 @@ function callApi($input, $data) {
 	global $loop;
 
     mylog((checkIfMaster() ? 'Master' : 'Slave' )." inputReceived:".$input." data=".$data);
-/* 	remove local calls on master, because it's not multitasking
+/* 	remove local calls on master, because it's not performing/multitasking
 	everything goes through the webserver that can handle multiple calls
 	untill there is a good coapserver?
     if ( checkIfMaster() ) {
@@ -140,10 +140,5 @@ foreach ($inputArray as $value) {
 
 //listen voor wiegand readers
 $wiegandObserver->watch('/dev/wiegand');
-
-
-
-
-
 
 $loop->run();
