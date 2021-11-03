@@ -38,7 +38,7 @@ insmod /scripts/wiegand-driver.ko
 #echo insmod /scripts/wiegand-gpio.ko
 #insmod /scripts/match2_test/drv/test_drv.ko
 #echo /scripts/match2_test/user/ wiegand
-php -f /maasland_app/scripts/coap_listener.php >> /var/log/coap_listener.log &
+#php -f /maasland_app/scripts/coap_listener.php >> /var/log/coap_listener.log &
 #cat /sys/module/wiegand_gpio/sections/.text
 #echo gdbserver --multi :10000
 
