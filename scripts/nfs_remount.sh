@@ -8,7 +8,7 @@
 /etc/init.d/S49php-fpm stop
 /etc/init.d/S50lighttpd stop
 /etc/init.d/S60flexess stop
-umount maasland_app
+umount /maasland_app
 mount -t nfs -o port=2049,nolock,proto=tcp,rw,suid ubu:/home/pjeutr/nuvoton/DuoApp /maasland_app
 #mount -o port=2049,nolock,proto=tcp ubu:/home/pjeutr/nuvoton/DuoApp /maasland_app
 /etc/init.d/S49php-fpm start

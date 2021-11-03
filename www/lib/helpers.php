@@ -62,7 +62,20 @@ function apiCall($host, $uri) {
     if(true) {
         $url = "http://".$host."/?/api/".$uri;
         mylog("apiCall:".$url);
-        $msg = file_get_contents($url);
+        //$msg = file_get_contents($url);
+
+        //TODO this is the 3rd place where a loop is created. "bad design?"
+        $loop = React\EventLoop\Factory::create();
+        $client = new React\HttpClient\Client( $loop );
+        $request = $client->request('GET', $url);
+        $request->on('response', function ( $response ) {
+            $response->on('data', function ( $data ) {
+                mylog("apiCall return=".json_encode($data));
+                return $data;
+            });
+        });
+        $request->end();
+        $loop->run();
     } else {
         $cmd = "coap-client -m get coap://".$host."/".$uri;
         mylog("coapCall:".$cmd);
