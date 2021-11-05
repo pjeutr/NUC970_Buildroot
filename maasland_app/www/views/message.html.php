@@ -58,7 +58,7 @@
             </div>
         </nav>
         <!-- End Navbar -->
-        <div class="full-page  section-image" data-color="green" data-image="../../assets/img/bg.jpg" ;>
+        <div class="full-page  section-image" data-color="black" data-image="../../assets/img/bg.jpg" ;>
             <div class="content">
                 <div class="container">
                     <div class="col-md-4 col-sm-6 ml-auto mr-auto">
@@ -69,7 +69,7 @@
                                 </div>
 
                                 <div class="card-body ">
-                                    <div class="alert alert-danger">This is a slave controller</div>
+                                    <?= isset($message) ? '<div class="alert alert-danger">'.$message.'</div>' : "" ?> 
                                 </div>
                                 <div class="card-footer ml-auto mr-auto">
                                     <a href="<?= getMasterURL() ?>" class="btn btn-warning btn-wd">Go to master controller</a>

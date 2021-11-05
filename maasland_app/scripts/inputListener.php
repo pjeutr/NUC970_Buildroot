@@ -18,6 +18,11 @@ require_once '/maasland_app/www/lib/db.php';
 require_once '/maasland_app/www/lib/helpers.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
 
+//check and do restore factory settings
+if(checkIfFactoryReset()){
+	doFactoryReset();
+}
+
 //configure and initialize gpio 
 echo configureGPIO();
 
@@ -30,7 +35,7 @@ if( checkIfMaster() ) {
 	option('db_conn', $db);
 	option('debug', true);
 
-	require_once '/maasland_app/www/lib/logic.door.php';
+	require_once '/maasland_app/www/lib/logic.master.php';
 	//load models for used db methods
 	require_once '/maasland_app/www/lib/model.report.php';
 	require_once '/maasland_app/www/lib/model.user.php';

@@ -9,6 +9,8 @@ set('title', 'Settings');
             <div class="col-xs-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
+                        <?= iconLink_to('Download settings', 'settings_csv', 'btn-outline', 'fa fa-download') ?>
+                        <?= iconLink_to('Upload settings', 'settings_csv', 'btn-outline', 'fa fa-upload') ?>
                     </div>
                     <div class="card-body">
                         <div class="card-body table-responsive">

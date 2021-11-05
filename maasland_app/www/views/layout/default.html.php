@@ -112,6 +112,8 @@ $message = flash_now();
                             <p>Settings</p>
                         </a>
                     </li>
+
+                    <?php if( isset($_SESSION["dev"]) ) { ?>
                     <hr>
                     <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/gpio">
@@ -125,6 +127,14 @@ $message = flash_now();
                             <p>DB</p>
                         </a>
                     </li>
+                    <li <?php echo ($id == 12) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="/examples/icons.html">
+                            <i class="nc-icon nc-html5"></i>
+                            <p>Icons</p>
+                        </a>
+                    </li>
+                    <?php } ?>
+
                 </ul>
                 <div class="sidebar-footer">
                 	<?=  L::language ?><br/>
@@ -151,10 +161,6 @@ $message = flash_now();
                         </div>
                         <a class="navbar-brand" href="#wim"><?php echo $title ?></a>
                     </div>
-
-                    
-                    
-
                     <button href="" class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-bar burger-lines"></span>
                         <span class="navbar-toggler-bar burger-lines"></span>

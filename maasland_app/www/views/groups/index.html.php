@@ -74,7 +74,7 @@ set('title', 'Groups');
 
                                     <?php 
                                     //only show 'New Rule' if there less than 2 defined
-                                    if($counter < 2) { ?>
+                                    if($counter < count($doors)) { ?>
 
                                     <form class="validateForm" id="row0" action="<?= url_for('grules') ?>" method="POST">
                                         <input type="hidden" name="_method" id="_method" value="POST">
