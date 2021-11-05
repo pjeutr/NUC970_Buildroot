@@ -30,7 +30,7 @@ option('debug', true);
 echo configureGPIO();
 
 if( checkIfMaster() ) {
-	require_once '/maasland_app/www/lib/logic.door.php';
+	require_once '/maasland_app/www/lib/logic.master.php';
 	//load models for used db methods
 	require_once '/maasland_app/www/lib/model.report.php';
 	require_once '/maasland_app/www/lib/model.user.php';
