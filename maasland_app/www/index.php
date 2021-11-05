@@ -45,6 +45,11 @@ function before($route = array())
     error_log("l=".request_method()."_".request_uri()."_".php_sapi_name());
     //Allow login POST to submit. TODO needs check on uri=login?
     if(request_method() != "POST") {
+      if (checkIfFactoryReset()) {
+          doFactoryReset();
+          echo messagePage(L("message_factoryreset"));
+          stop_and_exit();
+      }
       if (strpos(request_uri(), "api") !== false) {
           //TODO authentication 
           //ajax page, do nothing
@@ -55,7 +60,7 @@ function before($route = array())
 
         //} elseif(strpos(request_uri(), '/door/') !== false) { //allow cli
         //} elseif(request_uri() == "/door/1") { //allow cli
-        echo slave_page();
+        echo messagePage(L("message_slave"));
         //layout('layout/default.html.php');
         stop_and_exit();
       } elseif(isset($_SESSION['login'])) { //check if user is logged in
@@ -103,8 +108,9 @@ function login_page() {
   return html('login.html.php');
   //return render('login.html.php', 'splash_layout.php');
 }
-function slave_page() {
-  return html('slave.html.php');
+function messagePage($message) {
+  set('message', $message);
+  return html('message.html.php');
 }
 function login_page_post() {
   //TODO geen sanitize check
@@ -140,7 +146,14 @@ function dashboard_page() {
 dispatch('reports', 'report_index');
 dispatch('reports_csv', 'report_csv');
 
-//TODO remove testpages
+dispatch('settings_csv', 'settings_csv');
+
+//DEV pages
+dispatch_get('dev/:switch',  'set_dev');
+function set_dev() {
+    $_SESSION["dev"] = params('switch');
+    return html('dashboard.html.php');
+}
 //dispatch('info', phpinfo());
 dispatch('gpio', 'gpio_page');
 function gpio_page() {

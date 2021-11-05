@@ -19,7 +19,8 @@ class GVAR
     public static $GPIO_BUTTON2 = 169; //NUC980_PF9 - CAT_PIN //contact input
     public static $GPIO_DOORSTATUS1 = 170;//168; //NUC980_PF8 - PSU_PIN //psu input
     public static $GPIO_DOORSTATUS2 = 45; //NUC980_PB13 - TAMPER_PIN //tamp input
-    public static $GPIO_S1 = 140; //NUC980_PE12 - Master Slave switch
+    public static $GPIO_MASTER = 140; //NUC980_PE12 - Master Slave switch
+    public static $GPIO_FIRMWARE = 140; //NUC980_PE12 - Reset Firmware switch
 
     public static function outputs() {
         return [
@@ -31,7 +32,8 @@ class GVAR
 
 $masterControllerIp = null;
 $inputArray = [
-    1 => "/sys/class/gpio/gpio".GVAR::$GPIO_S1."/value",
+    1 => "/sys/class/gpio/gpio".GVAR::$GPIO_MASTER."/value",
+    2 => "/sys/class/gpio/gpio".GVAR::$GPIO_FIRMWARE."/value",
     3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
     4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
     5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
@@ -112,13 +114,39 @@ function activateOutput($doorId, $duration, $gpios) {
 
 
 /*
+*   Check if the factory reset switch is enabled
+*/
+function checkIfFactoryReset() {
+    return false;
+    //return (getGPIO(GVAR::$GPIO_FIRMWARE) == 1);
+}
+function doFactoryReset() {
+    $master = '/maasland_app/www/db/master.db';
+    //$file = ' /maasland_app/www/db/prod.db';
+    $file = '/maasland_app/www/db/dev.db';
+    $backup = '/maasland_app/www/db/prod_bak.db';
+
+    if (!@copy($file, $backup)) {
+        $errors= error_get_last();
+        mylog("COPY ERROR: ".$errors['type']);
+        mylog("<br />\n".$errors['message']);
+        mylog(json_encode($errors));
+        mylog("failed to make backup $file...\n");
+    } elseif (!@copy($master, $file)) {
+        mylog(json_encode(error_get_last()));
+        mylog("failed to restore factory settings $file...\n");
+    } else {
+        mylog("Factory settings were restored $file...\n");
+    }
+}
+/*
 *   Check if this controller is Master
 *   Slave controllers don't use database and webgui
 *   if Master => S1 Value is 0
 */
 function checkIfMaster() {
-    //mylog("checkIfMaster: S=".getGPIO(GVAR::$GPIO_S1));
-    return (getGPIO(GVAR::$GPIO_S1) == 0);
+    //mylog("checkIfMaster: S=".getGPIO(GVAR::$GPIO_MASTER));
+    return (getGPIO(GVAR::$GPIO_MASTER) == 0);
 }
 
 function getMasterControllerIP() {
@@ -207,7 +235,7 @@ function configureGPIO() {
     initGPIO(GVAR::$GPIO_BUTTON2, false);
     initGPIO(GVAR::$GPIO_DOORSTATUS1, false);
     initGPIO(GVAR::$GPIO_DOORSTATUS2, false);
-    initGPIO(GVAR::$GPIO_S1, false);
+    initGPIO(GVAR::$GPIO_MASTER, false);
     
     return "GPIOInputs initialized: Controller configured as ".(checkIfMaster() ? "Master" : "Slave")."\n";
 }

@@ -1,6 +1,4 @@
 <?php
-require_once '/maasland_app/www/lib/logic.slave.php';
-
 /*
 *   Masterside methods.
 *   - has NO knowledge which GPIO's belong to what
@@ -168,11 +166,13 @@ function handleUserAccess($user, $readerId, $controller) {
         return "Door is already scheduled to be open: ".$door->name;
     }
 
+    //TODO mag user deze deur wel open maken?
+
     //check if the group/user has access for this door
     $tz = find_timezone_by_group_id($user->group_id, $door->id);
     mylog("tz=".json_encode($tz));
     if(empty($tz)) {
-        return "Door can not be used. No timezone assigned to this door";
+        return "Door can not be used. No timezone assigned to this door for this group.";
     }
     mylog("group=".$user->group_id." door=".$door->id."=".$door->name);
     mylog("name=".$tz->name." start=".$tz->start." end=".$tz->end);
