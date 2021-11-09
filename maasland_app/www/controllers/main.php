@@ -66,20 +66,23 @@ function door_open() {
     $result = openDoor($door, $controller);
     return (json(array($result)));
 }
+function outputStatus() {
+    $outputId = filter_var(params('door'), FILTER_VALIDATE_INT);
+    $result = getOutputStatus($outputId);
+    return json($result);
+}
 function output() {
     $door = filter_var(params('door'), FILTER_VALIDATE_INT);
-    $open = filter_var(params('open'), FILTER_VALIDATE_INT);
-    mylog("output");
-    $result = operateDoor($door, $open);
+    $state = filter_var(params('state'), FILTER_VALIDATE_INT);
+    $result = operateOutput($door, $state);
     return (json(array($result)));
 }
 function activate() {
     $door = filter_var(params('door'), FILTER_VALIDATE_INT);
     $duration = filter_var(params('duration'), FILTER_VALIDATE_INT);
-    $gpiosString = filter_var(params('gpios'), FILTER_VALIDATE_INT);
+    $gpiosString = params('gpios');
     //put gpios in an array
     $gpios = explode("-",$gpiosString);
-    mylog("activte");
     $result = activateOutput($door, $duration, $gpios);
     return (json(array($result)));
 }

@@ -5,6 +5,29 @@
 */
 class GVAR
 {
+/*    
+    //outputs
+    public static $GPIO_DOOR1 = 71; //NUC980_PC7
+    public static $GPIO_DOOR2 = 68; //NUC980_PC4
+    public static $GPIO_ALARM1 = 65; //NUC980_PC1
+    public static $GPIO_ALARM2 = 66; //NUC980_PC0
+    public static $RD1_GLED_PIN = 2; //NUC980_PA3   
+    public static $RD2_GLED_PIN = 10; //NUC980_PA10  //reader2 gled output
+    public static $BUZZER_PIN = 138; //NUC980_PE10  //buzzer output
+    public static $RUNNING_LED = 40; //NUC980_PB8  //running led
+    public static $OUT12V_PIN = 79; //NUC980_PC15  //output 12v control output
+
+    //inputs
+    public static $GPIO_BUTTON1 = 10; //NUC980_PA10
+    public static $GPIO_BUTTON2 = 2; //NUC980_PA2
+    public static $GPIO_DOORSTATUS1 = 70; //NUC980_PC6 
+    public static $GPIO_DOORSTATUS1N = 69; //NUC980_PC5 
+    public static $GPIO_DOORSTATUS2 = 76; //NUC980_PC3
+    public static $GPIO_DOORSTATUS2N = 66; //NUC980_PC2
+    public static $GPIO_MASTER = 38; //NUC980_PB6 - Master Slave switch
+    public static $GPIO_FIRMWARE = 32; //NUC980_PB0 - Reset Firmware switch
+*/
+
     //outputs
     public static $GPIO_DOOR1 = 68; //NUC980_PC4
     public static $GPIO_DOOR2 = 66; //NUC980_PC2
@@ -13,6 +36,16 @@ class GVAR
     public static $RD1_GLED_PIN = 2; //NUC980_PA2   //reader1 gled output
     public static $RD2_GLED_PIN = 10;  //NUC980_PA10  //reader2 gled output
     public static $BUZZER_PIN = 79;  //NUC980_PC15  //buzzer output
+    public static $RUNNING_LED = 40; //NUC980_PB8  //running led
+    public static $OUT12V_PIN = 138; //NUC980_PE10  //output 12v control output
+
+    public static function outputs() {
+        return [
+            GVAR::$GPIO_DOOR1,GVAR::$GPIO_DOOR2,GVAR::$GPIO_ALARM1,GVAR::$GPIO_ALARM2,
+            GVAR::$RD1_GLED_PIN,GVAR::$RD2_GLED_PIN,GVAR::$BUZZER_PIN,
+            GVAR::$RUNNING_LED,GVAR::$OUT12V_PIN
+        ];
+    } 
 
     //inputs
     public static $GPIO_BUTTON1 = 170; //NUC980_PF10
@@ -22,12 +55,12 @@ class GVAR
     public static $GPIO_MASTER = 140; //NUC980_PE12 - Master Slave switch
     public static $GPIO_FIRMWARE = 140; //NUC980_PE12 - Reset Firmware switch
 
-    public static function outputs() {
+    public static function inputs() {
         return [
-            GVAR::$GPIO_DOOR1,GVAR::$GPIO_DOOR2,GVAR::$GPIO_ALARM1,GVAR::$GPIO_ALARM2,
-            GVAR::$RD1_GLED_PIN,GVAR::$RD2_GLED_PIN,GVAR::$BUZZER_PIN
+            GVAR::$GPIO_BUTTON1,GVAR::$GPIO_BUTTON2,GVAR::$GPIO_DOORSTATUS1,GVAR::$GPIO_DOORSTATUS2,
+            GVAR::$GPIO_MASTER,GVAR::$GPIO_FIRMWARE
         ];
-    } 
+    }
 }
 
 $masterControllerIp = null;
@@ -61,22 +94,22 @@ getInputValue
 */
 
 /*
-*   Operate a door/alarm given a doorId 
-*   $doorId : id in the db
+*   Operate a door/alarm given a outputId 
+*   $outputId : id in the db
 *   $state : 0 or 1
 *   $gpios : array with extra gpios
 *   returns true if state was changed
 */
-function operateOutput($doorId, $state, $gpios = array()) {
-    mylog("operateOutput ".$doorId." state=".$state." gpios=".json_encode($gpios));
+function operateOutput($outputId, $state, $gpios = array()) {
+    mylog("operateOutput ".$outputId." state=".$state." gpios=".json_encode($gpios));
 
-    $gid = getDoorGPIO($doorId);
+    $gid = getDoorGPIO($outputId);
 
     //add gpio for the door to gpios
     //$gpios[] = $gid;
     array_push($gpios, $gid);
 
-    mylog("operateOutput door=".$doorId." state=".$state." gpios=".json_encode($gpios));
+    mylog("operateOutput door=".$outputId." state=".$state." gpios=".json_encode($gpios));
 
     //check if the state has already been set / door is already open
     $currentValue = getGPIO($gid);
@@ -90,25 +123,34 @@ function operateOutput($doorId, $state, $gpios = array()) {
 }
 
 /*
-* This function 
-* 
+*   Activate a door/alarm given a outputId 
+*   $outputId : id in the db
+*   $duration : int in seconds
+*   $gpios : array with extra gpios
+*   returns true if state was changed
 */
-function activateOutput($doorId, $duration, $gpios) {
-    mylog("activateOutput door=".$doorId." duration=".$duration." gpios=".json_encode($gpios));
+function activateOutput($outputId, $duration, $gpios) {
+    mylog("activateOutput door=".$outputId." duration=".$duration." gpios=".json_encode($gpios));
     //open door
-    $hasChanged = operateOutput($doorId, 1, $gpios);
+    $hasChanged = operateOutput($outputId, 1, $gpios);
     //if the state was not changed, the door was already open. Presumably by the scheduler, or another reader/button
     if($hasChanged) {
         //TODO React here is too much, need simpeler timout?
         $loop = React\EventLoop\Factory::create();
-        $loop->addTimer($duration, function () use ($doorId, $gpios) {
+        $loop->addTimer($duration, function () use ($outputId, $gpios) {
             //close door
-            operateOutput($doorId, 0, $gpios);
+            operateOutput($outputId, 0, $gpios);
             mylog('Done'.PHP_EOL);
         });
         $loop->run();
     }
     return $hasChanged;
+}
+
+function getOutputStatus($outputId) {
+    mylog("getOutputStatus output=".$outputId);
+    $gid = getDoorGPIO($outputId);
+    return getGPIO($gid);
 }
 
 
@@ -188,7 +230,7 @@ function getMasterURL() {
 
 /*
 *   Get GPIO value for a door relais
-*   $doorId : doors.id in database in accordance with physical connection
+*   $outputId : doors.id in database in accordance with physical connection
 */
 function getDoorGPIO($doorEnum) { 
     mylog("getDoorGPIO=".$doorEnum);
@@ -222,40 +264,39 @@ function getInputValue($gpioPath) {
 *   GPIO helper functions 
 */
 function configureGPIO() {
-    //TODO loop over outputs array
-    initGPIO(GVAR::$GPIO_DOOR1);
-    initGPIO(GVAR::$GPIO_DOOR2);
-    initGPIO(GVAR::$GPIO_ALARM1);
-    initGPIO(GVAR::$GPIO_ALARM2);
-    initGPIO(GVAR::$RD1_GLED_PIN);
-    initGPIO(GVAR::$RD2_GLED_PIN);
-    initGPIO(GVAR::$BUZZER_PIN);
+    //init
+    foreach (GVAR::outputs() as $gpio) {
+        initGPIO($gpio);
+    }
 
-    initGPIO(GVAR::$GPIO_BUTTON1, false);
-    initGPIO(GVAR::$GPIO_BUTTON2, false);
-    initGPIO(GVAR::$GPIO_DOORSTATUS1, false);
-    initGPIO(GVAR::$GPIO_DOORSTATUS2, false);
-    initGPIO(GVAR::$GPIO_MASTER, false);
+    foreach (GVAR::inputs() as $gpio) {
+        initGPIO($gpio, false);
+    }
+
+    setGPIO(GVAR::$OUT12V_PIN, 1);
+    setGPIO(GVAR::$RUNNING_LED, 1);
     
     return "GPIOInputs initialized: Controller configured as ".(checkIfMaster() ? "Master" : "Slave")."\n";
 }
 
 function setGPIO($gpio, $state) {
     if (! in_array($gpio, GVAR::outputs())) {
-        mylog("setGPIO ".$gpio." not an output\t");
+        mylog("setGPIO ".$gpio." not an output");
         return 0;
     }
-    mylog("setGPIO ".$gpio."=".$state."\t");
+    mylog("setGPIO ".$gpio."=".$state);
     initGPIO($gpio);
     exec("echo ".$state." >/sys/class/gpio/gpio".$gpio."/value");   
     return 1;    
 }
 function getGPIO($gpio) {
-    return exec("cat /sys/class/gpio/gpio".$gpio."/value");
+    $v = exec("cat /sys/class/gpio/gpio".$gpio."/value");
+    mylog("getGPIO ".$gpio."=".$v);
+    return $v;
 }
 function initGPIO($gpio, $out = true) {
     if(! file_exists("/sys/class/gpio/gpio".$gpio)) {
-        mylog("init gid=".$gpio."\t");
+        mylog("init gid=".$gpio);
         exec("echo ".$gpio." > /sys/class/gpio/export");
         if($out) {
             exec("echo out >/sys/class/gpio/gpio".$gpio."/direction"); 

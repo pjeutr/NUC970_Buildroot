@@ -17,4 +17,5 @@ return array(
     'React\\Cache\\' => array($vendorDir . '/react/cache/src'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'Calcinai\\Rubberneck\\' => array($vendorDir . '/calcinai/rubberneck/src/Rubberneck'),
+    'Brunty\\Cigar\\' => array($vendorDir . '/brunty/cigar/src'),
 );

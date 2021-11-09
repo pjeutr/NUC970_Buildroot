@@ -1,6 +1,7 @@
 #!/usr//bin/php
 <?php
 
+require_once '/maasland_app/vendor/autoload.php';
 require_once '/maasland_app/www/lib/limonade.php';
 require_once '/maasland_app/www/lib/db.php';
 require_once '/maasland_app/www/lib/helpers.php';
