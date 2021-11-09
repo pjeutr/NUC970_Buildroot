@@ -9,7 +9,7 @@ date_default_timezone_set($tz);
 //Custom log
 function mylog($message) {
     //add milliseconds timestamp for 'permance' profiling
-    $message = mdate('H:i:s-u')."_".$message;
+    $message = mdate('H:i:s-u')."_".json_encode($message);
     if(true) {
     //if(option('debug') && option('env') > ENV_PRODUCTION) {
         if(php_sapi_name() === 'cli') {

@@ -2,6 +2,18 @@
 require_once dirname(dirname(__FILE__)).'/lib/limonade.php';
 require_once dirname(dirname(__FILE__)).'/lib/limonade/tests.php';
 
+
+// om te runnen 
+//  php tests/flexess.php
+// maar werkt niet lekker, zie doors.php
+/* dit nodig in de route
+dispatch('test', 'gpi_page');
+function gpi_page() {
+    return phpversion();
+}
+/*
+
+
 $basedir = dirname(__FILE__).DS;
 
 if(!defined('TESTS_DOC_ROOT'))
@@ -11,7 +23,8 @@ if(!defined('TESTS_DOC_ROOT'))
   if(file_exists($config_file))
   {
     include $config_file;
-    $doc_root = $config['limonade_base_url']."tests/apps/";
+    //$doc_root = $config['limonade_base_url']."tests/apps/";
+    $doc_root = $config['limonade_base_url'];
   }
   else
   {
@@ -38,8 +51,9 @@ OUTPUT;
   # 2. HTTP+CURL requirements
   if(function_exists('curl_version'))
   {
-    $url = $doc_root.'index.php';
+    $url = $doc_root.'?test';
     $response = test_request($url, 'GET');
+    error_log($response);
     if($response)
     {
       $v = phpversion();
@@ -104,11 +118,5 @@ OUTPUT;
 
 test_suite('Limonade');
   require $basedir."tests.php";
-  require $basedir."router.php";
-  require $basedir."request.php";
-  //require $basedir."main.php";
-  require $basedir."file.php";
-  //require $basedir."functional.php";
-  //require $basedir."output.php";
-  require $basedir."http.php";
+  require $basedir."doors.php";
 end_test_suite();

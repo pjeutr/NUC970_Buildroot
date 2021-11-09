@@ -8,6 +8,7 @@
 /etc/init.d/S49php-fpm stop
 /etc/init.d/S50lighttpd stop
 /etc/init.d/S60flexess stop
+sleep 1 #let things stop, so we dont' get a resource in use exception
 umount /maasland_app
 mount -t nfs -o port=2049,nolock,proto=tcp,rw,suid ubu:/home/pjeutr/nuvoton/DuoApp /maasland_app
 #mount -o port=2049,nolock,proto=tcp ubu:/home/pjeutr/nuvoton/DuoApp /maasland_app
