@@ -302,8 +302,8 @@ function operateDoor($door, $open) {
         return false;
     } else {
         $controller = find_controller_by_id($door->controller_id );
+        mylog($controller);
 
-        $duration =1;
         $gpios = array();
         //TODO could also use leds? see openDoor
         // $gpios[] = GVAR::$RD1_GLED_PIN;
@@ -319,12 +319,14 @@ function operateDoor($door, $open) {
         $currentValue = 1;
         mylog("openLock ".$currentValue."=".$open."\n");
 
+        //TODO check if already open? anticipate tz change during
         if($currentValue != $open) { */
         if(true) {
             //mylog("STATE CHANGED=".$open);
-            $cmd = "coap-client -m get coap://".$controller->ip."/output/".$door->enum."/".$open."/".implode("-",$gpios);
-            mylog($cmd);
-            $msg = shell_exec($cmd);
+
+            $uri = "output/".$door->enum."/".$open."/".implode("-",$gpios);
+            $msg = apiCall($controller->ip, $uri);
+            mylog($msg);
             return true;
         }
         

@@ -32,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '6418fc664e28cc6fbb4b8a8f686aad76b59fc802',
+    'reference' => '22848df982a48d553b178a415ed3ba3b7f82557e',
     'name' => '__root__',
   ),
   'versions' => 
@@ -44,7 +44,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '6418fc664e28cc6fbb4b8a8f686aad76b59fc802',
+      'reference' => '22848df982a48d553b178a415ed3ba3b7f82557e',
+    ),
+    'brunty/cigar' => 
+    array (
+      'pretty_version' => '1.12.3',
+      'version' => '1.12.3.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'dba36d74ef8303d4e1cf7deca8f2654a07e90083',
     ),
     'calcinai/rubberneck' => 
     array (

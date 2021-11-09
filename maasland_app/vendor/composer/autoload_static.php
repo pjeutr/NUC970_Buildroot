@@ -34,6 +34,10 @@ class ComposerStaticInit3c587730de6cf9405e1b52e8386b2c06
         array (
             'Calcinai\\Rubberneck\\' => 20,
         ),
+        'B' => 
+        array (
+            'Brunty\\Cigar\\' => 13,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -80,6 +84,10 @@ class ComposerStaticInit3c587730de6cf9405e1b52e8386b2c06
         'Calcinai\\Rubberneck\\' => 
         array (
             0 => __DIR__ . '/..' . '/calcinai/rubberneck/src/Rubberneck',
+        ),
+        'Brunty\\Cigar\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/brunty/cigar/src',
         ),
     );
 
