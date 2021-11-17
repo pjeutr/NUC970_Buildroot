@@ -10,10 +10,10 @@ date_default_timezone_set($tz);
 function mylog($message) {
     //add milliseconds timestamp for 'permance' profiling
     $message = mdate('H:i:s-u')."_".json_encode($message);
-    if(true) {
-    //if(option('debug') && option('env') > ENV_PRODUCTION) {
+    //if(true) {
+    if(option('debug') && option('env') > ENV_PRODUCTION) {
         if(php_sapi_name() === 'cli') {
-            echo($message);
+            echo($message."/n");
         }
         return error_log($message);
     }
@@ -171,6 +171,21 @@ function deleteLink_to($params = null) {
     // return "<a rel=\"tooltip\" title=\"$name\" class=\"btn btn-danger btn-link\" href=\"$url\"
     // onclick=\"if (confirm('Are you sure?')) { var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href; var m = document.createElement('input'); m.setAttribute('type', 'hidden'); m.setAttribute('name', '_method'); m.setAttribute('value', 'DELETE'); f.appendChild(m); f.submit(); };return false;\"
     // ><i class=\"fa fa-times\"></i>$name</a>";    
+}
+
+//format message for swal
+//TODO reorganise in app.js
+function swal_message($message, $title="Oops", $type="error") {
+    if(is_array($message)) {
+        $message = implode("<br>", $message);
+    } else $message;
+    return "{type: '$type' ,title: '$title', html: '$message'}";
+}
+function swal_message_error($message) {
+    return swal_message($message, "Oops", "error");
+}
+function swal_message_success($message) {
+    return swal_message($message, "Great", "success");
 }
 
 function print_date($timestamp) {

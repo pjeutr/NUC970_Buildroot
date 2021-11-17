@@ -3,11 +3,19 @@
 require_once('lib/limonade.php');
 require_once 'lib/i18n.class.php';
 require_once '/maasland_app/vendor/autoload.php';
+use Arrilot\DotEnv\DotEnv;
 
 function configure() {
-    $env = $_SERVER['HTTP_HOST'] == 'library.dev' ? ENV_DEVELOPMENT : ENV_PRODUCTION;
-    $env = ENV_DEVELOPMENT;
+    //Read env file
+    DotEnv::load('.env.php'); 
+    $debug = DotEnv::get('APP_DEBUG', false);
+    $development = DotEnv::get('APP_DEVELOPMENT', false);
+    error_log("Env debug=".$debug." development=".$development);
+
+    $env = $development ? ENV_DEVELOPMENT : ENV_PRODUCTION;
     $dsn = $env == ENV_PRODUCTION ? 'sqlite:db/prod.db' : 'sqlite:db/dev.db';
+    error_log(json_encode($dsn));
+
     $db = new PDO($dsn);
     //$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
     $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
@@ -41,8 +49,68 @@ function before($route = array())
     // $i18n->setMergeFallback(false); // make keys available from the fallback language
     $i18n->init();
 
-    //authentication
     error_log("l=".request_method()."_".request_uri()."_".php_sapi_name());
+
+    /*
+      if factoryResetSwitch
+        doFactoryReset
+        showMessage factoryeset
+
+      //calls from master,slave or tests
+      if  url = api
+        if from master || local || ip in controllers  
+          apiCalls
+        else
+          error client not allowed
+      //only show dashboard on master     
+      if masterSwitch
+        if session 
+          dashboard
+          ajax calls
+        else
+          login
+      else
+        showMessage slave
+    */
+
+    if (checkIfFactoryReset()) {
+        doFactoryReset();
+        echo messagePage(L("message_factoryreset"));
+        stop_and_exit();
+    }
+
+    //calls from master,slave or tests
+    if (strpos(request_uri(), "api") !== false) {
+      if(true) { //from master || local || ip in controllers //allow cli
+        //TODO authentication 
+        //apiCalls, do nothing, pass through
+        return;
+      }
+      else {
+        echo "error client not allowed";
+      }
+    }
+
+    //only show dashboard on master    
+    if(checkIfMaster()) { 
+      //need session to get in dashboard
+      if(isset($_SESSION['login'])) { 
+        layout('layout/default.html.php');
+      } else { //force login
+        if(request_method() == "POST") {
+          //Allow login POST to submit. 
+        } else {
+          echo login_page();
+          stop_and_exit();
+        }
+      }
+    } else {
+      //if not master, show slave page
+      echo messagePage(L("message_slave"));
+      stop_and_exit();
+    }
+
+/*
     //Allow login POST to submit. TODO needs check on uri=login?
     if(request_method() != "POST") {
       if (checkIfFactoryReset()) {
@@ -70,6 +138,8 @@ function before($route = array())
         stop_and_exit();
       }
     }
+*/
+
 }
 
 //layout('layout/default.html.php');
@@ -146,15 +216,21 @@ function dashboard_page() {
 dispatch('reports', 'report_index');
 dispatch('reports_csv', 'report_csv');
 
-dispatch('settings_csv', 'settings_csv');
-
 //DEV pages
 dispatch_get('dev/:switch',  'set_dev');
 function set_dev() {
     $_SESSION["dev"] = params('switch');
     return html('dashboard.html.php');
 }
-//dispatch('info', phpinfo());
+dispatch('resetfirmware', 'reset_page');
+function reset_page() {
+    doFactoryReset();
+    return html('dashboard.html.php');
+}
+dispatch('info', 'info_page');
+function info_page() {
+    return phpinfo();
+}
 dispatch('gpio', 'gpio_page');
 function gpio_page() {
     return html('gpio.html.php');
@@ -166,6 +242,8 @@ dispatch_get   ('gpio_key',  'gpio_key');
 
 dispatch_get   ('settings',   'settings_index');
 dispatch_put   ('settings/:id', 'settings_update');
+dispatch_get   ('settings_download',   'settings_download');
+dispatch_post  ('settings_upload',   'settings_upload');
 
  //webapi / coap alternatives
 dispatch_get   ('api/status/:door', 'outputStatus');
@@ -229,4 +307,15 @@ dispatch_get   ('timezones/:id/edit', 'timezones_edit');
 dispatch_get   ('timezones/:id',      'timezones_show');
 dispatch_put   ('timezones/:id',      'timezones_update');
 dispatch_delete('timezones/:id',      'timezones_destroy');
-run();
+
+try {
+  run();
+} catch (PDOException $e) {
+  mylog($e);
+  //TODO could give upload option, but there is no way to authenticate with a broken db
+  echo messagePage(L("message_db_error"));
+} catch (Exception $e) {
+  mylog($e);
+  echo messagePage(L("message_unkown_error"));
+}
+

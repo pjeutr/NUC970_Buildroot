@@ -38,6 +38,10 @@ class ComposerStaticInit3c587730de6cf9405e1b52e8386b2c06
         array (
             'Brunty\\Cigar\\' => 13,
         ),
+        'A' => 
+        array (
+            'Arrilot\\DotEnv\\' => 15,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -88,6 +92,10 @@ class ComposerStaticInit3c587730de6cf9405e1b52e8386b2c06
         'Brunty\\Cigar\\' => 
         array (
             0 => __DIR__ . '/..' . '/brunty/cigar/src',
+        ),
+        'Arrilot\\DotEnv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/arrilot/dotenv-php/src',
         ),
     );
 
