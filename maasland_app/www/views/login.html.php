@@ -141,6 +141,8 @@
 <script src="../../assets/js/core/jquery.3.2.1.min.js" type="text/javascript"></script>
 <script src="../../assets/js/core/popper.min.js" type="text/javascript"></script>
 <script src="../../assets/js/core/bootstrap.min.js" type="text/javascript"></script>
+<!--  jQueryValidate https://jqueryvalidation.org  -->
+<script src="/assets/js/plugins/jquery.validate.min.js" type="text/javascript"></script>
 <script src="../../assets/js/app.js"></script>
 <script>
     $(document).ready(function() {

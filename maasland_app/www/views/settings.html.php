@@ -9,8 +9,19 @@ set('title', 'Settings');
             <div class="col-xs-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <?= iconLink_to('Download settings', 'settings_csv', 'btn-outline', 'fa fa-download') ?>
-                        <?= iconLink_to('Upload settings', 'settings_csv', 'btn-outline', 'fa fa-upload') ?>
+                        
+                    <form action="/?/settings_upload" method="POST" enctype="multipart/form-data">
+                        <div class="custom-file">
+                            <input type="file" name="fileToUpload" class="custom-file-input form-control" id="customFile">
+                            <label class="custom-file-label form-control" for="customFile">Choose file</label>
+                        </div>        
+                        <button type="submit" name="submit" class="btn btn-success btn-outline">
+                            <i class="fa fa-upload"></i> 'Upload configuration'
+                        </button>
+                        <?= iconLink_to('Download configuration', 'settings_download', 'btn-outline', 'fa fa-download') ?>
+                    </form>
+
+
                     </div>
                     <div class="card-body">
                         <div class="card-body table-responsive">
@@ -41,7 +52,7 @@ set('title', 'Settings');
         $fieldAtrribute = 'data-toggle="switch" '.($row->value ? 'checked=""': '').' data-on-color="info" data-off-color="info" data-eye-open-class="fa-toggle-off"  data-eye-close-class="fa-toggle-on"';
     }
         ?>                        
-<form class="settingsForm" id="row<?= $row->id ?>" action="<?= url_for('settings', $row->id) ?>" method="POST">
+<form class="settingsForm" id="row_<?= $row->name ?>" action="<?= url_for('settings', $row->id) ?>" method="POST">
     <input type="hidden" name="_method" id="_method" value="PUT">
     <input type="hidden" name="setting_name" value="<?= $row->name ?>">
     <input type="hidden" name="setting_type" value="<?= $row->type ?>">
@@ -76,7 +87,16 @@ set('title', 'Settings');
         console.log("settingsFormValidation");
         //$("#settingsForm").validate();
 
-        $("#row1").validate({
+        // Show the name of the file appear on select
+        $(".custom-file-input").on("change", function() {
+          var fileName = $(this).val().split("\\").pop();
+          console.log("fileName:"+fileName);
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+        /*
+        * Validation docs https://jqueryvalidation.org/documentation/
+        */
+        $("#row_door_open").validate({
             rules: {
                 door_open: {
                     range: [1, 60],
@@ -85,61 +105,52 @@ set('title', 'Settings');
                 }
             }
         });
-        // $("#row2").validate({
-        //     rules: {
-        //         sound_buzzer: "required"
-        //     },
-        // });
-        $("#row3").validate({
+        $("#row_apb").validate({
             rules: {
-                hostname: "required"
-            },
-            messages: {
-                hostname: "Please enter a hostname",
-            },
+                door_open: {
+                    range: [1, 60],
+                    required: true,
+                    number: true
+                }
+            }
         });
-        $("#row4").validate({
+        $("#row_alarm").validate({
             rules: {
-                password: "required"
+                door_open: {
+                    range: [1, 60],
+                    required: true,
+                    number: true
+                }
+            }
+        });
+        $("#row_hostname").validate({
+            rules: {
+                maxLength: 4,
+                hostname: {
+                    required: true,
+                    maxlength: 30
+                }
+            }
+            // ,
+            // messages: {
+            //     hostname: "Please enter a hostname",
+            // },
+        });
+        $("#row_password").validate({
+            rules: {
+                password: {
+                    required: true,
+                    maxlength: 30
+                }
             },
-            messages: {
-                password: "Please enter a password",
-            },
+            // messages: {
+            //     password: "Please enter a password",
+
+            // },
             errorPlacement: function(error, element) {
                 error.insertAfter(".input-group");
             },
         });
-        // $(id).validate({
-        //     rules: {
-        //         1: {
-        //             range: [1, 60],
-        //             required: true,
-        //             number: true
-        //         },
-        //         3: "required",
-        //         4: "required"
-        //     },
-        //     messages: {
-        //         3: "Please enter a hostname",
-        //         4: "Please enter a password"
-        //     },
-        //     errorPlacement: function(error, element) {
-        //         console.log(element.attr("name"));
-        //         if (element.attr("name") == 4) {
-        //             console.log("pass error");
-        //             error.insertAfter(".input-group");
-        //         } else {
-        //             error.insertAfter(element);
-        //         }
-        //     },
-        //     submitHandler: function(form) {
-        //         // do other things for a valid form
-        //         console.log(form);
-        //         console.log(event);
-        //         //form.submit();
-        //     },
-
-        // });
-
     }
+
 </script>

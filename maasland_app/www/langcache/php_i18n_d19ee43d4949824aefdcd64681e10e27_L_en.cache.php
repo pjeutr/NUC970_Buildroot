@@ -19,7 +19,9 @@ const button_delete = 'Delete';
 const dashboard_name = 'dashboard';
 const dashboard_title = 'This controller has %s';
 const message_slave = 'This is a slave controller';
-const message_factoryreset = 'The factory settings switch is on.<br>Factory settings were put back and the old configuration is deleted';
+const message_factoryreset = 'The reset factory settings switch is on.<br>Factory settings were put back and the old configuration is deleted';
+const message_db_error = 'Something went wrong with the configuration.<br> Try to reset factory settings, by using the proper switch.';
+const message_unkown_error = 'Something went wrong';
 public static function __callStatic($string, $args) {
     return vsprintf(constant("self::" . $string), $args);
 }

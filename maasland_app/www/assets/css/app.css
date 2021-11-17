@@ -99,6 +99,35 @@ a.text-success:focus, a.text-success:hover {
     line-height: 3rem;
 }
 
+/* 
+* Make inline file browse field
+* from https://www.w3schools.com/bootstrap4/bootstrap_forms_custom.asp 
+*/
+.custom-file {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0;
+    height:  37px;
+}
+.custom-file-input {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    opacity: 0;
+    height:  37px;
+}
+.custom-file-label {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1;
+    height:  37px;
+}
+
+/*
+*  Language icon flags
+*/
 .icon-flag-nl{
   background-image : url(../flags/nl.png);
   background-size: cover;
