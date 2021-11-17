@@ -163,22 +163,24 @@ function checkIfFactoryReset() {
     //return (getGPIO(GVAR::$GPIO_FIRMWARE) == 1);
 }
 function doFactoryReset() {
+    mylog("Factory reset invoked");
     $master = '/maasland_app/www/db/master.db';
-    //$file = ' /maasland_app/www/db/prod.db';
-    $file = '/maasland_app/www/db/dev.db';
+    $file = ' /maasland_app/www/db/prod.db';
+    //$file = '/maasland_app/www/db/dev.db';
     $backup = '/maasland_app/www/db/prod_bak.db';
 
+    //this method can only be invoked from cli (inputListner), webserver has no permission to writh files
     if (!@copy($file, $backup)) {
         $errors= error_get_last();
         mylog("COPY ERROR: ".$errors['type']);
-        mylog("<br />\n".$errors['message']);
+        mylog("<br />".$errors['message']);
         mylog(json_encode($errors));
-        mylog("failed to make backup $file...\n");
+        mylog("failed to make backup $file...");
     } elseif (!@copy($master, $file)) {
         mylog(json_encode(error_get_last()));
-        mylog("failed to restore factory settings $file...\n");
+        mylog("failed to restore factory settings $file...");
     } else {
-        mylog("Factory settings were restored $file...\n");
+        mylog("Factory settings were restored $file...");
     }
 }
 /*
@@ -264,15 +266,14 @@ function getInputValue($gpioPath) {
 *   GPIO helper functions 
 */
 function configureGPIO() {
-    //init
+    //init inputs and outputs
     foreach (GVAR::outputs() as $gpio) {
         initGPIO($gpio);
     }
-
     foreach (GVAR::inputs() as $gpio) {
         initGPIO($gpio, false);
     }
-
+    mylog("Activate wiegand readers");
     setGPIO(GVAR::$OUT12V_PIN, 1);
     setGPIO(GVAR::$RUNNING_LED, 1);
     

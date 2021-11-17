@@ -95,32 +95,5 @@ function input() {
     return (json(array($result)));
 }
 
-function settings_csv() {
-    //t
-    $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
-    //https://csv.thephpleague.com/9.0/interoperability/encoding/
-    //let's set the output BOM
-    $csv->setOutputBOM(Reader::BOM_UTF8);
-    //let's convert the incoming data from iso-88959-15 to utf-8
-    //$csv->addStreamFilter('convert.iconv.ISO-8859-15/UTF-8');
-    $results = find_reports();
 
-    $dbh = option('db_conn');
-    $sth = $dbh->prepare(
-        "SELECT id,name,value,type,title,status FROM settings"
-    );
-    //because we don't want to duplicate the data for each row
-    // PDO::FETCH_NUM could also have been used
-    $sth->setFetchMode(PDO::FETCH_ASSOC);
-    $sth->execute();
-
-    $filename = "settings".date("Y-m-d_H:i:s");
-    $columns = ["id","name","value","type","title","status"];
-    $csv->insertAll($sth);
-    $csv->output(
-        //to get output in browser escape the next line/filename
-        $filename.'.csv'
-    );
-    exit(); //safari was giving .html, this ends it
-}
 

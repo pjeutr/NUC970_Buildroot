@@ -32,7 +32,7 @@ private static $installed = array (
     'aliases' => 
     array (
     ),
-    'reference' => '22848df982a48d553b178a415ed3ba3b7f82557e',
+    'reference' => '4a2e51b2274bd9c19eed64d91f3830ede6f80e48',
     'name' => '__root__',
   ),
   'versions' => 
@@ -44,7 +44,16 @@ private static $installed = array (
       'aliases' => 
       array (
       ),
-      'reference' => '22848df982a48d553b178a415ed3ba3b7f82557e',
+      'reference' => '4a2e51b2274bd9c19eed64d91f3830ede6f80e48',
+    ),
+    'arrilot/dotenv-php' => 
+    array (
+      'pretty_version' => '2.0.0',
+      'version' => '2.0.0.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => '9ff3403b73231e99a7dd75b1976f57d32bc7fda1',
     ),
     'brunty/cigar' => 
     array (

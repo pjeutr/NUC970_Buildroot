@@ -18,4 +18,5 @@ return array(
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'Calcinai\\Rubberneck\\' => array($vendorDir . '/calcinai/rubberneck/src/Rubberneck'),
     'Brunty\\Cigar\\' => array($vendorDir . '/brunty/cigar/src'),
+    'Arrilot\\DotEnv\\' => array($vendorDir . '/arrilot/dotenv-php/src'),
 );
