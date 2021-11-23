@@ -27,7 +27,7 @@ $doors = find_doors();
                     <div class="card-footer ">
                         <hr>
                         <button class="btn btn-info btn-block" type="button" 
-                            onclick="app.timerAlert('Door 1 is open', <?= $door_open ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')"><?= $door->name ?> </button>
+                            onclick="app.timerAlert('<?= $door->name ?> is open', <?= $door_open ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')"><?= $door->name ?> </button>
 
 
 

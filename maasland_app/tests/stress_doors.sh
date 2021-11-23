@@ -1,9 +1,15 @@
 #!/bin/bash
 
+#curl http://192.168.178.165/?/api/status/2
+#curl http://192.168.178.165/?/api/output/2/1
+#curl http://192.168.178.165/?/api/activate/2/6
+
 open_door()
 {
-    #curl -d "_method=POST&user[name]=Alex$i&user[keycode]=Alex2&user[group_id]=1" -X POST http://192.168.178.137/?/users
-    wget -q -O - "http://192.168.178.137/?/door/$1" 
+    #?/api/activate/{door}/{duration}/{gpios}
+    curl http://127.0.0.1/?/api/activate/$1/0/2-10
+    curl http://192.168.178.165/?/api/activate/$1/0/2-10
+    #wget -q -O - "http://192.168.178.137/?/door/$1" 
     printf "door $1 opened\n"
 }
 
