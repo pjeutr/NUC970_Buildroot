@@ -11,7 +11,8 @@ function mylog($message) {
     //add milliseconds timestamp for 'permance' profiling
     $message = mdate('H:i:s-u')."_".json_encode($message);
     //if(true) {
-    if(option('debug') && option('env') > ENV_PRODUCTION) {
+    if(option('debug')) {
+    //if(option('debug') && option('env') > ENV_PRODUCTION) {
         if(php_sapi_name() === 'cli') {
             echo($message."/n");
         }
@@ -83,19 +84,7 @@ function apiCall($host, $uri) {
         $msg = shell_exec($cmd);//." 2>/dev/null &");
         mylog("shell_exec returns");
     }
-    return $msg;
-
-/*
-$client = new GuzzleHttp\Client();
-$res = $client->get('https://api.github.com/user', [
-    'auth' =>  ['user', 'pass']
-]);
-mylog($res->getStatusCode());           // 200
-mylog($res->getHeader('content-type')); // 'application/json; charset=utf8'
-mylog($res->getBody());                 // {"type":"User"...'
-mylog($res->json());             // Outputs the JSON decoded data
-*/    
-    
+    return $msg;    
 }
 
 /* 
@@ -214,3 +203,30 @@ function mdate($format = 'u', $utimestamp = null) {
 
     return date(preg_replace('`(?<!\\\\)u`', $milliseconds, $format), $timestamp);
 }
+
+
+/* 
+*   cli functions - only used by cli 
+*/
+//configDB, keep it the same as in configure index.php
+function configDB() {
+    //Read env file
+    Arrilot\DotEnv\DotEnv::load('/maasland_app/www/.env.php'); 
+    $debug = Arrilot\DotEnv\DotEnv::get('APP_DEBUG', false);
+    $development = Arrilot\DotEnv\DotEnv::get('APP_DEVELOPMENT', false);
+    mylog("Env debug=".$debug." development=".$development);
+
+    $env = $development ? ENV_DEVELOPMENT : ENV_PRODUCTION;
+    $dsn = $env == ENV_PRODUCTION ? 'sqlite:/maasland_app/www/db/prod.db' : 'sqlite:/maasland_app/www/db/dev.db';
+    mylog(json_encode($dsn));
+
+    $db = new PDO($dsn);
+    //$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
+    $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+    option('env', $env);
+    option('dsn', $dsn);
+    option('db_conn', $db);
+    option('debug', true);
+    option('session', 'Maasland_Match_App');    
+}
+

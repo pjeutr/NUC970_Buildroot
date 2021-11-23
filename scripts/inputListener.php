@@ -28,12 +28,7 @@ echo configureGPIO();
 
 if( checkIfMaster() ) {
 	//initialize database connection
-	$dsn = "sqlite:/maasland_app/www/db/dev.db";
-	$db = new PDO($dsn);
-	$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
-	option('dsn', $dsn);
-	option('db_conn', $db);
-	option('debug', true);
+	configDB();
 
 	require_once '/maasland_app/www/lib/logic.master.php';
 	//load models for used db methods

@@ -21,13 +21,7 @@ if( !checkIfMaster() ) {
 	exit();
 }
 
-//initialize database connection
-$dsn = "sqlite:/maasland_app/www/db/dev.db";
-$db = new PDO($dsn);
-$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
-option('dsn', $dsn);
-option('db_conn', $db);
-option('debug', true);
+configDB();
 
 $now = new DateTime();
 $actor = "Cron"; 
