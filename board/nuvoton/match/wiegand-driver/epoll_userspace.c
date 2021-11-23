@@ -3,9 +3,7 @@
 *
 *  \details    epoll user space application
 *
-*  \author     EmbeTronicX
-*
-*  \Tested with Linux raspberrypi 5.4.51-v7l+
+*  \author     Peter Sloots
 *
 * *******************************************************************************/
 
@@ -35,7 +33,6 @@ int main(int argc, char* argv[])
   int fd, epoll_fd, ret, n;
   struct epoll_event ev,events[20];
   
-  //fd = open("/dev/wiegand", O_RDWR | O_NONBLOCK);
   fd = open(filename, O_RDWR | O_NONBLOCK);
 
   if( fd == -1 )  
@@ -64,13 +61,14 @@ int main(int argc, char* argv[])
     close(epoll_fd);
     exit(EXIT_FAILURE);
   }
-    
+
   while( 1 ) 
   {
-    puts("Starting Epoll v3...");
-    
+    //Print which device is being watched  
+    printf("%s MODIFY from epoll_userspace\n", filename);
+
     ret = epoll_wait( epoll_fd, events, MAX_EVENTS, -1);;   //wait for 5secs
-    
+  
     if( ret < 0 ) 
     {
       perror("epoll_wait");
@@ -83,18 +81,18 @@ int main(int argc, char* argv[])
       //fprintf(stdout, "n ret=%d\n", ret);
       if( ( events[n].events & EPOLLIN )  == EPOLLIN )
       {
-        //read(events[n].data.fd, &kernel_val, sizeof(kernel_val));
-        // char *x;
-        // int size = asprintf(stdout, "EPOLLIN : Kernel_val = %s\n", kernel_val);
-        // free(x);
+        read(events[n].data.fd, &kernel_val, sizeof(kernel_val));
+        char *x;
+        int size = asprintf(stdout, "EPOLLIN : Kernel_val = %s\n", kernel_val);
+        free(x);
 
-        // if (size == -1 ) {
-        //    perror("Failed to asprintf\n");
-        // }
-        fprintf(stdout, "%s\n", "dummy");
-        fprintf(stderr, "%s\n", "demummy");
-        perror("en doorrr\n");
-        //asprintf(stdout, "EPOLLIN : Kernel_val = %s\n", kernel_val);
+        if (size == -1 ) {
+           perror("Failed to asprintf\n");
+        }
+        //fprintf(stdout, "%s\n", "dummy");
+        //fprintf(stderr, "%s\n", "demummy");
+        //perror("en doorrr\n");
+        asprintf(stdout, "EPOLLIN : Kernel_val = %s\n", kernel_val);
         //puts("Get value 1231\n");
         //  cat /sys/kernel/wiegand/read
         // int c;

@@ -34,7 +34,8 @@
 #define RD2_D0_PIN     NUC980_PA9   //reader2 d0 input
 // #define RD2_GLED_PIN   NUC980_PA10  //reader2 gled output
 // #define RD2_RLED_PIN   NUC980_PA11  //reader2 rled output
-#define OUT12V_PIN     NUC980_PE10  //output 12v control output
+#define OUT12V_PIN     NUC980_PE10  //Match2 output 12v control output
+//#define OUT12V_PIN     NUC980_PC15  //Match4 output 12v control output
 
 static void recieve_data_convert(void);
 
@@ -407,7 +408,7 @@ static struct file_operations wiegand_fops = {
 static int __init wiegand_init(void)
 {
 	//create character device
-	int err, i, retval, ret;
+	int err, i, retval;
 
 	if (major) {
 		devid = MKDEV(major, 0);
@@ -423,17 +424,18 @@ static int __init wiegand_init(void)
 	cls = class_create(THIS_MODULE, DEV_NAME);
 	device_create(cls, NULL, devid, NULL, DEV_NAME); 	/* /dev/wiegand */
 
+	//Remove power switch, do it form inputListener.php
 	//Activate wiegand power
-	ret = gpio_request( OUT12V_PIN ,"OUT12V_PIN");
-	if(ret < 0)
-	{
-	  printk(KERN_EMERG "GPIO REQUEST OUT12V_PIN FAILED!\n");
-	}
-	else
-	{
-	  gpio_direction_output(OUT12V_PIN,0);  //output 12v  control set output and value low 
-	  gpio_set_value( OUT12V_PIN ,1);  //open reader power
-	}
+	// ret = gpio_request( OUT12V_PIN ,"OUT12V_PIN");
+	// if(ret < 0)
+	// {
+	//   printk(KERN_EMERG "GPIO REQUEST OUT12V_PIN FAILED!\n");
+	// }
+	// else
+	// {
+	//   gpio_direction_output(OUT12V_PIN,0);  //output 12v  control set output and value low 
+	//   gpio_set_value( OUT12V_PIN ,1);  //open reader power
+	// }
 
 	//sleep, let the poweron become stable
 	ssleep(2);
