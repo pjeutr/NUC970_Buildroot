@@ -24,7 +24,10 @@ class InotifyWait extends AbstractDriver implements DriverInterface {
 
     public function watch($path) {
 
-        $subprocess_cmd = sprintf('inotifywait -mr %s 2>/dev/null', $path);
+        //$subprocess_cmd = sprintf('inotifywait -mr %s 2>/dev/null', $path);
+        //removing pipe, to prevent starting inotifywait wrapped in a shell (takes 4% memory extra for each entry)
+        //remove -r, recusive is not necessary
+        $subprocess_cmd = sprintf('inotifywait -m %s', $path);
 
         $this->observer->getLoop()->addReadStream(popen($subprocess_cmd, 'r'), [$this, 'onData']);
 

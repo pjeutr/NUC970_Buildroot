@@ -103,8 +103,8 @@ function settings_upload() {
     //$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
     $target_file = $target_dir . "prod.db";
     $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
+    //$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    $imageFileType = "";
     $messageArr = array();
     $uploadOk = 0;
 
@@ -137,6 +137,8 @@ function settings_upload() {
         }
 
         // Allow certain file formats
+        $imageFileType = strtolower(pathinfo($_FILES["fileToUpload"]["name"],PATHINFO_EXTENSION));
+        mylog("imageFileType=".$imageFileType);
         if($imageFileType != "db" && $imageFileType != "flexess") {
           $messageArr[]= "Only flexess files are allowed.";
           $uploadOk = 0;
