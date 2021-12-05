@@ -4,7 +4,7 @@
 //date_default_timezone_set('Europe/London');
 //date_default_timezone_set('Australia/Sydney');
 $tz = "Europe/Amsterdam";
-date_default_timezone_set($tz);
+
 
 //Custom log
 function mylog($message) {
@@ -178,11 +178,15 @@ function swal_message_success($message) {
 }
 
 function print_date($timestamp) {
-    //return $timestamp;
-    $dt = new DateTime($timestamp);
-    //Theorie, sqlite timestamp wordt UTC opgeslagen. Alles in php is met date_default_timezone_set gezet bovenaan ^
-    //Daarom moet voor display van sqlite gezette datums worden gecorigeerd Amsterdam +0200 => +0400
-    $dt->setTimezone(new DateTimeZone('+0400'));
+    $tz = "Europe/Amsterdam";
+    //https://stackoverflow.com/questions/20288789/php-date-with-timezone
+    //date_default_timezone_set($tz); //bad practic volgen bovenstaande link
+    //https://stackoverflow.com/questions/3792066/convert-utc-dates-to-local-time-in-php
+
+    // create a $dt object with the UTC timezone
+    $dt = new DateTime($timestamp, new DateTimeZone('UTC'));
+    // change the timezone of the object without changing its time
+    $dt->setTimezone(new DateTimeZone($tz)); 
     return $dt->format('d-m-Y H:i:s');
 }
 
@@ -214,6 +218,8 @@ function configDB() {
     Arrilot\DotEnv\DotEnv::load('/maasland_app/www/.env.php'); 
     $debug = Arrilot\DotEnv\DotEnv::get('APP_DEBUG', false);
     $development = Arrilot\DotEnv\DotEnv::get('APP_DEVELOPMENT', false);
+    $hardwareVersion = Arrilot\DotEnv\DotEnv::get('HARDWARE_VERSION', false);
+
     mylog("Env debug=".$debug." development=".$development);
 
     $env = $development ? ENV_DEVELOPMENT : ENV_PRODUCTION;
@@ -227,6 +233,7 @@ function configDB() {
     option('dsn', $dsn);
     option('db_conn', $db);
     option('debug', true);
+    option('hardware_version', $hardwareVersion);
     option('session', 'Maasland_Match_App');    
 }
 

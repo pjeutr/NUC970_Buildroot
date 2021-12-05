@@ -1,6 +1,8 @@
 #!/bin/sh
 #
 # Replace DuoApp with the latest version from github
+# Git is too big and not available on the controller
+# so this script can only be called from a mount on a dev machine
 #
 #sshfs root@maasland:/ ~/mounts/match 
 #cd /Users/pjeutr/Mounts/match/maasland_app
