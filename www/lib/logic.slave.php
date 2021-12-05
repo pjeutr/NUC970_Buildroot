@@ -3,67 +3,33 @@
 *   GVAR (gpio variables)
 *   contains software to hardware tranlations
 */
-class GVAR
-{
-/*    
-    //outputs
-    public static $GPIO_DOOR1 = 71; //NUC980_PC7
-    public static $GPIO_DOOR2 = 68; //NUC980_PC4
-    public static $GPIO_ALARM1 = 65; //NUC980_PC1
-    public static $GPIO_ALARM2 = 66; //NUC980_PC0
-    public static $RD1_GLED_PIN = 2; //NUC980_PA3   
-    public static $RD2_GLED_PIN = 10; //NUC980_PA10  //reader2 gled output
-    public static $BUZZER_PIN = 138; //NUC980_PE10  //buzzer output
-    public static $RUNNING_LED = 40; //NUC980_PB8  //running led
-    public static $OUT12V_PIN = 79; //NUC980_PC15  //output 12v control output
 
-    //inputs
-    public static $GPIO_BUTTON1 = 10; //NUC980_PA10
-    public static $GPIO_BUTTON2 = 2; //NUC980_PA2
-    public static $GPIO_DOORSTATUS1 = 70; //NUC980_PC6 
-    public static $GPIO_DOORSTATUS1N = 69; //NUC980_PC5 
-    public static $GPIO_DOORSTATUS2 = 76; //NUC980_PC3
-    public static $GPIO_DOORSTATUS2N = 66; //NUC980_PC2
-    public static $GPIO_MASTER = 38; //NUC980_PB6 - Master Slave switch
-    public static $GPIO_FIRMWARE = 32; //NUC980_PB0 - Reset Firmware switch
-*/
+//web loads dynamically scripts need this manualy set
+require_once '/maasland_app/www/lib/gvar.match2.php';
+require_once '/maasland_app/www/lib/gvar.match4.php';
 
-    //outputs
-    public static $GPIO_DOOR1 = 68; //NUC980_PC4
-    public static $GPIO_DOOR2 = 66; //NUC980_PC2
-    public static $GPIO_ALARM1 = 65; //NUC980_PC2
-    public static $GPIO_ALARM2 = 66; //fake same as door
-    public static $RD1_GLED_PIN = 2; //NUC980_PA2   //reader1 gled output
-    public static $RD2_GLED_PIN = 10;  //NUC980_PA10  //reader2 gled output
-    public static $BUZZER_PIN = 79;  //NUC980_PC15  //buzzer output
-    public static $RUNNING_LED = 40; //NUC980_PB8  //running led
-    public static $OUT12V_PIN = 138; //NUC980_PE10  //output 12v control output
+if(false) {
+    //include "gvar.match2.php";
 
-    public static function outputs() {
-        return [
-            GVAR::$GPIO_DOOR1,GVAR::$GPIO_DOOR2,GVAR::$GPIO_ALARM1,GVAR::$GPIO_ALARM2,
-            GVAR::$RD1_GLED_PIN,GVAR::$RD2_GLED_PIN,GVAR::$BUZZER_PIN,
-            GVAR::$RUNNING_LED,GVAR::$OUT12V_PIN
-        ];
-    } 
-
-    //inputs
-    public static $GPIO_BUTTON1 = 170; //NUC980_PF10
-    public static $GPIO_BUTTON2 = 169; //NUC980_PF9 - CAT_PIN //contact input
-    public static $GPIO_DOORSTATUS1 = 170;//168; //NUC980_PF8 - PSU_PIN //psu input
-    public static $GPIO_DOORSTATUS2 = 45; //NUC980_PB13 - TAMPER_PIN //tamp input
-    public static $GPIO_MASTER = 140; //NUC980_PE12 - Master Slave switch
-    public static $GPIO_FIRMWARE = 140; //NUC980_PE12 - Reset Firmware switch
-
-    public static function inputs() {
-        return [
-            GVAR::$GPIO_BUTTON1,GVAR::$GPIO_BUTTON2,GVAR::$GPIO_DOORSTATUS1,GVAR::$GPIO_DOORSTATUS2,
-            GVAR::$GPIO_MASTER,GVAR::$GPIO_FIRMWARE
-        ];
-    }
+} else {
+    //include "gvar.match4.php";
 }
 
-$masterControllerIp = null;
+function outputs() {
+    return [
+        GVAR::$GPIO_DOOR1,GVAR::$GPIO_DOOR2,GVAR::$GPIO_ALARM1,GVAR::$GPIO_ALARM2,
+        GVAR::$RD1_GLED_PIN,GVAR::$RD2_GLED_PIN,GVAR::$BUZZER_PIN,
+        GVAR::$RUNNING_LED,GVAR::$OUT12V_PIN
+    ];
+} 
+
+function inputs() {
+    return [
+        GVAR::$GPIO_BUTTON1,GVAR::$GPIO_BUTTON2,GVAR::$GPIO_DOORSTATUS1,GVAR::$GPIO_DOORSTATUS2,
+        GVAR::$GPIO_MASTER,GVAR::$GPIO_FIRMWARE
+    ];
+}
+
 $inputArray = [
     1 => "/sys/class/gpio/gpio".GVAR::$GPIO_MASTER."/value",
     2 => "/sys/class/gpio/gpio".GVAR::$GPIO_FIRMWARE."/value",
@@ -159,8 +125,7 @@ function getOutputStatus($outputId) {
 *   Check if the factory reset switch is enabled
 */
 function checkIfFactoryReset() {
-    return false;
-    //return (getGPIO(GVAR::$GPIO_FIRMWARE) == 1);
+    return (getGPIO(GVAR::$GPIO_FIRMWARE) == 0);
 }
 function doFactoryReset() {
     mylog("Factory reset invoked");
@@ -195,7 +160,7 @@ function checkIfMaster() {
 
 function getMasterControllerIP() {
     //return "192.168.178.137";
-    global $masterControllerIp;
+    $masterControllerIp = null;
     if(checkIfMaster()) {
         //Design decision not to put the network IP in the db for Master
         //This means, the Master does not know it's own IP at start
@@ -266,11 +231,13 @@ function getInputValue($gpioPath) {
 *   GPIO helper functions 
 */
 function configureGPIO() {
+    mylog("Board identified as :".GVAR::$BOARD_TYPE);
+
     //init inputs and outputs
-    foreach (GVAR::outputs() as $gpio) {
+    foreach (outputs() as $gpio) {
         initGPIO($gpio);
     }
-    foreach (GVAR::inputs() as $gpio) {
+    foreach (inputs() as $gpio) {
         initGPIO($gpio, false);
     }
     mylog("Activate wiegand readers");
@@ -281,7 +248,7 @@ function configureGPIO() {
 }
 
 function setGPIO($gpio, $state) {
-    if (! in_array($gpio, GVAR::outputs())) {
+    if (! in_array($gpio, outputs())) {
         mylog("setGPIO ".$gpio." not an output");
         return 0;
     }

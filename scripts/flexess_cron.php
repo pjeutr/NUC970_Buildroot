@@ -15,7 +15,7 @@ require_once '/maasland_app/www/lib/model.door.php';
 require_once '/maasland_app/www/lib/model.controller.php';
 require_once '/maasland_app/www/lib/model.timezone.php';
 
-//Quit quickly if not master
+//Quit quickly if not master, listener check is also not possible
 if( !checkIfMaster() ) {
 	mylog("Stop Cron, this controller is not master");
 	exit();
