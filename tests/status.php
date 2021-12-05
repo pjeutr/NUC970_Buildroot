@@ -19,3 +19,16 @@ echo "\nButton2=". getGPIO(GVAR::$GPIO_BUTTON2);
 echo "\nDoorstatus1=". getGPIO(GVAR::$GPIO_DOORSTATUS1);
 echo "\nDoorstatus2=". getGPIO(GVAR::$GPIO_DOORSTATUS2);
 
+if(checkIfFactoryReset()) {
+	echo "doFactoryReset ";
+	try {
+		doFactoryReset();
+	} catch (Exception $e) {
+	    echo 'Caught exception: ',  $e->getMessage(), "\n";
+	}
+	
+	echo "done";
+} else {
+	echo "do nothing";
+}
+

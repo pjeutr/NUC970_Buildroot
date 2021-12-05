@@ -130,7 +130,7 @@ function checkIfFactoryReset() {
 function doFactoryReset() {
     mylog("Factory reset invoked");
     $master = '/maasland_app/www/db/master.db';
-    $file = ' /maasland_app/www/db/prod.db';
+    $file = '/maasland_app/www/db/prod.db';
     //$file = '/maasland_app/www/db/dev.db';
     $backup = '/maasland_app/www/db/prod_bak.db';
 
