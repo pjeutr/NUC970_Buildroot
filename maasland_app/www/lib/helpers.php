@@ -14,7 +14,7 @@ function mylog($message) {
     if(option('debug')) {
     //if(option('debug') && option('env') > ENV_PRODUCTION) {
         if(php_sapi_name() === 'cli') {
-            echo($message."/n");
+            echo($message."\n");
         }
         return error_log($message);
     }
