@@ -18,13 +18,13 @@ require_once '/maasland_app/www/lib/db.php';
 require_once '/maasland_app/www/lib/helpers.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
 
+//configure and initialize gpio 
+echo configureGPIO();
+
 //check and do restore factory settings
 if(checkIfFactoryReset()){
 	doFactoryReset();
 }
-
-//configure and initialize gpio 
-echo configureGPIO();
 
 if( checkIfMaster() ) {
 	//initialize database connection

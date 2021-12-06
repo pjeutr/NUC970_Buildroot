@@ -231,8 +231,6 @@ function getInputValue($gpioPath) {
 *   GPIO helper functions 
 */
 function configureGPIO() {
-    mylog("Board identified as :".GVAR::$BOARD_TYPE);
-
     //init inputs and outputs
     foreach (outputs() as $gpio) {
         initGPIO($gpio);
@@ -244,7 +242,9 @@ function configureGPIO() {
     setGPIO(GVAR::$OUT12V_PIN, 1);
     setGPIO(GVAR::$RUNNING_LED, 1);
     
-    return "GPIOInputs initialized: Controller configured as ".(checkIfMaster() ? "Master" : "Slave")."\n";
+    return "Board identified as :".GVAR::$BOARD_TYPE.
+        "GPIOInputs initialized: Controller configured as ".
+        (checkIfMaster() ? "Master" : "Slave")."\n";
 }
 
 function setGPIO($gpio, $state) {

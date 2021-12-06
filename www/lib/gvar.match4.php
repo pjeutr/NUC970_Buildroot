@@ -14,8 +14,8 @@ class GVAR
     public static $GPIO_DOOR2 = 68; //NUC980_PC4
     public static $GPIO_ALARM1 = 65; //NUC980_PC1
     public static $GPIO_ALARM2 = 66; //NUC980_PC0
-    public static $RD1_GLED_PIN = 2; //NUC980_PA3   
-    public static $RD2_GLED_PIN = 10; //NUC980_PA10  //reader2 gled output
+    public static $RD1_GLED_PIN = 3; //NUC980_PA3  //reader1 gled output 
+    public static $RD2_GLED_PIN = 11; //NUC980_PA11  //reader2 gled output
     public static $BUZZER_PIN = 138; //NUC980_PE10  //buzzer output
     public static $RUNNING_LED = 40; //NUC980_PB8  //running led
     public static $OUT12V_PIN = 79; //NUC980_PC15  //output 12v control output
