@@ -1,0 +1,7 @@
+special image for match2 dev boards
+
+CONFIG_WINBOND_W25N02 removed, memory is not recognized when used.
+GVAR2 used ipv GVAR4
+
+uImage has 08:00:27:00:01:92
+uImage2 has 00:11:22:33:44:55

@@ -25,8 +25,8 @@
 #define DEV_NAME "wiegand"
 #define SYSFS_NAME "wiegand"
 
-#define RD1_D1_PIN     NUC980_PA0   //reader1 d1 input
-#define RD1_D0_PIN     NUC980_PA1   //reader1 d0 input
+#define RD1_D1_PIN     NUC980_PA1   //reader1 d1 input
+#define RD1_D0_PIN     NUC980_PA0   //reader1 d0 input
 // #define RD1_GLED_PIN   NUC980_PA2   //reader1 gled output
 // #define RD1_RLED_PIN   NUC980_PA3   //reader1 rled output
 
