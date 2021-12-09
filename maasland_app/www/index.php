@@ -2,6 +2,7 @@
 
 require_once('lib/limonade.php');
 require_once 'lib/i18n.class.php';
+require_once 'lib/helpers.php';
 require_once '/maasland_app/vendor/autoload.php';
 use Arrilot\DotEnv\DotEnv;
 
@@ -10,13 +11,14 @@ function configure() {
     DotEnv::load('.env.php'); 
     $debug = DotEnv::get('APP_DEBUG', false);
     $development = DotEnv::get('APP_DEVELOPMENT', false);
-    error_log("Env debug=".$debug." development=".$development);
+    mylog("Env debug=".$debug." development=".$development);
 
     $env = $development ? ENV_DEVELOPMENT : ENV_PRODUCTION;
     $dsn = $env == ENV_PRODUCTION ? 'sqlite:db/prod.db' : 'sqlite:db/dev.db';
-    error_log(json_encode($dsn));
+    mylog(json_encode($dsn));
 
     $db = new PDO($dsn);
+    //$db = new PDO($dsn, null, null, array(PDO::ATTR_PERSISTENT => true));
     //$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
     $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     option('env', $env);
@@ -49,7 +51,7 @@ function before($route = array())
     // $i18n->setMergeFallback(false); // make keys available from the fallback language
     $i18n->init();
 
-    error_log("l=".request_method()."_".request_uri()."_".php_sapi_name());
+    mylog("l=".request_method()."_".request_uri()."_".php_sapi_name());
 
     /*
       if factoryResetSwitch
