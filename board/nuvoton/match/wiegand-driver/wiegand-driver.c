@@ -30,8 +30,8 @@
 // #define RD1_GLED_PIN   NUC980_PA2   //reader1 gled output
 // #define RD1_RLED_PIN   NUC980_PA3   //reader1 rled output
 
-#define RD2_D1_PIN     NUC980_PA8   //reader2 d1 input
-#define RD2_D0_PIN     NUC980_PA9   //reader2 d0 input
+#define RD2_D1_PIN     NUC980_PA9   //reader2 d1 input
+#define RD2_D0_PIN     NUC980_PA8   //reader2 d0 input
 // #define RD2_GLED_PIN   NUC980_PA10  //reader2 gled output
 // #define RD2_RLED_PIN   NUC980_PA11  //reader2 rled output
 #define OUT12V_PIN     NUC980_PE10  //Match2 output 12v control output
