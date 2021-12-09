@@ -144,7 +144,7 @@ $flashMessage = flash_now();
                     <a class="btn btn-success btn-sm" href="./?/lang/en"><i class="icon-flag-gb"></i> EN</a>                 
                 </div>
                 <div class="sidebar-footer">
-                    Flexess Duo v0.5.0
+                    Flexess Duo v0.6.0
                 </div>
             </div>
         </div>

@@ -8,6 +8,9 @@
 require_once '/maasland_app/www/lib/gvar.match2.php';
 require_once '/maasland_app/www/lib/gvar.match4.php';
 
+//get $masterControllerIp global so we can save it between requests
+$masterControllerIp = getMasterControllerIP();
+
 if(false) {
     //include "gvar.match2.php";
 
@@ -160,7 +163,7 @@ function checkIfMaster() {
 
 function getMasterControllerIP() {
     //return "192.168.178.137";
-    $masterControllerIp = null;
+    global $masterControllerIp;
     if(checkIfMaster()) {
         //Design decision not to put the network IP in the db for Master
         //This means, the Master does not know it's own IP at start

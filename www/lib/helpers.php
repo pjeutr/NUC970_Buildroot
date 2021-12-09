@@ -46,7 +46,7 @@ function keyToHex($key) {
 //Save a record to reports db
 function saveReport($user, $msg, $key = "empty") { //empty => null
     //create report entry in log
-    mylog($user." ".$msg."\n");
+    mylog("saveReport:".$user." ".$msg."\n");
 
     //create report record in db
     $report = make_report_obj([
@@ -54,6 +54,7 @@ function saveReport($user, $msg, $key = "empty") { //empty => null
         "keycode"  => $key,
         "door" => $msg
     ]);
+    mylog("saveReport:Done");
     return create_object($report, 'reports', null);
 }
 

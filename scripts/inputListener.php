@@ -107,7 +107,7 @@ $wiegandObserver->onModify(function($file_name){
 	$keycode = $parts[1];
 	$reader = $parts[2];
 	mylog("Wiegand:". $reader.":".$keycode);
-	$result =  callApi($reader, $keycode);
+	$result = callApi($reader, $keycode);
     mylog(json_encode($result));
 });	
 
