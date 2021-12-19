@@ -1,9 +1,5 @@
 <?php
 
-function available_controllers() {
-    return json(mdnsBrowse("_maasland._udp"));
-}
-
 # GET /controllers
 function controllers_index() {
     set('controllers', find_controllers());

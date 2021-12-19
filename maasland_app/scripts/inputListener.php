@@ -1,21 +1,25 @@
-#!/usr//bin/php
+#!/usr/bin/php
 <?php
 
 /*
-
-* Second script, only inputListener 
-* coapServer & Listener, could not multitask
-* So the webapi is used instead
-
-* Runs on all controllers
-* - detects input changes (readers/buttons/sensors)
-* 
+* Call appropiate script for Master or Slave
+* TODO could combine both scripts again, instead minify?
+* - harder to read/test
+* - not sure Master resources are loaded on Slave
+*
+* coap-client -m get coap://192.168.178.179/input/1/3333
+* coap-client -m get coap://192.168.178.137/status/66-68 = print button status 
+* coap-client -m get coap://192.168.178.137/output/2/1 = Door 2 for open
+* coap-client -m get coap://192.168.178.137/output/1/0 = Door 1 for close
+* coap-client -m get coap://192.168.178.137/activate/1/2 = Door 1 for 2 seconds
+* coap-client -m get coap://192.168.178.139/activate/2/5/3-11 = Door 2 all leds and buzzer for 5 seconds
+*
+* TODO user auth?
+* coap-client -m get -u maaslnd -k WGH coap://slave/activate/2/5/2-10-66-79
 */
-
-require_once '/maasland_app/vendor/autoload.php';
-require_once '/maasland_app/www/lib/limonade.php';;
-require_once '/maasland_app/www/lib/db.php';
 require_once '/maasland_app/www/lib/helpers.php';
+require_once '/maasland_app/vendor/autoload.php';
+require_once '/maasland_app/www/lib/limonade.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
 
 //configure and initialize gpio 
@@ -26,27 +30,27 @@ if(checkIfFactoryReset()){
 	doFactoryReset();
 }
 
+//create THE eventloop. (get's instance, or creates new)
+$loop = React\EventLoop\Loop::get();
+
 if( checkIfMaster() ) {
-	//initialize database connection
-	configDB();
-
-	require_once '/maasland_app/www/lib/logic.master.php';
-	//load models for used db methods
-	require_once '/maasland_app/www/lib/model.report.php';
-	require_once '/maasland_app/www/lib/model.user.php';
-	require_once '/maasland_app/www/lib/model.settings.php';
-	require_once '/maasland_app/www/lib/model.door.php';
-	require_once '/maasland_app/www/lib/model.controller.php';
-	require_once '/maasland_app/www/lib/model.timezone.php';
-	require_once '/maasland_app/www/lib/model.rule.php';
-	echo "Extra Master requirements loaded\n";
-
-	//anounce as master server
-	$r = mdnsPublish();
-	mylog("mdnsPublish return=".json_encode($r));
+	echo "Master input script loaded\n";
+	require_once '/maasland_app/scripts/coapListenerMaster.php';
+} else {
+	echo "Slave input script loaded\n";
+	require_once '/maasland_app/scripts/coapListener.php';
 }
 
-function callApi($input, $data) {
+//Start THE eventloop
+$loop->run();
+
+
+
+
+
+
+//not used, future callapi?
+function callApiOLD($input, $data) {
 	global $loop;
 
     mylog((checkIfMaster() ? 'Master' : 'Slave' )." inputReceived:".$input." data=".$data);
@@ -91,54 +95,3 @@ function callApi($input, $data) {
 */    
 }
 
-$loop = React\EventLoop\Factory::create();
-
-/*
-* Listen for input changes (inputListener)
-*/
-//TODO class meegeven werkte niet, daarom maar de index van array
-//$inputObserver = new \Calcinai\Rubberneck\Observer($loop, EpollWait::class);
-$wiegandObserver = new \Calcinai\Rubberneck\Observer($loop, 0);
-$wiegandObserver->onModify(function($file_name){
-	//find the value
-	$value = getInputValue($file_name);
-	$parts = explode(':',$value);
-	$nr = $parts[0];
-	$keycode = $parts[1];
-	$reader = $parts[2];
-	mylog("Wiegand:". $reader.":".$keycode);
-	$result = callApi($reader, $keycode);
-    mylog(json_encode($result));
-});	
-
-//$inputObserver = new \Calcinai\Rubberneck\Observer($loop, InotifyWait::class);
-$inputObserver = new \Calcinai\Rubberneck\Observer($loop, 1);
-$inputObserver->onModify(function($file_name){
-	mylog("Modified:". $file_name. "\n");
-	//determine the input number for this file
-	$input = resolveInput($file_name);
-	//find the value
-	$value = getInputValue($file_name);
-	//mylog("value:". $value. "\n");
-	//take action if a button is pressed
-	if($value == 1) { 
-		mylog("Button:". $input);
-		$result =  callApi($input, "");
-        mylog(json_encode($result));
-	}   
-	//TODO sleep / prevent klapperen 
-	//sleep(1);
-});
-
-//listen voor gpio inputs
-global $inputArray;
-foreach ($inputArray as $value) {
-	mylog("inputObserver init:". $value ." \n");
-    $inputObserver->watch($value);
-}
-//$inputObserver->watch('/sys/class/gpio/gpio170/value');
-
-//listen voor wiegand readers
-$wiegandObserver->watch('/dev/wiegand');
-
-$loop->run();

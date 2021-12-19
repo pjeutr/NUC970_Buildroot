@@ -21,7 +21,7 @@ class Server extends \Evenement\EventEmitter
 
 		if ( $this->sock === false )
 		{
-			throw new \Exception( sprintf( "Error( %s ) : %s", $errno, $errstr ) );
+			throw \Exception( sprintf( "Error( %s ) : %s", $errno, $errstr ) );
 		}
 
 		$this->packetStream = new PacketStream( $this->sock, $this->loop );

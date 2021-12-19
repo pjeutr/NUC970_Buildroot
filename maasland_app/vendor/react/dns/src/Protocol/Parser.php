@@ -171,7 +171,7 @@ final class Parser
             }
         } elseif (Message::TYPE_CNAME === $type || Message::TYPE_PTR === $type || Message::TYPE_NS === $type) {
             list($rdata, $consumed) = $this->readDomain($message->data, $consumed);
-        } elseif (Message::TYPE_TXT === $type) {
+        } elseif (Message::TYPE_TXT === $type || Message::TYPE_SPF === $type) {
             $rdata = array();
             while ($consumed < $expected) {
                 $len = ord($message->data[$consumed]);
@@ -230,6 +230,22 @@ final class Parser
                     'minimum' => $minimum
                 );
             }
+        } elseif (Message::TYPE_OPT === $type) {
+            $rdata = array();
+            while (isset($message->data[$consumed + 4 - 1])) {
+                list($code, $length) = array_values(unpack('n*', substr($message->data, $consumed, 4)));
+                $value = (string) substr($message->data, $consumed + 4, $length);
+                if ($code === Message::OPT_TCP_KEEPALIVE && $value === '') {
+                    $value = null;
+                } elseif ($code === Message::OPT_TCP_KEEPALIVE && $length === 2) {
+                    list($value) = array_values(unpack('n', $value));
+                    $value = round($value * 0.1, 1);
+                } elseif ($code === Message::OPT_TCP_KEEPALIVE) {
+                    break;
+                }
+                $rdata[$code] = $value;
+                $consumed += 4 + $length;
+            }
         } elseif (Message::TYPE_CAA === $type) {
             if ($rdLength > 3) {
                 list($flag, $tagLength) = array_values(unpack('C*', substr($message->data, $consumed, 2)));
@@ -270,10 +286,28 @@ final class Parser
             return array(null, null);
         }
 
-        return array(implode('.', $labels), $consumed);
+        // use escaped notation for each label part, then join using dots
+        return array(
+            \implode(
+                '.',
+                \array_map(
+                    function ($label) {
+                        return \addcslashes($label, "\0..\40.\177");
+                    },
+                    $labels
+                )
+            ),
+            $consumed
+        );
     }
 
-    private function readLabels($data, $consumed)
+    /**
+     * @param string $data
+     * @param int    $consumed
+     * @param int    $compressionDepth maximum depth for compressed labels to avoid unreasonable recursion
+     * @return array
+     */
+    private function readLabels($data, $consumed, $compressionDepth = 127)
     {
         $labels = array();
 
@@ -291,14 +325,14 @@ final class Parser
             }
 
             // first two bits set? this is a compressed label (14 bit pointer offset)
-            if (($length & 0xc0) === 0xc0 && isset($data[$consumed + 1])) {
+            if (($length & 0xc0) === 0xc0 && isset($data[$consumed + 1]) && $compressionDepth) {
                 $offset = ($length & ~0xc0) << 8 | \ord($data[$consumed + 1]);
                 if ($offset >= $consumed) {
                     return array(null, null);
                 }
 
                 $consumed += 2;
-                list($newLabels) = $this->readLabels($data, $offset);
+                list($newLabels) = $this->readLabels($data, $offset, $compressionDepth - 1);
 
                 if ($newLabels === null) {
                     return array(null, null);

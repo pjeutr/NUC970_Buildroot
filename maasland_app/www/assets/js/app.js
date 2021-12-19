@@ -70,7 +70,7 @@ $().ready(function() {
 // ];
 // console.log(jsonData2);
 
-                    $("#controller_chooser").append($.map(jsonData, function(o) {
+                    $("#controller_chooser").html($.map(jsonData, function(o) {
                         console.log(o);
                       return $('<option>', {
                         class: "list_item", 

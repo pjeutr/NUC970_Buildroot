@@ -33,13 +33,13 @@ class StreamEncryption
             $this->method = \STREAM_CRYPTO_METHOD_TLS_SERVER;
 
             if (\PHP_VERSION_ID < 70200 && \PHP_VERSION_ID >= 50600) {
-                $this->method |= \STREAM_CRYPTO_METHOD_TLSv1_0_SERVER | \STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | \STREAM_CRYPTO_METHOD_TLSv1_2_SERVER;
+                $this->method |= \STREAM_CRYPTO_METHOD_TLSv1_0_SERVER | \STREAM_CRYPTO_METHOD_TLSv1_1_SERVER | \STREAM_CRYPTO_METHOD_TLSv1_2_SERVER; // @codeCoverageIgnore
             }
         } else {
             $this->method = \STREAM_CRYPTO_METHOD_TLS_CLIENT;
 
             if (\PHP_VERSION_ID < 70200 && \PHP_VERSION_ID >= 50600) {
-                $this->method |= \STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT | \STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | \STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+                $this->method |= \STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT | \STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | \STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT; // @codeCoverageIgnore
             }
         }
     }
@@ -49,11 +49,6 @@ class StreamEncryption
         return $this->toggle($stream, true);
     }
 
-    public function disable(Connection $stream)
-    {
-        return $this->toggle($stream, false);
-    }
-
     public function toggle(Connection $stream, $toggle)
     {
         // pause actual stream instance to continue operation on raw stream socket
@@ -61,9 +56,9 @@ class StreamEncryption
 
         // TODO: add write() event to make sure we're not sending any excessive data
 
-        $deferred = new Deferred(function ($_, $reject) use ($toggle) {
-            // cancelling this leaves this stream in an inconsistent state…
-            $reject(new \RuntimeException('Cancelled toggling encryption ' . $toggle ? 'on' : 'off'));
+        // cancelling this leaves this stream in an inconsistent state…
+        $deferred = new Deferred(function () {
+            throw new \RuntimeException();
         });
 
         // get actual stream socket from stream instance
@@ -130,13 +125,13 @@ class StreamEncryption
             if (\feof($socket) || $error === null) {
                 // EOF or failed without error => connection closed during handshake
                 $d->reject(new \UnexpectedValueException(
-                    'Connection lost during TLS handshake',
-                    \defined('SOCKET_ECONNRESET') ? \SOCKET_ECONNRESET : 0
+                    'Connection lost during TLS handshake (ECONNRESET)',
+                    \defined('SOCKET_ECONNRESET') ? \SOCKET_ECONNRESET : 104
                 ));
             } else {
                 // handshake failed with error message
                 $d->reject(new \UnexpectedValueException(
-                    'Unable to complete TLS handshake: ' . $error
+                    $error
                 ));
             }
         } else {
