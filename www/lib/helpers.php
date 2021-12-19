@@ -13,9 +13,9 @@ function mylog($message) {
     //if(true) {
     if(option('debug')) {
     //if(option('debug') && option('env') > ENV_PRODUCTION) {
-        if(php_sapi_name() === 'cli') {
-            echo($message."\n");
-        }
+        // if(php_sapi_name() === 'cli') {
+        //     echo($message."\n");
+        // }
         return error_log($message);
     }
     return null;
@@ -58,7 +58,9 @@ function saveReport($user, $msg, $key = "empty") { //empty => null
     return create_object($report, 'reports', null);
 }
 
-
+/* 
+* Outgoing calls to slave
+*/
 function apiCall($host, $uri) {
     $msg = "dummy";
     if(true) {
@@ -236,5 +238,16 @@ function configDB() {
     option('debug', true);
     option('hardware_version', $hardwareVersion);
     option('session', 'Maasland_Match_App');    
+}
+
+/*
+* Helper to read options from the request (ReactPHP specific)
+* to prevent errors, check if an option exist before reading the value
+*/  
+function readOption($option, $i) {
+    if (array_key_exists($i, $option)) {
+        return $option[$i] ? $option[$i]->getValue() : null;
+    }
+    return null;
 }
 

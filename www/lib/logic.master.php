@@ -85,7 +85,7 @@ function handleInput($from, $input, $keycode) {
     }    
     //save report
     saveReport($actor, $action, keyToHex($keycode));
-    mylog($result);
+    mylog("handleInput result:".$result);
     return array(
         "actor" =>$actor, 
         "controller" => $controller->name, 
@@ -149,12 +149,11 @@ function handleUserAccess($user, $readerId, $controller) {
     }
 
     //APB, if the user is back within APB time, deny access
-    $lastSeen = new DateTime($user->last_seen, new DateTimeZone('Europe/Amsterdam'));
-    //TODO fix timezone mess -getOffset is a hack?
-    $diff =  $now->getTimestamp() - $now->getOffset() - $lastSeen->getTimestamp();
+    $lastSeen = new DateTime($user->last_seen, new DateTimeZone('UTC')); //always calc with UTC
+    $diff =  $now->getTimestamp() - $lastSeen->getTimestamp();
     $apb = find_setting_by_name('apb'); //apb is defined in seconds
     mylog("lastseen=".$lastSeen->format("c")." now=".$now->format("c")." diff=".$diff." seconds");
-    if($diff < $apb) {
+    if($diff < $apb && $diff !== 0) {
         return "APB restriction: no access within ".$diff." seconds, must be longer than ".$apb." seconds";
     }
 
@@ -208,7 +207,8 @@ function handleUserAccess($user, $readerId, $controller) {
 */
 function checkDoorSchedule($door) {
     $tz = find_timezone_by_id($door->timezone_id);
-    mylog($tz);
+    //mylog($door);
+    //mylog($tz);
     mylog("checkDoorSchedule door=".$door->id." tz=".$door->timezone_id);
     if($door->timezone_id) {
         $now = new DateTime();

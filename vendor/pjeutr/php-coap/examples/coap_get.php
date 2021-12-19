@@ -1,12 +1,12 @@
 <?php
 
-require('/maasland_app/vendor/pjeutr/php-coap/src/PhpCoap/functions.php');
+require( __DIR__ . '/../vendor/autoload.php' );
 
 $loop = React\EventLoop\Factory::create();
 
 $client = new PhpCoap\Client( $loop );
 
-$client->get( 'coap://192.168.178.165/status/68', function( $data ) {
+$client->get( 'coap://skynet.im/status', function( $data ) {
 	var_dump( json_decode( $data ));
 } );
 

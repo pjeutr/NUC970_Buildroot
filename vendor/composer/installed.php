@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '4a2e51b2274bd9c19eed64d91f3830ede6f80e48',
+    'reference' => '300eea662c81163fb1b6d9f167a1bf7ad0c0a973',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '4a2e51b2274bd9c19eed64d91f3830ede6f80e48',
+      'reference' => '300eea662c81163fb1b6d9f167a1bf7ad0c0a973',
     ),
     'arrilot/dotenv-php' => 
     array (
@@ -38,15 +38,6 @@
       ),
       'reference' => 'dba36d74ef8303d4e1cf7deca8f2654a07e90083',
     ),
-    'calcinai/rubberneck' => 
-    array (
-      'pretty_version' => 'v0.1.1',
-      'version' => '0.1.1.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '22cbcfd27c2c587f3e3611b18b79ecf6caba4fe7',
-    ),
     'evenement/evenement' => 
     array (
       'pretty_version' => 'v2.1.0',
@@ -65,6 +56,16 @@
         0 => '9999999-dev',
       ),
       'reference' => '8a34b4d347981bbc4b8b57e23e23f7c147185614',
+    ),
+    'pjeutr/php-notify' => 
+    array (
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
+      'aliases' => 
+      array (
+        0 => '9999999-dev',
+      ),
+      'reference' => '6a5e1ef4b4b1a372f2702f6ce05d89634e518393',
     ),
     'psr/http-message' => 
     array (
@@ -93,21 +94,21 @@
     ),
     'react/dns' => 
     array (
-      'pretty_version' => 'v1.1.0',
-      'version' => '1.1.0.0',
+      'pretty_version' => 'v1.8.0',
+      'version' => '1.8.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'a04f6f23ee40afec2e5814ddfbdf71b9e88bbc1f',
+      'reference' => '2a5a74ab751e53863b45fb87e1d3913884f88248',
     ),
     'react/event-loop' => 
     array (
-      'pretty_version' => 'v0.4.3',
-      'version' => '0.4.3.0',
+      'pretty_version' => 'v1.2.0',
+      'version' => '1.2.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '8bde03488ee897dc6bb3d91e4e17c353f9c5252f',
+      'reference' => 'be6dee480fc4692cec0504e65eb486e3be1aa6f2',
     ),
     'react/http-client' => 
     array (
@@ -129,30 +130,30 @@
     ),
     'react/promise-timer' => 
     array (
-      'pretty_version' => 'v1.6.0',
-      'version' => '1.6.0.0',
+      'pretty_version' => 'v1.8.0',
+      'version' => '1.8.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'daee9baf6ef30c43ea4c86399f828bb5f558f6e6',
+      'reference' => '0bbbcc79589e5bfdddba68a287f1cb805581a479',
     ),
     'react/socket' => 
     array (
-      'pretty_version' => 'v1.3.0',
-      'version' => '1.3.0.0',
+      'pretty_version' => 'v1.10.0',
+      'version' => '1.10.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '10f0629ec83ea0fa22597f348623f554227e3ca0',
+      'reference' => 'd132fde589ea97f4165f2d94b5296499eac125ec',
     ),
     'react/stream' => 
     array (
-      'pretty_version' => 'v1.1.1',
-      'version' => '1.1.1.0',
+      'pretty_version' => 'v1.2.0',
+      'version' => '1.2.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '7c02b510ee3f582c810aeccd3a197b9c2f52ff1a',
+      'reference' => '7a423506ee1903e89f1e08ec5f0ed430ff784ae9',
     ),
     'ringcentral/psr7' => 
     array (

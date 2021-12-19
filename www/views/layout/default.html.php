@@ -133,6 +133,18 @@ $flashMessage = flash_now();
                             <p>Icons</p>
                         </a>
                     </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/tests/status.php">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Status test</p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/tests/network.sh">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Network test</p>
+                        </a>
+                    </li>
                     <?php } ?>
 
                 </ul>
@@ -144,7 +156,7 @@ $flashMessage = flash_now();
                     <a class="btn btn-success btn-sm" href="./?/lang/en"><i class="icon-flag-gb"></i> EN</a>                 
                 </div>
                 <div class="sidebar-footer">
-                    Flexess Duo v0.6.0
+                    Flexess Duo v0.6.1
                 </div>
             </div>
         </div>
@@ -277,7 +289,7 @@ $flashMessage = flash_now();
 <script src="/assets/js/plugins/bootstrap-show-password.min.js"></script>
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
-<script src="/assets/js/app.js?3"></script>
+<script src="/assets/js/app.js?4"></script>
 <script type="text/javascript">
     // Content for SweetAlert
     <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>

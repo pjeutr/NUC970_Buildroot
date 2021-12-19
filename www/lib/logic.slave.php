@@ -104,14 +104,13 @@ function activateOutput($outputId, $duration, $gpios) {
     $hasChanged = operateOutput($outputId, 1, $gpios);
     //if the state was not changed, the door was already open. Presumably by the scheduler, or another reader/button
     if($hasChanged) {
-        //TODO React here is too much, need simpeler timout?
-        $loop = React\EventLoop\Factory::create();
+        //get instance for THE eventloop
+        $loop = React\EventLoop\Loop::get();
         $loop->addTimer($duration, function () use ($outputId, $gpios) {
             //close door
             operateOutput($outputId, 0, $gpios);
             mylog('Done'.PHP_EOL);
         });
-        $loop->run();
     }
     return $hasChanged;
 }
@@ -151,6 +150,23 @@ function doFactoryReset() {
         mylog("Factory settings were restored $file...");
     }
 }
+
+/*
+*   Get available controllers to command for the master
+*   -
+*/
+function available_controllers() {
+    $result = mdnsBrowse("_maasland._udp");
+    mylog($result);
+    //Remove master controller
+    $masterIp = mdnsBrowse("_master._sub._maasland._udp")[0][7];
+    $result = array_filter($result, function($v) use($masterIp){ 
+        mylog($v[7] ."". $masterIp);
+        return $v[7] != $masterIp; 
+    });
+    return json($result);
+}
+
 /*
 *   Check if this controller is Master
 *   Slave controllers don't use database and webgui
@@ -175,6 +191,8 @@ function getMasterControllerIP() {
     }
     if( $masterControllerIp == null ) {
         //TODO too errorprone fishing from an array?
+        //["=","eth0","IPv4","FlexessDuo","_maasland._udp","local","FlexessDuo-2.local","192.168.178.179","5683","text"]
+        //3=hostname,7=ip
         $result = mdnsBrowse("_master._sub._maasland._udp");
         mylog(json_encode($result)."\n");
         $masterControllerIp = $result[0][7];
@@ -203,7 +221,7 @@ function getMasterURL() {
 *   $outputId : doors.id in database in accordance with physical connection
 */
 function getDoorGPIO($doorEnum) { 
-    mylog("getDoorGPIO=".$doorEnum);
+    //mylog("getDoorGPIO=".$doorEnum);
     if($doorEnum == "1") return GVAR::$GPIO_DOOR1;
     if($doorEnum == "2") return GVAR::$GPIO_DOOR2;
     return 0;
@@ -262,7 +280,7 @@ function setGPIO($gpio, $state) {
 }
 function getGPIO($gpio) {
     $v = exec("cat /sys/class/gpio/gpio".$gpio."/value");
-    mylog("getGPIO ".$gpio."=".$v);
+    //mylog("getGPIO ".$gpio."=".$v);
     return $v;
 }
 function initGPIO($gpio, $out = true) {

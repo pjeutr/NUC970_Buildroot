@@ -3,11 +3,15 @@
         {
             "type": "git",
             "url": "https://github.com/pjeutr/php-coap"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/pjeutr/php-notify"
         }
     ], 
     "require": {
-	"pjeutr/php-coap": "dev-master",
-        "calcinai/rubberneck": "^0.1.1",
+        "pjeutr/php-coap": "dev-master",
+        "pjeutr/php-notify": "dev-master",
         "react/promise": "^2.8",
         "react/http-client": "^0.5.11",
         "arrilot/dotenv-php": "^2.0"
