@@ -14,6 +14,9 @@
 * coap-client -m get coap://192.168.178.137/activate/1/2 = Door 1 for 2 seconds
 * coap-client -m get coap://192.168.178.139/activate/2/5/3-11 = Door 2 all leds and buzzer for 5 seconds
 *
+* curl http://192.168.178.179/?/api/activate/1/2/2-10
+* curl http://192.168.178.179/?/api/input/1/3333
+*
 * TODO user auth?
 * coap-client -m get -u maaslnd -k WGH coap://slave/activate/2/5/2-10-66-79
 */
@@ -21,6 +24,7 @@ require_once '/maasland_app/www/lib/helpers.php';
 require_once '/maasland_app/vendor/autoload.php';
 require_once '/maasland_app/www/lib/limonade.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
+require_once '/maasland_app/vendor/arrilot/dotenv-php/src/DotEnv.php';
 
 //configure and initialize gpio 
 echo configureGPIO();

@@ -4,7 +4,7 @@
 *   contains software to hardware tranlations
 */
 
-class GVAR2
+class GVAR
 {
     //error_log("Load gpio voor Match board");
     public static $BOARD_TYPE = "Match2: Dev1";

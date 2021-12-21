@@ -7,6 +7,7 @@ require_once '/maasland_app/www/lib/db.php';
 require_once '/maasland_app/www/lib/helpers.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
 require_once '/maasland_app/www/lib/logic.master.php';
+require_once '/maasland_app/vendor/arrilot/dotenv-php/src/DotEnv.php';
 //load models for used db methods
 require_once '/maasland_app/www/lib/model.report.php';
 require_once '/maasland_app/www/lib/model.user.php';
@@ -15,12 +16,17 @@ require_once '/maasland_app/www/lib/model.door.php';
 require_once '/maasland_app/www/lib/model.controller.php';
 require_once '/maasland_app/www/lib/model.timezone.php';
 
+//configure and initialize gpio 
+echo configureGPIO();
+
 //Quit quickly if not master, listener check is also not possible
+//TODO, don't start on slave so we don't need this (Run cron through React?)
 if( !checkIfMaster() ) {
 	mylog("Stop Cron, this controller is not master");
 	exit();
 }
 
+//initialize database connection
 configDB();
 
 $now = new DateTime();

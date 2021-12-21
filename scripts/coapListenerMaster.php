@@ -67,7 +67,7 @@ $inputObserver->onModify(function($file_name) use ($loop){
 });
 
 //listen voor gpio inputs
-global $inputArray;
+$inputArray = getInputArray();
 foreach ($inputArray as $value) {
 	mylog("inputObserver init:". $value ." \n");
     $inputObserver->watch($value);
@@ -92,6 +92,7 @@ $server->on( 'request', function( $req, $res, $handler ) {
 
 	switch ($type) {
 	    case 'input':
+	    case 'in':
 	        $from = $handler->getPeerHost();
 			$input = readOption($o,1);
 			$keycode = readOption($o,2);
