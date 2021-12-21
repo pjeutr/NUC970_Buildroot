@@ -4,19 +4,8 @@
 *   contains software to hardware tranlations
 */
 
-//web loads dynamically scripts need this manualy set
-require_once '/maasland_app/www/lib/gvar.match2.php';
-require_once '/maasland_app/www/lib/gvar.match4.php';
-
-//get $masterControllerIp global so we can save it between requests
-$masterControllerIp = getMasterControllerIP();
-
-if(false) {
-    //include "gvar.match2.php";
-
-} else {
-    //include "gvar.match4.php";
-}
+//get $masterControllerIp global so we can cache it between requests
+$masterControllerIp = null;
 
 function outputs() {
     return [
@@ -33,15 +22,16 @@ function inputs() {
     ];
 }
 
-$inputArray = [
-    1 => "/sys/class/gpio/gpio".GVAR::$GPIO_MASTER."/value",
-    2 => "/sys/class/gpio/gpio".GVAR::$GPIO_FIRMWARE."/value",
-    3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
-    4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
-    5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
-    6 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS2."/value"
-];
-
+function getInputArray() {
+    return [
+        1 => "/sys/class/gpio/gpio".GVAR::$GPIO_MASTER."/value",
+        2 => "/sys/class/gpio/gpio".GVAR::$GPIO_FIRMWARE."/value",
+        3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
+        4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
+        5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
+        6 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS2."/value"
+    ];
+}
 /*
 *   Slaveside methods, also used by the master.
 *   - has knowledge which GPIO's belong to what
@@ -234,7 +224,7 @@ function getDoorGPIO($doorEnum) {
 *   5,6 door sensor
 */
 function resolveInput($gpioPath) {    
-    global $inputArray;
+    $inputArray = getInputArray();
     return array_search($gpioPath,$inputArray);
     //if($gpioPath == "/sys/class/gpio/gpio170/value") return 3;
     //if($gpioPath == "/sys/class/gpio/gpio169/value") return 4;
@@ -252,6 +242,24 @@ function getInputValue($gpioPath) {
 *   GPIO helper functions 
 */
 function configureGPIO() {
+    //Read env file
+    Arrilot\DotEnv\DotEnv::load('/maasland_app/www/.env.php'); 
+    $debug = Arrilot\DotEnv\DotEnv::get('APP_DEBUG', false);
+    $logLevel = Arrilot\DotEnv\DotEnv::get('APP_LOG_LEVEL', false);
+    $hardwareVersion = Arrilot\DotEnv\DotEnv::get('HARDWARE_VERSION', false);
+    option('debug', isset($debug));
+    option('log_level', $logLevel);
+    option('hardware_version', $hardwareVersion);
+    option('session', 'Maasland_Match_App');  
+
+    //web loads dynamically scripts need to set this manualy
+    mylog("H=".$hardwareVersion);
+    if($hardwareVersion == 1) {
+        require_once '/maasland_app/www/db/gvar.match2.php';
+    } else {
+        require_once '/maasland_app/www/db/gvar.match4.php';
+    }
+
     //init inputs and outputs
     foreach (outputs() as $gpio) {
         initGPIO($gpio);
@@ -262,7 +270,12 @@ function configureGPIO() {
     mylog("Activate wiegand readers");
     setGPIO(GVAR::$OUT12V_PIN, 1);
     setGPIO(GVAR::$RUNNING_LED, 1);
-    
+
+    //TODO fill cache?
+    //global $inputArray?
+    //we need it, might as well get it already
+    getMasterControllerIP();
+
     return "Board identified as :".GVAR::$BOARD_TYPE.
         "GPIOInputs initialized: Controller configured as ".
         (checkIfMaster() ? "Master" : "Slave")."\n";

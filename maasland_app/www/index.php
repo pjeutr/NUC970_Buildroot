@@ -4,43 +4,14 @@ require_once('lib/limonade.php');
 require_once 'lib/i18n.class.php';
 require_once 'lib/helpers.php';
 require_once '/maasland_app/vendor/autoload.php';
-use Arrilot\DotEnv\DotEnv;
+require_once '/maasland_app/www/lib/logic.slave.php';
 
 function configure() {
-    //Read env file
-    DotEnv::load('.env.php'); 
-    $debug = DotEnv::get('APP_DEBUG', false);
-    $development = DotEnv::get('APP_DEVELOPMENT', false);
-    mylog("Env debug=".$debug." development=".$development);
+    //configure and initialize gpio 
+    configureGPIO();
 
-    $env = $development ? ENV_DEVELOPMENT : ENV_PRODUCTION;
-    $dsn = $env == ENV_PRODUCTION ? 'sqlite:db/prod.db' : 'sqlite:db/dev.db';
-    mylog(json_encode($dsn));
-    $db = new PDO($dsn);
-
-    /* DB in Memory 
-    -- needs more work, db is not persistent, 
-    - a change initiates db clone
-    - 
-    $db = new PDO('sqlite::memory:');
-    //$db = new PDO($dsn, null, null, array(PDO::ATTR_PERSISTENT => true));
-    //$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
-    $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-
-    $sql = "/maasland_app/www/db/schema.sql";
-    try {
-      $db->exec(file_get_contents($sql));
-      $db->query("/maasland_app/www/db/data.sql");
-    } catch (Exception $e) {
-        var_dump($e);
-        exit;
-    }
-  */
-    option('env', $env);
-    option('dsn', $dsn);
-    option('db_conn', $db);
-    option('debug', true);
-    option('session', 'Maasland_Match_App');
+    //initialize database connection
+    configDB();
 }
 
 function before($route = array())

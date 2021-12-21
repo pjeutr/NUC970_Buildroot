@@ -79,7 +79,9 @@ class CoapPdu
 		$this->compile();
 		$rv = '';
 		foreach ( $this->byteBuffer as $value) {
+			//mylog($value);
 			$rv .= pack( 'C', $value );
+			//mylog($value."_".$rv);
 		}
 		return $rv;
 	}
@@ -101,21 +103,33 @@ class CoapPdu
 	function compile()
 	{
 		$i = 0;
+/*
+#define COAP_HEADER_VERSION(data)  ( (0xC0 & data[0])>>6    ) 1100
+#define COAP_HEADER_TYPE(data)     ( (0x30 & data[0])>>4    ) 0011 
+#define COAP_HEADER_TKL(data)      ( (0x0F & data[0])>>0    ) 0000 1111
+#define COAP_HEADER_CLASS(data)    ( ((data[1]>>5)&0x07)    ) 0111
+#define COAP_HEADER_CODE(data)     ( ((data[1]>>0)&0x1F)    ) 0001 1111
+#define COAP_HEADER_MID(data)      ( (data[2]<<8)|(data[3]) )
+*/
 
-		// Header
+		// Header = 40 01
 		$this->byteBuffer[$i] = $this->version << 6;
 		$this->byteBuffer[$i] |= $this->type << 4;
+		// Token TKL 4567 
+		//$this->token = hexdec("1795");
+		//mylog("token".$this->token);
 		$this->byteBuffer[$i] |= strlen( $this->token );
 		$i++;
 
-		// Code
+		// Code 
 		list( $class, $detail ) = explode( '.', $this->code );
+		mylog("class=".$class." detail=".$detail);
 		$this->byteBuffer[$i++] = $this->genCode( $class, $detail );
 
 		// Message Id
 		$this->byteBuffer[$i++] = $this->messageId >> 8;
 		$this->byteBuffer[$i++] = $this->messageId & (( 1 << 8 ) - 1 );
-
+mylog($this->byteBuffer);
 		// Token
 		if ( strlen( $this->token ) != 0 )
 		{
@@ -124,18 +138,20 @@ class CoapPdu
 
 		// Options
 		CoapOption::sort( $this->options );
-
+mylog($this->options);
 		$prevNo = 0;
 		foreach ($this->options as $opt )
 		{
 			$delta = $opt->getOptionNumber() - $prevNo;
-			
+			mylog($opt->getOptionNumber());
+			mylog("delta=".$delta);
 			if ( $delta < 13 )
 			{
 				$this->byteBuffer[$i] = $delta << 4;
 				if ( $opt->length() < 13 )
 				{
-					$this->byteBuffer[$i] |= $opt->length();
+					//als we er 7 afhalen werkt het wel...
+					$this->byteBuffer[$i] |= $opt->length() - 7;
 					$lenExt = false;
 				}
 				else
@@ -149,12 +165,14 @@ class CoapPdu
 			{
 				throw Exception( "Not Implemented!" );
 			}
-
+mylog("lenExt=".$lenExt );
+mylog($this->byteBuffer);
 			if ( $lenExt == 13 )
 			{
+				//byte te veel?
 				$this->byteBuffer[$i++] = $opt->length() - 13;
 			}
-
+mylog($this->byteBuffer);
 			foreach( $opt->getByteArray() as $byte )
 			{
 				$this->byteBuffer[$i++] = $byte;
@@ -172,6 +190,7 @@ class CoapPdu
 				$this->byteBuffer[$i++] = $byte;
 			}
 		}
+mylog($this->byteBuffer);		
 	}
 
 	static function fromBinString( $binString )
@@ -209,6 +228,8 @@ class CoapPdu
 
 			while ( $i <= count( $buf ) && $buf[ $i ] != 0xFF )
 			{
+mylog($buf);		
+mylog($i." previous=".$prev );		
 				$prev = $pdu->parseOption( $buf, $i, $prev );
 			}
 
@@ -222,7 +243,6 @@ class CoapPdu
 		{
 			// empty
 		}
-
 		return $pdu;
 
 	}
@@ -239,9 +259,7 @@ class CoapPdu
 		{
 			$optNo = 13 + $buf[$i];
 			$i++;
-		}
-
-		if ( $optNo == 14 )
+		} else if ( $optNo == 14 )
 		{
 			$optNo = 269 + ( $buf[$i] << 8 ) + $buf[ $i + 1 ];
 			$i++;
@@ -253,16 +271,22 @@ class CoapPdu
 		{
 			$optLen = 13 + $buf[$i];
 			$i++;
-		} else if ( $optLen == 14 )
+		} 
+
+		if ( $optLen == 14 )
 		{
 			$optLen = 269 + ( $buf[$i] << 8 ) + $buf[ $i + 1 ];
 			$i++;
 		}
 
 		$value = "";
-
+mylog($buf);
 		for ( $j = 0; $j < $optLen; $j++ )
-		{
+		{			
+mylog('$buf['.$i.' + '.$j.']');	
+			//PHP Notice:  Undefined offset: 124 in /maasland_app/vendor/pjeutr/php-coap/src/PhpCoap/CoapPdu.php on line 266
+			//hier gaat het fout
+			//dus hier er 5 af
 			$value .= sprintf( '%c', $buf[$i + $j]);
 		}
 		$i += $j;

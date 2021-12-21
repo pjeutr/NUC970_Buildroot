@@ -10,8 +10,11 @@ $tz = "Europe/Amsterdam";
 function mylog($message) {
     //add milliseconds timestamp for 'permance' profiling
     $message = mdate('H:i:s-u')."_".json_encode($message);
-    //if(true) {
-    if(option('debug')) {
+
+    //$debug = option('debug');
+    //error_log("debug=".option('debug')." log_level=".option('log_level'));
+
+    if( option('debug') ) {
     //if(option('debug') && option('env') > ENV_PRODUCTION) {
         // if(php_sapi_name() === 'cli') {
         //     echo($message."\n");
@@ -217,13 +220,9 @@ function mdate($format = 'u', $utimestamp = null) {
 */
 //configDB, keep it the same as in configure index.php
 function configDB() {
-    //Read env file
-    Arrilot\DotEnv\DotEnv::load('/maasland_app/www/.env.php'); 
-    $debug = Arrilot\DotEnv\DotEnv::get('APP_DEBUG', false);
     $development = Arrilot\DotEnv\DotEnv::get('APP_DEVELOPMENT', false);
-    $hardwareVersion = Arrilot\DotEnv\DotEnv::get('HARDWARE_VERSION', false);
 
-    mylog("Env debug=".$debug." development=".$development);
+    mylog("Env debug=".option('debug')." development=".$development);
 
     $env = $development ? ENV_DEVELOPMENT : ENV_PRODUCTION;
     $dsn = $env == ENV_PRODUCTION ? 'sqlite:/maasland_app/www/db/prod.db' : 'sqlite:/maasland_app/www/db/dev.db';
@@ -232,12 +231,29 @@ function configDB() {
     $db = new PDO($dsn);
     //$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
     $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+    /* DB in Memory 
+    -- needs more work, db is not persistent, 
+    - a change initiates db clone
+    - 
+    $db = new PDO('sqlite::memory:');
+    //$db = new PDO($dsn, null, null, array(PDO::ATTR_PERSISTENT => true));
+    //$db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
+    $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
+    $sql = "/maasland_app/www/db/schema.sql";
+    try {
+      $db->exec(file_get_contents($sql));
+      $db->query("/maasland_app/www/db/data.sql");
+    } catch (Exception $e) {
+        var_dump($e);
+        exit;
+    }
+    */
+
     option('env', $env);
     option('dsn', $dsn);
-    option('db_conn', $db);
-    option('debug', true);
-    option('hardware_version', $hardwareVersion);
-    option('session', 'Maasland_Match_App');    
+    option('db_conn', $db);   
 }
 
 /*
