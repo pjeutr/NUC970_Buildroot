@@ -7,7 +7,7 @@ require_once '/maasland_app/www/lib/db.php';
 require_once '/maasland_app/www/lib/helpers.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
 require_once '/maasland_app/www/lib/logic.master.php';
-require_once '/maasland_app/vendor/arrilot/dotenv-php/src/DotEnv.php';
+require_once '/maasland_app/vendor/pjeutr/dotenv-php/src/DotEnv.php';
 //load models for used db methods
 require_once '/maasland_app/www/lib/model.report.php';
 require_once '/maasland_app/www/lib/model.user.php';

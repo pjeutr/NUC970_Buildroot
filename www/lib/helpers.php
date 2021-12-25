@@ -9,7 +9,7 @@ $tz = "Europe/Amsterdam";
 //Custom log
 function mylog($message) {
     //add milliseconds timestamp for 'permance' profiling
-    $message = mdate('H:i:s-u')."_".json_encode($message);
+    $message = mdate('H:i:s-u')."_".(is_string($message) ? $message : json_encode($message));
 
     //$debug = option('debug');
     //error_log("debug=".option('debug')." log_level=".option('log_level'));
@@ -66,7 +66,7 @@ function saveReport($user, $msg, $key = "empty") { //empty => null
 */
 function apiCall($host, $uri) {
     $msg = "dummy";
-    if(true) {
+    if(false) {
         $url = "http://".$host."/?/api/".$uri;
         mylog("apiCall:".$url);
         //$msg = file_get_contents($url);
@@ -77,18 +77,28 @@ function apiCall($host, $uri) {
         $request = $client->request('GET', $url);
         $request->on('response', function ( $response ) {
             $response->on('data', function ( $data ) {
-                mylog("apiCall return=".json_encode($data));
+                mylog("apiCall return=".$data);
                 return $data;
             });
         });
         $request->end();
         $loop->run();
     } else {
-        $cmd = "coap-client -m get coap://".$host."/".$uri;
-        mylog("coapCall:".$cmd);
-        //TODO hangs here shell_exec alternative
-        $msg = shell_exec($cmd);//." 2>/dev/null &");
-        mylog("shell_exec returns");
+        // $cmd = "coap-client -m get coap://".$host."/".$uri;
+        // mylog("coapCall:".$cmd);
+        // //TODO hangs here shell_exec alternative
+        // $msg = shell_exec($cmd);//." 2>/dev/null &");
+        // mylog("shell_exec returns");
+
+        $url = "coap://".$host."/".str_replace('/','_',$uri);
+        mylog("coapCall:".$url);
+        //request
+        $loop = React\EventLoop\Loop::get();
+        $client = new PhpCoap\Client\Client( $loop );
+        $client->get($url, function( $data ) {
+            mylog("coapCall return=".$data);
+            return $data;
+        });        
     }
     return $msg;    
 }

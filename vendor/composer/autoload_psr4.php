@@ -18,5 +18,5 @@ return array(
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'Pjeutr\\PhpNotify\\' => array($vendorDir . '/pjeutr/php-notify/src/PhpNotify'),
     'Brunty\\Cigar\\' => array($vendorDir . '/brunty/cigar/src'),
-    'Arrilot\\DotEnv\\' => array($vendorDir . '/arrilot/dotenv-php/src'),
+    'Arrilot\\DotEnv\\' => array($vendorDir . '/pjeutr/dotenv-php/src'),
 );

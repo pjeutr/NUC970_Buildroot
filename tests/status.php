@@ -11,6 +11,8 @@ require_once '/maasland_app/www/lib/db.php';
 require_once '/maasland_app/www/lib/helpers.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
 
+echo configureGPIO();
+
 echo "\nMaster=". getGPIO(GVAR::$GPIO_MASTER)." => ".(checkIfMaster() ? "Master" : "Slave");
 echo "\nVoltage=". getGPIO(GVAR::$OUT12V_PIN);
 echo "\nBuzzer=". getGPIO(GVAR::$BUZZER_PIN);

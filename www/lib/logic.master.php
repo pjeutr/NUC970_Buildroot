@@ -241,9 +241,9 @@ function checkDoorSchedule($door) {
 function openDoor($door, $controller) {
     $duration=find_setting_by_name("door_open");
     $soundBuzzer=find_setting_by_name("sound_buzzer");
-    mylog("\nDoor=".json_encode($door));
-    mylog("\nCon=".json_encode($controller));
-    mylog("\nOpen Door ".$door->id." cid=".$controller->id." duration=".$duration." sound_buzzer=".$soundBuzzer);
+    mylog("Door=".json_encode($door));
+    mylog("Cont=".json_encode($controller));
+    mylog("Open Door ".$door->id." cid=".$controller->id." duration=".$duration." sound_buzzer=".$soundBuzzer);
 
     $gpios = array();
     //aggegrate gpios to switch on/off

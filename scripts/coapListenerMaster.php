@@ -87,15 +87,21 @@ $server->receive( 5683, '0.0.0.0' );
 
 $server->on( 'request', function( $req, $res, $handler ) {
 	$o = $req->GetOptions();
-	$type = readOption($o,0);
+	$url = basename(readOption($o,0));
+	mylog("url=".$url);
+	// $path = explode('_',$url);
+	// $type = $path[0];
+	// $input = $path[1];
+	// $keycode = $path[2];
+	// does the same as above, but also checks if 1 and 2 are empty and replaces them with o
+	list($type, $input, $keycode) = explode("_", $url . '_0_0');
 	$result = 'dummy';
+	mylog($type." input=".$input." keycode=".$keycode);
 
 	switch ($type) {
 	    case 'input':
-	    case 'in':
+	    case 'x':
 	        $from = $handler->getPeerHost();
-			$input = readOption($o,1);
-			$keycode = readOption($o,2);
 			mylog("coapServer: input=".$input." data=".$keycode);
 			$result = handleInput($from, $input, $keycode);
 			mylog("coapServer result=".json($result));

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitbd67efe6440c05f8b2f6a9c4cafbccb4
+class ComposerStaticInit83231cb9ca8161fe5767b4a96e0560f6
 {
     public static $files = array (
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
@@ -92,7 +92,7 @@ class ComposerStaticInitbd67efe6440c05f8b2f6a9c4cafbccb4
         ),
         'Arrilot\\DotEnv\\' => 
         array (
-            0 => __DIR__ . '/..' . '/arrilot/dotenv-php/src',
+            0 => __DIR__ . '/..' . '/pjeutr/dotenv-php/src',
         ),
     );
 
@@ -120,10 +120,10 @@ class ComposerStaticInitbd67efe6440c05f8b2f6a9c4cafbccb4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitbd67efe6440c05f8b2f6a9c4cafbccb4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitbd67efe6440c05f8b2f6a9c4cafbccb4::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitbd67efe6440c05f8b2f6a9c4cafbccb4::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitbd67efe6440c05f8b2f6a9c4cafbccb4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit83231cb9ca8161fe5767b4a96e0560f6::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit83231cb9ca8161fe5767b4a96e0560f6::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit83231cb9ca8161fe5767b4a96e0560f6::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit83231cb9ca8161fe5767b4a96e0560f6::$classMap;
 
         }, null, ClassLoader::class);
     }
