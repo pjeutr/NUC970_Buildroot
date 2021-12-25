@@ -10,8 +10,8 @@
 */
 
 return [
-    'APP_DEBUG' => false,
-    'APP_DEVELOPMENT' => true,
+    'APP_DEBUG' => true,
+    'APP_DEVELOPMENT' => false,
     'APP_LOG_LEVEL' => 1,
     'HARDWARE_VERSION' => 2, 
 ];

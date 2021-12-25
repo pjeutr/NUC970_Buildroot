@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '300eea662c81163fb1b6d9f167a1bf7ad0c0a973',
+    'reference' => '9226a4b3ee8f03744e9e173cc64e386f5bd73a67',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,16 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '300eea662c81163fb1b6d9f167a1bf7ad0c0a973',
-    ),
-    'arrilot/dotenv-php' => 
-    array (
-      'pretty_version' => '2.0.0',
-      'version' => '2.0.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '9ff3403b73231e99a7dd75b1976f57d32bc7fda1',
+      'reference' => '9226a4b3ee8f03744e9e173cc64e386f5bd73a67',
     ),
     'brunty/cigar' => 
     array (
@@ -47,6 +38,16 @@
       ),
       'reference' => '6ba9a777870ab49f417e703229d53931ed40fd7a',
     ),
+    'pjeutr/dotenv-php' => 
+    array (
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
+      'aliases' => 
+      array (
+        0 => '9999999-dev',
+      ),
+      'reference' => 'd18818073fd3abd1849ccd698fd3d6c00f5f1858',
+    ),
     'pjeutr/php-coap' => 
     array (
       'pretty_version' => 'dev-master',
@@ -55,7 +56,7 @@
       array (
         0 => '9999999-dev',
       ),
-      'reference' => '8a34b4d347981bbc4b8b57e23e23f7c147185614',
+      'reference' => 'b47315edb2b4eac33038b5474282cca505a1ab99',
     ),
     'pjeutr/php-notify' => 
     array (
@@ -65,7 +66,7 @@
       array (
         0 => '9999999-dev',
       ),
-      'reference' => '6a5e1ef4b4b1a372f2702f6ce05d89634e518393',
+      'reference' => 'ca1165240cc9217c496e5629b139646d0cdae7e4',
     ),
     'psr/http-message' => 
     array (
@@ -94,12 +95,12 @@
     ),
     'react/dns' => 
     array (
-      'pretty_version' => 'v1.8.0',
-      'version' => '1.8.0.0',
+      'pretty_version' => 'v1.9.0',
+      'version' => '1.9.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '2a5a74ab751e53863b45fb87e1d3913884f88248',
+      'reference' => '6d38296756fa644e6cb1bfe95eff0f9a4ed6edcb',
     ),
     'react/event-loop' => 
     array (

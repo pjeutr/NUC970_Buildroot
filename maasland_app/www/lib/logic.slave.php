@@ -247,7 +247,7 @@ function configureGPIO() {
     $debug = Arrilot\DotEnv\DotEnv::get('APP_DEBUG', false);
     $logLevel = Arrilot\DotEnv\DotEnv::get('APP_LOG_LEVEL', false);
     $hardwareVersion = Arrilot\DotEnv\DotEnv::get('HARDWARE_VERSION', false);
-    option('debug', isset($debug));
+    option('debug', $debug);
     option('log_level', $logLevel);
     option('hardware_version', $hardwareVersion);
     option('session', 'Maasland_Match_App');  

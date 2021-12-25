@@ -7,6 +7,7 @@
 * - harder to read/test
 * - not sure Master resources are loaded on Slave
 *
+* coap-client -m get coap://192.168.178.179/input/1/2310811
 * coap-client -m get coap://192.168.178.179/input/1/3333
 * coap-client -m get coap://192.168.178.137/status/66-68 = print button status 
 * coap-client -m get coap://192.168.178.137/output/2/1 = Door 2 for open
@@ -24,7 +25,7 @@ require_once '/maasland_app/www/lib/helpers.php';
 require_once '/maasland_app/vendor/autoload.php';
 require_once '/maasland_app/www/lib/limonade.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
-require_once '/maasland_app/vendor/arrilot/dotenv-php/src/DotEnv.php';
+require_once '/maasland_app/vendor/pjeutr/dotenv-php/src/DotEnv.php';
 
 //configure and initialize gpio 
 echo configureGPIO();
