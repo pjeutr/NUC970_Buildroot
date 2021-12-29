@@ -1,6 +1,6 @@
 <?php 
 set('id', 2);
-set('title', 'Groups');
+set('title', L("groups"));
 ?>
 
 <div class="content">
@@ -81,7 +81,7 @@ set('title', 'Groups');
                                         <input type="hidden" name="rule[group_id]" value="<?= $group->id ?>"> 
                                         <div class="row">  
                                             <div class="col-sm-4 form-group">
-                                            <label>Door:</label>
+                                            <label><?php echo L::door; ?>:</label>
                                               <select name="rule[door_id]" class="selectpicker" id="rule_door_id"
                                                 data-title="Choose a door" data-style="btn-default btn-outline">
                                                 <?php
@@ -92,7 +92,7 @@ set('title', 'Groups');
                                               </select>    
                                             </div>
                                             <div class="col-sm-4 form-group">
-                                            <label>Timezone:</label>
+                                            <label><?php echo L::timezone; ?>:</label>
                                               <select name="rule[timezone_id]" class="selectpicker" id="rule_timezone_id"
                                                 data-title="Choose a timezone" data-style="btn-default btn-outline">
                                                 <?php
@@ -104,7 +104,7 @@ set('title', 'Groups');
                                             </div>
                                             <div class="col-sm-4 form-group mt-4">
                                                 <button type="submit" class="btn btn-link text-success">
-                                                  <i class="fa fa-edit"></i> New Rule
+                                                  <i class="fa fa-edit"></i> <?php echo L::button_newrule; ?>
                                                 </button>
                                             </div>
                                         </div>

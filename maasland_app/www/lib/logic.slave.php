@@ -185,10 +185,13 @@ function getMasterControllerIP() {
         //3=hostname,7=ip
         $result = mdnsBrowse("_master._sub._maasland._udp");
         mylog(json_encode($result)."\n");
-        $masterControllerIp = $result[0][7];
+        
+        if(isset($result[0][7])) {
+            $masterControllerIp = $result[0][7];
+        }
         if(empty($masterControllerIp)) {
             die ("ERROR: Master Controller not found :".json_encode($result)."\n");
-            //TODO restart coap_listener.php
+            //refreshing the page, till it's active?
         }
         return $masterControllerIp;
     } else {

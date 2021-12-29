@@ -17,7 +17,7 @@ if(! isset($id)) {
 
 //Calculate time for js clock
 $serverTime =  time() * 1000;
-$timezone = date('O'); //+0200
+$timezone = date('2'); //+0200
 
 //check error message
 $flashMessage = flash_now();
@@ -40,13 +40,14 @@ $flashMessage = flash_now();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.1a" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="/assets/css/app.css?5" rel="stylesheet" />
+    <link href="/assets/css/app.css?6" rel="stylesheet" />
     <script type="text/javascript">
         //calculate clock with php server time
         var serverTime = <?php echo $serverTime;?>,
             timezone = "<?php echo $timezone;?>",
             timeDiff = serverTime - Date.now();
 
+        console.log(serverTime+"-"+timezone+"-"+timeDiff);
         setInterval(function () {
           serverClock.innerHTML= moment().add(timeDiff).zone(timezone).format('DD-MM-Y H:mm:ss');
         }, 1000);
@@ -97,19 +98,19 @@ $flashMessage = flash_now();
                     <li <?php echo ($id == 4) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/timezones">
                             <i class="nc-icon nc-watch-time"></i>
-                            <p>Timezones</p>
+                            <p><?php echo L::timezones; ?></p>
                         </a>
                     </li>
                     <li <?php echo ($id == 5) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/reports">
                             <i class="nc-icon nc-notes"></i>
-                            <p>Reports</p>
+                            <p><?php echo L::reports; ?></p>
                         </a>
                     </li>
                     <li <?php echo ($id == 7) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/settings">
                             <i class="nc-icon nc-settings-gear-64"></i>
-                            <p>Settings</p>
+                            <p><?php echo L::settings; ?></p>
                         </a>
                     </li>
 
@@ -151,12 +152,25 @@ $flashMessage = flash_now();
                 <div class="sidebar-footer">
                 	<?=  L::language ?><br/>
                 	<!--- https://github.com/tkrotoff/famfamfam_flags --->
-                    <a class="btn btn-success btn-sm active" href="./?/lang/nl"><i class="icon-flag-nl"></i> NL</a>
-                    <a class="btn btn-success btn-sm" href="./?/lang/fr"><i class="icon-flag-fr"></i> FR</a>
-                    <a class="btn btn-success btn-sm" href="./?/lang/en"><i class="icon-flag-gb"></i> EN</a>                 
+
+                    <?php
+                        $fr = "";
+                        $en = "";
+                        $nl = "";
+                        if($_SESSION["lang"]=="nl") { 
+                            $nl = "active";
+                        } elseif($_SESSION["lang"]=="fr") {
+                            $fr = "active";
+                        } else {
+                            $en = "active";
+                        }
+                    ?>
+                    <a class="btn btn-success btn-sm <?= $nl ?>" href="./?/lang/nl"><i class="icon-flag-nl"></i> NL</a>
+                    <a class="btn btn-success btn-sm <?= $fr ?>" href="./?/lang/fr"><i class="icon-flag-fr"></i> FR</a>
+                    <a class="btn btn-success btn-sm <?= $en ?>" href="./?/lang/en"><i class="icon-flag-gb"></i> EN</a>                
                 </div>
                 <div class="sidebar-footer">
-                    Flexess Duo v0.6.1
+                    Flexess Duo v0.7.1
                 </div>
             </div>
         </div>
@@ -289,7 +303,7 @@ $flashMessage = flash_now();
 <script src="/assets/js/plugins/bootstrap-show-password.min.js"></script>
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
-<script src="/assets/js/app.js?4"></script>
+<script src="/assets/js/app.js?6"></script>
 <script type="text/javascript">
     // Content for SweetAlert
     <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>

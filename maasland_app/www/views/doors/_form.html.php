@@ -10,14 +10,14 @@
   <input type="hidden" name="_method" id="_method" value="<?php echo $method ?>" />
 
   <div class="form-group">
-    <label>Door name:</label>
-    <input type="text" class="form-control" name="door[name]" id="door_name" value="<?php echo h($door->name) ?>" placeholder="Enter a name"/>
+    <label><?php echo L::name; ?>:</label>
+    <input type="text" class="form-control" name="door[name]" id="door_name" value="<?php echo h($door->name) ?>" placeholder="<?php echo L::generic_sub." ".L::name; ?>"/>
   </div>
 
     <div class="form-group">
-        <label>Timezone:</label>
+        <label><?php echo L::timezone; ?>:</label>
         <select name="door[timezone_id]" class="selectpicker" id="rule_timezone_id"
-        data-title="Take care! The door will automatically open at chosen timezone" data-style="btn-default btn-outline">
+        data-title="<?php echo L::timezone_warning; ?>" data-style="btn-default btn-outline">
         <option value=""></option>
         <?php
             foreach ($timezones as $tz) {
@@ -25,12 +25,12 @@
             }
         ?>
         </select>    
-        <small id="codeHelp" class="form-text text-muted">The door will automatically open at chosen timezone</small>
+        <small id="codeHelp" class="form-text text-muted"><?php echo L::timezone_remark; ?></small>
     </div>
 
-    <?php echo buttonLink_to('Cancel', 'doors'), "\n" ?>
+    <?php echo buttonLink_to(L::button_cancel, 'doors'), "\n" ?>
     <button type="submit" class="btn btn-success">
-        <i class="fa fa-save"></i> Save
+        <i class="fa fa-save"></i> <?php echo L::button_save; ?>
     </button>
 </form>
 

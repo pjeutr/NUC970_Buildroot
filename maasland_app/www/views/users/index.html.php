@@ -1,6 +1,6 @@
 <?php 
 set('id', 1);
-set('title', 'Users');
+set('title', L("users"));
 ?>
 
 <div class="content">
@@ -9,18 +9,18 @@ set('title', 'Users');
             <div class="col-xs-12 col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                    	<?= iconLink_to('New user', 'users/new', 'btn-outline', 'fa-user') ?>
+                    	<?= iconLink_to(L::button_new." ".L::user, 'users/new', 'btn-outline', 'fa-user') ?>
                     </div>
                     <div class="card-body table-responsive">
                         <table class="table table-hover table-striped">
                             <thead>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Keycode</th>
-                                <th>Group</th>
-                                <th>Visits</th>
-                                <th>Last seen</th>
-                                <th>Action</th>
+                                <th><?=  L("id"); ?></th>
+                                <th><?=  L("name"); ?></th>
+                                <th><?=  L("key"); ?></th>
+                                <th><?=  L("group"); ?></th>
+                                <th><?=  L("visits"); ?></th>
+                                <th><?=  L("lastseen"); ?></th>
+                                <th><?=  L("action"); ?></th>
                             </thead>
                             <tbody>
                                 <?php foreach ($users as $row) { ?>
@@ -31,9 +31,9 @@ set('title', 'Users');
                                     <td><?= $row->group_name ?></td>
                                     <td><?= $row->visit_count ?></td>
                                     <td><?= $row->last_seen ?></td>
-                                    <td><?= iconLink_to("Edit", 'users/'.$row->id.'/edit', 'btn-link', null) ?>
+                                    <td><?= iconLink_to(L("button_edit"), 'users/'.$row->id.'/edit', 'btn-link', null) ?>
                                     	&nbsp;
-                                    	<?= deleteLink_to('Delete', 'users', $row->id) ?>
+                                    	<?= deleteLink_to(L("button_delete"), 'users', $row->id) ?>
                                 </tr>
                                 <?php } ?>
                             </tbody>

@@ -1,6 +1,6 @@
 <?php 
 set('id', 7);
-set('title', 'Settings');
+set('title', L("settings"));
 ?>
 
 <div class="content">
@@ -13,12 +13,12 @@ set('title', 'Settings');
                     <form action="/?/settings_upload" method="POST" enctype="multipart/form-data">
                         <div class="custom-file">
                             <input type="file" name="fileToUpload" class="custom-file-input form-control" id="customFile">
-                            <label class="custom-file-label form-control" for="customFile">Choose file</label>
+                            <label class="custom-file-label form-control" for="customFile"><?=  L("choose_file"); ?></label>
                         </div>        
                         <button type="submit" name="submit" class="btn btn-success btn-outline">
-                            <i class="fa fa-upload"></i> 'Upload configuration'
+                            <i class="fa fa-upload"></i> <?=  L("setting_upload"); ?>
                         </button>
-                        <?= iconLink_to('Download configuration', 'settings_download', 'btn-outline', 'fa fa-download') ?>
+                        <?= iconLink_to(L("setting_download") , 'setting_download', 'btn-outline', 'fa fa-download') ?>
                     </form>
 
 
@@ -26,10 +26,10 @@ set('title', 'Settings');
                     <div class="card-body">
                         <div class="card-body table-responsive">
                             <div class="flex-table row header" role="rowgroup">
-                              <div class="flex-row-1 first" role="columnheader">ID</div>
-                              <div class="flex-row-3" role="columnheader">Name</div>
-                              <div class="flex-row-4" role="columnheader">Value</div>
-                              <div class="flex-row-2" role="columnheader">Action</div>
+                              <div class="flex-row-1 first" role="columnheader"><?=  L("id"); ?></div>
+                              <div class="flex-row-3" role="columnheader"><?=  L("name"); ?></div>
+                              <div class="flex-row-4" role="columnheader"><?=  L("value"); ?></div>
+                              <div class="flex-row-2" role="columnheader"><?=  L("action"); ?></div>
                             </div>
 
     <?php foreach ($settings as $row) { 
@@ -59,14 +59,14 @@ set('title', 'Settings');
 
     <div class="flex-table row" role="rowgroup">
         <div class="flex-row-1 flex-cell first" role="cell"><?= $row->id ?></div>
-        <div class="flex-row-3 flex-cell flex-cell" role="cell"><?= $row->title ?></div>
+        <div class="flex-row-3 flex-cell flex-cell" role="cell"><?= L('setting_'.$row->name) ?></div>
         <div class="flex-row-4 flex-cell" role="cell">
             <input type="<?= $fieldType ?>" <?= $fieldAtrribute ?> class="form-control"
                 name="<?= $row->name ?>" value="<?= $row->value ?>"> 
         </div>
         <div class="flex-row-2 flex-cell" role="cell">
             <button type="submit" class="btn btn-success">
-                <i class="fa fa-edit"></i> Change
+                <i class="fa fa-edit"></i> <?=  L("button_change"); ?>
             </button>
         </div>
 
