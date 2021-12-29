@@ -148,7 +148,7 @@ $().ready(function() {
         });
 
         $('.datepicker').datetimepicker({
-            format: 'MM/DD/YYYY',
+            format: 'DD/MM/YYYY',
             icons: {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
@@ -374,10 +374,10 @@ app = {
             showConfirmButton: true
         });
     },    
-    areYouSure: function(that) {
+    areYouSure: function(that, title, text) {
         swal({
-            title: "Are you sure?",
-            text: "This item will be deleted!",
+            title: title,
+            text: text,
             type: "warning",
             showCancelButton: true,
             confirmButtonClass: "btn btn-info btn-fill",

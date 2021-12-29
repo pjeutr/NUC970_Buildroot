@@ -170,7 +170,7 @@ function deleteLink_to($params = null) {
     //return '<a href="#" rel="tooltip" title="Remove" class="btn btn-danger btn-link"><i class="fa fa-times"></i></a>';
 
     return "<a rel=\"tooltip\" title=\"$name\" class=\"btn btn-danger btn-link text-danger\" href=\"$url\"
-    onclick=\"app.areYouSure(this);return false;\"
+    onclick=\"app.areYouSure(this,'".L('delete_confirm')."','".L('delete_subtext')."');return false;\"
     ><i class=\"fa fa-times\"></i>$name</a>";  
 
     // return "<a rel=\"tooltip\" title=\"$name\" class=\"btn btn-danger btn-link\" href=\"$url\"

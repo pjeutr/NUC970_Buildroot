@@ -1,6 +1,6 @@
 <?php 
 set('id', 5);
-set('title', 'Reports');
+set('title', L("reports"));
 ?>
 
 <div class="content">
@@ -9,16 +9,16 @@ set('title', 'Reports');
             <div class="col-md-12">
                 <div class="card strpied-tabled-with-hover">
                     <div class="card-header ">
-                        <?= iconLink_to('Download csv', 'reports_csv', 'btn-outline', 'fa fa-download') ?>
+                        <?= iconLink_to(L("button_downloadcsv"), 'reports_csv', 'btn-outline', 'fa fa-download') ?>
                     </div>
                     <div class="card-body table-responsive">
                         <table class="table  table-hover table-striped">
                             <thead>
-                                <th>ID</th>
-                                <th>Keycode</th>
-                                <th>User</th>
-                                <th>Door</th>  
-                                <th>Time</th>
+                                <th><?=  L("id"); ?></th>
+                                <th><?=  L("key"); ?></th>
+                                <th><?=  L("user"); ?></th>
+                                <th><?=  L("door"); ?></th>
+                                <th><?=  L("time"); ?></th>
                             </thead>
                             <tbody>
                             <?php foreach ($reports as $row) { ?>
