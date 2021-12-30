@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '9226a4b3ee8f03744e9e173cc64e386f5bd73a67',
+    'reference' => '8a9111902d734ab117f8e2a01292b39b4d1902a0',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '9226a4b3ee8f03744e9e173cc64e386f5bd73a67',
+      'reference' => '8a9111902d734ab117f8e2a01292b39b4d1902a0',
     ),
     'brunty/cigar' => 
     array (
@@ -56,7 +56,7 @@
       array (
         0 => '9999999-dev',
       ),
-      'reference' => 'b47315edb2b4eac33038b5474282cca505a1ab99',
+      'reference' => '38d637cbe89caf35612d8174e551f8959b83c0d7',
     ),
     'pjeutr/php-notify' => 
     array (
