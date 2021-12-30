@@ -161,9 +161,9 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pjeutr/php-coap",
-                "reference": "b47315edb2b4eac33038b5474282cca505a1ab99"
+                "reference": "38d637cbe89caf35612d8174e551f8959b83c0d7"
             },
-            "time": "2021-12-25T14:21:21+00:00",
+            "time": "2021-12-30T12:47:53+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "source",
