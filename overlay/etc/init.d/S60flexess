@@ -1,0 +1,39 @@
+#!/bin/bash
+
+case "$1" in 
+start)
+   printf "Starting flexess inputListener: "
+   php -f /maasland_app/scripts/inputListener.php &
+   echo $!>/var/run/flexess.pid
+   echo "OK"
+   ;;
+stop)
+   printf "Stopping flexess inputListener and killing watches: "
+   #TODO close programs in app
+   printf "kill inotifywait"
+   killall inotifywait
+   printf "kill epoll_userspace"
+   killall epoll_userspace 
+   printf "kill avahi-publish-service"
+   killall avahi-publish-service
+   kill `cat /var/run/flexess.pid`
+   rm /var/run/flexess.pid
+   echo "OK"
+   ;;
+restart)
+   $0 stop
+   $0 start
+   ;;
+status)
+   if [ -e /var/run/flexess.pid ]; then
+      echo inputListener is running, pid=`cat /var/run/flexess.pid`
+   else
+      echo inputListener is NOT running
+      exit 1
+   fi
+   ;;
+*)
+   echo "Usage: $0 {start|stop|status|restart}"
+esac
+
+exit 0 
