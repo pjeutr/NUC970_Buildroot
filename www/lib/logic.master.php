@@ -74,10 +74,12 @@ function handleInput($from, $input, $keycode) {
         case 5:
         case 6:
             $inputName = ($input == 5) ? "sensor_1":"sensor_2";
-            $door = find_door_for_input_device($inputName, $controller->id);
-            $action = $inputName.":".$door->name;
+            $gpio = ($input == 5) ? GVAR::$GPIO_DOORSTATUS1:GVAR::$GPIO_DOORSTATUS2;
+            $alarmId = find_alarm_for_sensor_id($inputName, $controller->id);
+            $action = $inputName.":".$controller->name;
+            mylog($gpio."_".$inputName." alarmId=".$alarmId);
+            checkAndHandleSensor($gpio, $inputName, $alarmId, $controller);
             $result = $action;
-            //TODO checkAndHandleSensor
             break;
         default:
             $action = "illegal";
@@ -94,33 +96,40 @@ function handleInput($from, $input, $keycode) {
     );
 }
 
-function checkAndHandleSensor($gpio, $id, $controller) {
+function checkAndHandleSensor($gpio, $inputName, $alarmId, $controller) {
+    mylog($gpio."=checkAndHandleSensor=".getGPIO($gpio));
     if(getGPIO($gpio) == 1) {
-        $name = "Sensor ".$id;
-        mylog("handleSensor ".$name);
-        $pollTime = 1; //interval for checking if the door is closed again.
         $doorSensorTriggerTime =find_setting_by_name("alarm");
+        mylog("handleSensor ".$inputName." triggerTime=".$doorSensorTriggerTime);
 
         //wait for the given trigger time, than check again
-        sleep($doorSensorTriggerTime);
-        if(getGPIO($gpio) == 1) {
-            //find what alarm to open
-            $alarm = find_alarm_for_sensor_id($id,$controller->id);
-            $gid = ($alarm == 1) ? GVAR::$GPIO_ALARM1 :GVAR::$GPIO_ALARM1;
-            setGPIO($gid, 1);
-            //save report
-            saveReport("Unkown", "Alarm ".$door->name." from ". $name);
+        $loop = React\EventLoop\Loop::get();
+        $loop->addTimer($doorSensorTriggerTime, function () use ($gpio, $inputName, $alarmId, $controller, $loop) {
+            mylog("recheck handleSensor ".$gpio);
+            //TODO poll more to check if open?
+            if(getGPIO($gpio) == 1) {
+                $gid = ($alarmId == 1) ? GVAR::$GPIO_ALARM1 :GVAR::$GPIO_ALARM2;
+                setGPIO($gid, 1);
+                //save report
+                saveReport("Unkown", "Alarm on ".$controller->name." from ".$inputName);
 
-            //check if the door is closed, to turn of the alarm
-            while(true) {
-                if(getGPIO($gpio) == 0) {
-                    setGPIO($gid, 0);
-                    saveReport("Unkown", "Alarm stopped for ".$door->name." from ". $name);
-                    break;
+                //check if the door is closed, to turn of the alarm
+                while(true) {
+                    if(getGPIO($gpio) == 0) {
+                        setGPIO($gid, 0);
+                        saveReport("Unkown", "Alarm stopped for ".$controller->name." from ". $inputName);
+                        break;
+                    }
+                    sleep(1);//interval for checking if the door is closed again.
                 }
-                sleep($pollTime);
+            } else {
+                //TODO remove 
+                mylog("FALSE alarm handleSensor ".$gpio);
             }
-        }
+
+        });
+
+
     }
 }
 

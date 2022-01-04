@@ -31,8 +31,8 @@ function find_door_for_reader_id($id, $cid) {
 }
 
 function find_alarm_for_sensor_id($id, $cid) {
-    $sql = "SELECT sensor_".$id." FROM controllers c, doors d WHERE c.id = ".$cid;
-    return find_object_by_sql($sql);
+    $sql = "SELECT ".$id." FROM controllers c WHERE c.id = ".$cid;
+    return find_string_by_sql($sql);
 }
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
