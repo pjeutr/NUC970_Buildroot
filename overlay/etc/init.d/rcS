@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# fstab or mount is not automatically attaching a ubi device
+# ubi.mtd=3 in the command line form uboot gave an error (only for rootfs?)
+ubiattach -p /dev/mtd3
 
 # Start all init scripts in /etc/init.d
 # executing them in numerical order.
