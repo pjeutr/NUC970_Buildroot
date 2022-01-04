@@ -17,12 +17,19 @@ Coap - coap-listener.php
 Would be nice if it can be a native server, would save space an performance
 like https://github.com/obgm/libcoap-minimal/blob/main/server.cc
 
-For now we used composer require ekongyun/php-coap (https://github.com/cfullelove/PhpCoap)
-Which pulls in react/react: 0.4.*
-https://github.com/reactphp/reactphp/tree/v0.4.1
+For now we used composer require pjeutr/php-coap (https://github.com/pjeutr/php-coap)
+Which pulls in react/reactphp: 1.1.*
+https://github.com/reactphp/reactphp/tree/v1.1.0
+
+composer require 
+calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
+arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
 
-composer req ekongyun/php-coap -> pjeutr/php-coap, remove react requirement which pulls in to much bloat
-composer require calcinai/rubberneck -> react/event-loop v0.4.3 (only react thing we need)
-#composer req devgiants/filesystem-gpio (not usable)
-
+v0.7.2 - back to ubifs, fix alarm
+v0.7.1 - squashfs
+v0.7.0 - translation added 
+v0.6.1 - back to coap
+v0.6.0 - support match4 hardware
+v0.5.1 - use http ie coap
+v0.5.0 - support network slave controllers

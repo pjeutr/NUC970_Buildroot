@@ -25,7 +25,7 @@ class GVAR
     public static $GPIO_BUTTON2 = 2; //NUC980_PA2
     public static $GPIO_DOORSTATUS1 = 70; //NUC980_PC6 
     public static $GPIO_DOORSTATUS1N = 69; //NUC980_PC5 
-    public static $GPIO_DOORSTATUS2 = 76; //NUC980_PC3
+    public static $GPIO_DOORSTATUS2 = 67; //NUC980_PC3
     public static $GPIO_DOORSTATUS2N = 66; //NUC980_PC2
     public static $GPIO_MASTER = 38; //NUC980_PB6 - Master Slave switch
     public static $GPIO_FIRMWARE = 32; //NUC980_PB0 - Reset Firmware switch
