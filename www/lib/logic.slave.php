@@ -165,10 +165,9 @@ function available_controllers() {
 *   if Master => S1 Value is 0
 */
 function checkIfMaster() {
-    //mylog("checkIfMaster: S=".getGPIO(GVAR::$GPIO_MASTER));
+    //mylog("checkIfMaster: Switch=".getGPIO(GVAR::$GPIO_MASTER));
     return (getGPIO(GVAR::$GPIO_MASTER) == 0);
 }
-
 function getMasterControllerIP() {
     //return "192.168.178.137";
     global $masterControllerIp;
@@ -182,7 +181,7 @@ function getMasterControllerIP() {
         return "127.0.0.1";
     }
     if( $masterControllerIp == null ) {
-        //TODO too errorprone fishing from an array?
+        //TODO too errorprone fishing from an array? No other way... 
         //["=","eth0","IPv4","FlexessDuo","_maasland._udp","local","FlexessDuo-2.local","192.168.178.179","5683","text"]
         //3=hostname,7=ip
         $result = mdnsBrowse("_master._sub._maasland._udp");
@@ -193,17 +192,14 @@ function getMasterControllerIP() {
         }
         if(empty($masterControllerIp)) {
             die ("ERROR: Master Controller not found :".json_encode($result)."\n");
-            //refreshing the page, till it's active?
+            //TODO refreshing the page, till it's active? No, selfrefreshing pages are evil
         }
         return $masterControllerIp;
     } else {
         return $masterControllerIp;
     }
 }
-
 function getMasterURL() {
-    //TODO make dynamic, called form slave error page
-    //return "http://flexessduo.local/";
     return "http://".getMasterControllerIP()."/";
 }
 
@@ -236,7 +232,8 @@ function resolveInput($gpioPath) {
 }
 
 function getInputValue($gpioPath) {
-    return exec("cat ".$gpioPath);
+    return file_get_contents($gpioPath);
+    //return exec("cat ".$gpioPath);
 }
 
 
@@ -276,8 +273,6 @@ function configureGPIO() {
     setGPIO(GVAR::$OUT12V_PIN, 1);
     setGPIO(GVAR::$RUNNING_LED, 1);
 
-    //TODO fill cache?
-    //global $inputArray?
     //we need it, might as well get it already
     getMasterControllerIP();
 
@@ -297,7 +292,8 @@ function setGPIO($gpio, $state) {
     return 1;    
 }
 function getGPIO($gpio) {
-    $v = exec("cat /sys/class/gpio/gpio".$gpio."/value");
+    $v = file_get_contents("/sys/class/gpio/gpio".$gpio."/value");
+    //$v = exec("cat /sys/class/gpio/gpio".$gpio."/value");
     //mylog("getGPIO ".$gpio."=".$v);
     return $v;
 }

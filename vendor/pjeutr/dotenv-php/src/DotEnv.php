@@ -36,7 +36,10 @@ class DotEnv
      */
     public static function load($source)
     {
-        self::$variables = is_array($source) ? $source : include $source;
+        //self::$variables = is_array($source) ? $source : include $source;
+        if (file_exists($source)) {
+          self::$variables = include_once($source);
+        }
         self::$isLoaded = true;
 
         self::checkRequiredVariables();
