@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '8a9111902d734ab117f8e2a01292b39b4d1902a0',
+    'reference' => '40e689a99c9b8d9d7c6714f65eaee92e839728fd',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '8a9111902d734ab117f8e2a01292b39b4d1902a0',
+      'reference' => '40e689a99c9b8d9d7c6714f65eaee92e839728fd',
     ),
     'brunty/cigar' => 
     array (
@@ -122,12 +122,12 @@
     ),
     'react/promise' => 
     array (
-      'pretty_version' => 'v2.8.0',
-      'version' => '2.8.0.0',
+      'pretty_version' => 'v2.9.0',
+      'version' => '2.9.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'f3cff96a19736714524ca0dd1d4130de73dbbbc4',
+      'reference' => '234f8fd1023c9158e2314fa9d7d0e6a83db42910',
     ),
     'react/promise-timer' => 
     array (
@@ -140,12 +140,12 @@
     ),
     'react/socket' => 
     array (
-      'pretty_version' => 'v1.10.0',
-      'version' => '1.10.0.0',
+      'pretty_version' => 'v1.11.0',
+      'version' => '1.11.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'd132fde589ea97f4165f2d94b5296499eac125ec',
+      'reference' => 'f474156aaab4f09041144fa8b57c7d70aed32a1c',
     ),
     'react/stream' => 
     array (

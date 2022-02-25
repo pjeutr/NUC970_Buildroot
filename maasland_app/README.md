@@ -25,7 +25,7 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
-
+v0.7.3 - fix alarm, demo db
 v0.7.2 - back to ubifs, fix alarm
 v0.7.1 - squashfs
 v0.7.0 - translation added 

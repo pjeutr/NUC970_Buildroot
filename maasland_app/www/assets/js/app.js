@@ -40,7 +40,7 @@ $().ready(function() {
             console.log(jsonData);
             $("#controller_name").val(jsonData[6]);
             $("#controller_ip").val(jsonData[7]);
-            $("#controller_remarks").val(jsonData);
+            //$("#controller_remarks").val(jsonData);
         });
 
         $("#scan_key").click(function () {

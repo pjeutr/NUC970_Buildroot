@@ -8,12 +8,13 @@ class GVAR
 {
     //mylog('Load gpio voor Flexeria board'.PHP_EOL);
     public static $BOARD_TYPE = "Match4: FlexeriaDuo";
+    public static $DASHBOARD_VERSION = "0.7.4";
 
     //outputs 71 32
     public static $GPIO_DOOR1 = 71; //NUC980_PC7
     public static $GPIO_DOOR2 = 68; //NUC980_PC4
     public static $GPIO_ALARM1 = 65; //NUC980_PC1
-    public static $GPIO_ALARM2 = 66; //NUC980_PC0
+    public static $GPIO_ALARM2 = 64; //NUC980_PC0
     public static $RD1_GLED_PIN = 3; //NUC980_PA3  //reader1 gled output 
     public static $RD2_GLED_PIN = 11; //NUC980_PA11  //reader2 gled output
     public static $BUZZER_PIN = 138; //NUC980_PE10  //buzzer output
