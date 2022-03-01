@@ -292,6 +292,10 @@ function setGPIO($gpio, $state) {
     return 1;    
 }
 function getGPIO($gpio) {
+    if (! in_array( $gpio, array_merge( inputs(), outputs() ))) {
+        mylog("getGPIO ".$gpio." not an input");
+        return 0;
+    }
     $v = file_get_contents("/sys/class/gpio/gpio".$gpio."/value");
     //$v = exec("cat /sys/class/gpio/gpio".$gpio."/value");
     //mylog("getGPIO ".$gpio."=".$v);
