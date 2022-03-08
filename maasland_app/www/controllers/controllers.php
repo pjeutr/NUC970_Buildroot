@@ -27,7 +27,15 @@ function controllers_update() {
     $controller = get_controller_or_404();
     $controller = make_controller_obj($controller_data, $controller);
 
-    update_controller_obj($controller);
+    try {
+        update_controller_obj($controller);
+    } catch(PDOException $e) {
+        //PDOException: SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed: controllers.ip
+        mylog($e);
+        flash('message', 'That controller (ip address) is already configured');
+        redirect('controllers/'.$controller->id.'/edit');
+    }
+    
     redirect('controllers');
 }
 

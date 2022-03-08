@@ -48,9 +48,7 @@ function create_controller_obj($controller_obj) {
     $controller_obj->button_2 = 1;
     $controller_obj->sensor_1 = 1;
     $controller_obj->sensor_2 = 1;
-    mylog("1");
     mylog(json_encode($controller_obj));
-    mylog("2");
     return create_object($controller_obj, 'controllers', $columns);
 }
 
@@ -73,6 +71,11 @@ function make_controller_obj($params, $obj = null) {
 }
 
 function controller_columns() {
+    // Creating a new controller gives these erros, not critical.
+    // And currently practical to start/test the error log when logging is disabled
+    // PHP Notice:  Undefined property: stdClass::$created_at in /maasland_app/www/lib/db.php on line 79
+    // PHP Notice:  Undefined property: stdClass::$updated_at in /maasland_app/www/lib/db.php on line 79
+
     return array('name', 'ip', 'remarks', 
         'reader_1', 'reader_2', 'button_1', 'button_2', 'sensor_1', 'sensor_2', 
         'created_at', 'updated_at');
