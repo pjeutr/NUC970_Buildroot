@@ -49,6 +49,7 @@ CREATE TABLE "doors" ("id" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL ,
   "timezone_id" DATETIME,
   "enum" INTEGER,
   "updated_at" DATETIME, "created_at"  DATETIME DEFAULT CURRENT_TIMESTAMP);
+CREATE UNIQUE INDEX 'unique_controller_ip' ON controllers (ip);
 
 -- Table users
 --  keycode is unique

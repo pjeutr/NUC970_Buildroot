@@ -231,7 +231,8 @@ $flashMessage = flash_now();
 
             <!-- Display error message, if available -->
             <?= isset($message['message']) ? '<div class="alert alert-danger">'.$message['message'].'</div>' : "" ?>
-
+            <!-- flashMessage is used by controller and user during db constraint error -->
+            <?= isset($flashMessage['message']) ? '<div class="alert alert-danger">'.$flashMessage['message'].'</div>' : "" ?>
             <?php echo $content ?>
             
             <footer class="footer">

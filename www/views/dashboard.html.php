@@ -30,12 +30,6 @@ $doors = find_doors();
                         <button class="btn btn-info btn-block" type="button" 
                             onclick="app.timerAlert('<?= $door->name ?> is open', <?= $door_open ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')"><?= $door->name ?> </button>
 
-
-
-<!-- <button class="btn btn-<?= getGPIO(getDoorGPIO($door->id)) == 1 ? "success" : "info" ?> btn-block" type="button" 
-                            onclick="app.timerAlert('Door 1 is open', <?= $door_open ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')"><?= $door->name ?> <?= getGPIO(getDoorGPIO($door->id)) == 1 ? " is open" : "" ?></button> -->
-
-
                         <!-- <hr>
                             <button class="btn btn-warning btn-small" type="button">Door sensor 1</button>
                             <button class="btn btn-warning btn-small" type="button">Door sensor 2</button>
