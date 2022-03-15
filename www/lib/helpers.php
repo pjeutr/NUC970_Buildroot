@@ -71,8 +71,7 @@ function apiCall($host, $uri) {
         mylog("apiCall:".$url);
         //$msg = file_get_contents($url);
 
-        //TODO this is the 3rd place where a loop is created. "bad design?"
-        $loop = React\EventLoop\Factory::create();
+        $loop = React\EventLoop\Loop::get();
         $client = new React\HttpClient\Client( $loop );
         $request = $client->request('GET', $url);
         $request->on('response', function ( $response ) {

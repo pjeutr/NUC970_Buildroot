@@ -355,7 +355,15 @@ app = {
         button.innerHTML=showSpinner ? '<i class="fa fa-spinner fa-spin"></i> Loading…':$text;
         console.log(button);
     },
-
+    // Background, Ajax call
+    ajaxCall: function(url) {
+        $.ajax({
+            url: url,
+            success: function(result){
+                console.log(result);
+            }
+        });
+    }, 
     // Sweet Alerts
     timerAlert: function(message, time, url) {
         $.ajax({
