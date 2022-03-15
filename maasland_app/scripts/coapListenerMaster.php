@@ -45,9 +45,12 @@ $wiegandObserver->onModify(function($file_name)  use ($loop){
     mylog(json_encode($result));
 });	
 
+$lastMicrotime = 0;
 //$inputObserver = new \Calcinai\Rubberneck\Observer($loop, InotifyWait::class);
 $inputObserver = new \Pjeutr\PhpNotify\Observer($loop, 1);
-$inputObserver->onModify(function($file_name) use ($loop){
+$inputObserver->onModify(function($file_name) use ($loop, $lastMicrotime){
+	global $lastMicrotime;
+
 	mylog("Modified:". $file_name. "\n");
 	//determine the input number for this file
 	$input = resolveInput($file_name);
@@ -56,13 +59,20 @@ $inputObserver->onModify(function($file_name) use ($loop){
 	//mylog("value:". $value. "\n");
 	//take action if a button is pressed
 	if($value == 1) { 
+		//Debounce a swich 200ms would be normal, but since there's a open/close reaction almost a second is also fine
+		$microtimeNow = microtime(true);
+		mylog("microtimeNow:". $microtimeNow."-".$lastMicrotime."=".($microtimeNow - $lastMicrotime));
+		if ($microtimeNow - $lastMicrotime < .9) {
+			mylog("DEBOUNCE ACTIVE");
+			return;
+		}
+		$lastMicrotime = $microtimeNow;
+
 		mylog("Button:". $input);
 		//$result =  callApi($input, "");
 		$result = handleInput("127.0.0.1", $input, "");
         mylog(json_encode($result));
 	}   
-	//TODO sleep / prevent klapperen 
-	//sleep(1);
 });
 
 //listen voor gpio inputs

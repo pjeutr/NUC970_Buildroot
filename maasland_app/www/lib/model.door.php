@@ -22,7 +22,7 @@
 // }
 
 function find_doors() {
-    return find_objects_by_sql("SELECT c.name cname, d.* FROM doors d LEFT JOIN controllers c ON c.id = d.controller_id");
+    return find_objects_by_sql("SELECT c.ip cip, c.name cname, d.* FROM doors d LEFT JOIN controllers c ON c.id = d.controller_id");
 }
 
 function find_door_by_id($id) {

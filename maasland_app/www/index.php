@@ -252,7 +252,8 @@ dispatch_get   ('api/activate/:door/:duration/:gpios/', 'activate');
 dispatch_get   ('api/input/:input/:keycode/', 'input');
 
 //ajax
-dispatch_get   ('door/:controller/:door/',  'door_open'); //->coap
+dispatch_get   ('door/:controller/:door',  'door_open'); //->coap
+dispatch_get   ('output/:controller/:output/:state',  'switchOutput'); //->coap
 dispatch_get   ('last_reports',   'last_reports');
 dispatch_get   ('last_scanned_key.json',   'last_scanned_key');
 dispatch_get   ('available_controllers.json',   'available_controllers');

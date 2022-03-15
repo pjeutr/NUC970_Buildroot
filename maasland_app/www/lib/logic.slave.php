@@ -62,16 +62,16 @@ getInputValue
 *   $gpios : array with extra gpios
 *   returns true if state was changed
 */
-function operateOutput($outputId, $state, $gpios = array()) {
-    mylog("operateOutput ".$outputId." state=".$state." gpios=".json_encode($gpios));
+function operateOutput($outputEnum, $state, $gpios = array()) {
+    mylog("operateOutput ".$outputEnum." state=".$state." gpios=".json_encode($gpios));
 
-    $gid = getDoorGPIO($outputId);
+    $gid = getOutputGPIO($outputEnum);
 
     //add gpio for the door to gpios
     //$gpios[] = $gid;
     array_push($gpios, $gid);
 
-    mylog("operateOutput door=".$outputId." state=".$state." gpios=".json_encode($gpios));
+    mylog("operateOutput output=".$outputEnum." state=".$state." gpios=".json_encode($gpios));
 
     //check if the state has already been set / door is already open
     $currentValue = getGPIO($gid);
@@ -85,32 +85,32 @@ function operateOutput($outputId, $state, $gpios = array()) {
 }
 
 /*
-*   Activate a door/alarm given a outputId 
-*   $outputId : id in the db
+*   Activate a door/alarm given a outputEnum 
+*   $outputEnum : id in the db
 *   $duration : int in seconds
 *   $gpios : array with extra gpios
 *   returns true if state was changed
 */
-function activateOutput($outputId, $duration, $gpios) {
-    mylog("activateOutput door=".$outputId." duration=".$duration." gpios=".json_encode($gpios));
+function activateOutput($outputEnum, $duration, $gpios) {
+    mylog("activateOutput door=".$outputEnum." duration=".$duration." gpios=".json_encode($gpios));
     //open door
-    $hasChanged = operateOutput($outputId, 1, $gpios);
+    $hasChanged = operateOutput($outputEnum, 1, $gpios);
     //if the state was not changed, the door was already open. Presumably by the scheduler, or another reader/button
     if($hasChanged) {
         //get instance for THE eventloop
         $loop = React\EventLoop\Loop::get();
-        $loop->addTimer($duration, function () use ($outputId, $gpios) {
+        $loop->addTimer($duration, function () use ($outputEnum, $gpios) {
             //close door
-            operateOutput($outputId, 0, $gpios);
+            operateOutput($outputEnum, 0, $gpios);
             mylog('Done'.PHP_EOL);
         });
     }
     return $hasChanged;
 }
 
-function getOutputStatus($outputId) {
-    mylog("getOutputStatus output=".$outputId);
-    $gid = getDoorGPIO($outputId);
+function getOutputStatus($outputEnum) {
+    mylog("getOutputStatus output=".$outputEnum);
+    $gid = getOutputGPIO($outputEnum);
     return getGPIO($gid);
 }
 
@@ -209,13 +209,15 @@ function getMasterURL() {
 */
 
 /*
-*   Get GPIO value for a door relais
+*   Get GPIO value for a output relais
 *   $outputId : doors.id in database in accordance with physical connection
 */
-function getDoorGPIO($doorEnum) { 
-    //mylog("getDoorGPIO=".$doorEnum);
-    if($doorEnum == "1") return GVAR::$GPIO_DOOR1;
-    if($doorEnum == "2") return GVAR::$GPIO_DOOR2;
+function getOutputGPIO($outputEnum) { 
+    //mylog("getOutputGPIO=".$outputEnum);
+    if($outputEnum == "1") return GVAR::$GPIO_DOOR1;
+    if($outputEnum == "2") return GVAR::$GPIO_DOOR2;
+    if($outputEnum == "3") return GVAR::$GPIO_ALARM1;
+    if($outputEnum == "4") return GVAR::$GPIO_ALARM2;
     return 0;
 }
 
@@ -300,7 +302,7 @@ function getGPIO($gpio) {
     $v = file_get_contents("/sys/class/gpio/gpio".$gpio."/value");
     //$v = exec("cat /sys/class/gpio/gpio".$gpio."/value");
     //mylog("getGPIO ".$gpio."=".$v);
-    return $v;
+    return trim($v);
 }
 function initGPIO($gpio, $out = true) {
     if(! file_exists("/sys/class/gpio/gpio".$gpio)) {

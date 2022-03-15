@@ -66,6 +66,15 @@ function door_open() {
     $result = openDoor($door, $controller);
     return (json(array($result)));
 }
+function switchOutput() {
+    $outputEnum = filter_var(params('output'), FILTER_VALIDATE_INT);
+    $controllerId = filter_var(params('controller'), FILTER_VALIDATE_INT);
+    $state = filter_var(params('state'), FILTER_VALIDATE_INT);
+    saveReport("WebAdmin", "Switch output ".$outputEnum." on controller ".$controllerId);
+    $controller = find_controller_by_id($controllerId);
+    $result = changeOutputState($outputEnum, $controller, $state);
+    return (json(array($result)));
+}
 function outputStatus() {
     $outputId = filter_var(params('door'), FILTER_VALIDATE_INT);
     $result = getOutputStatus($outputId);

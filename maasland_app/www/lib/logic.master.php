@@ -78,7 +78,11 @@ function handleInput($from, $input, $keycode) {
             $alarmId = find_alarm_for_sensor_id($inputName, $controller->id);
             $action = $inputName.":".$controller->name;
             mylog($gpio."_".$inputName." alarmId=".$alarmId);
-            checkAndHandleSensor($gpio, $inputName, $alarmId, $controller);
+            if($controller->id == 1){
+                checkAndHandleSensorLocal($gpio, $inputName, $alarmId, $controller);
+            } else {
+                checkAndHandleSensor($gpio, $inputName, $alarmId, $controller);
+            }
             $result = $action;
             break;
         default:
@@ -96,40 +100,154 @@ function handleInput($from, $input, $keycode) {
     );
 }
 
+/*
+*   Handle sensor input 
+*   includes delayed operations and recheck sensor input, will only work on match4
+*
+*   $gpio : sensor port number 
+*   $inputName : sensor_1/_2
+*   $alarmId : id of the alarm in db
+*   $controller : controller object
+*
+*   TODO* checkAndHandleSensor has the same code as checkAndHandleSensorLocal, 
+*   but I was unable to factor out the client request 
+*
+*   Used by inputListener 
+*/
 function checkAndHandleSensor($gpio, $inputName, $alarmId, $controller) {
-    mylog($gpio."=checkAndHandleSensor=".getGPIO($gpio));
-    if(getGPIO($gpio) == 1) {
-        $doorSensorTriggerTime =find_setting_by_name("alarm");
-        mylog("handleSensor ".$inputName." triggerTime=".$doorSensorTriggerTime);
+    $loop = React\EventLoop\Loop::get();
+    $doorSensorTriggerTime =find_setting_by_name("alarm");
+    mylog("handleSensor on slave ".$controller->name.":".$inputName." triggerTime=".$doorSensorTriggerTime);
 
-        //wait for the given trigger time, than check again
-        $loop = React\EventLoop\Loop::get();
-        $loop->addTimer($doorSensorTriggerTime, function () use ($gpio, $inputName, $alarmId, $controller, $loop) {
-            mylog("recheck handleSensor ".$gpio);
-            //TODO poll more to check if open?
-            if(getGPIO($gpio) == 1) {
-                $gid = ($alarmId == 1) ? GVAR::$GPIO_ALARM1 :GVAR::$GPIO_ALARM2;
-                setGPIO($gid, 1);
-                //save report
+    //wait for the given trigger time, than check again
+    $startAlarm = $loop->addTimer($doorSensorTriggerTime, function () use ($gpio, $inputName, $alarmId, $controller, $loop) {
+        mylog("recheck handleSensor ".$gpio);
+        //--TODO*
+        $client = new PhpCoap\Client\Client( $loop );
+        $url = "coap://".$controller->ip."/value_".$gpio;
+        mylog("checkSensor:".$url);
+        $client->get($url, function( $data ) use ($gpio, $inputName, $alarmId, $controller, $loop) {
+            mylog("checkSensor return=".$data);
+            //--
+            if( $data == '"1"' ) {
+                setAlarm($controller, $alarmId, 1);
                 saveReport("Unkown", "Alarm on ".$controller->name." from ".$inputName);
 
                 //check if the door is closed, to turn of the alarm
-                while(true) {
-                    if(getGPIO($gpio) == 0) {
-                        setGPIO($gid, 0);
-                        saveReport("Unkown", "Alarm stopped for ".$controller->name." from ". $inputName);
-                        break;
-                    }
-                    sleep(1);//interval for checking if the door is closed again.
-                }
-            } else {
-                //TODO remove 
-                mylog("FALSE alarm handleSensor ".$gpio);
-            }
-
+                $stopAlarm = $loop->addPeriodicTimer(0.5, function ($stopAlarm) use ($gpio, $inputName, $alarmId, $controller, $loop) {
+                    //--TODO*
+                    $client = new PhpCoap\Client\Client( $loop );
+                    $url = "coap://".$controller->ip."/value_".$gpio;
+                    mylog("checkSensor:".$url);
+                    $client->get($url, function( $data ) use ($gpio, $inputName, $alarmId, $controller, $loop, $stopAlarm) {
+                        mylog("checkSensor return=".$data);
+                        //--
+                        if( $data == '"0"' ) {
+                            setAlarm($controller, $alarmId, 0);
+                            saveReport("Unkown", "Alarm stopped for ".$controller->name." from ". $inputName);
+                            $loop->cancelTimer($stopAlarm);
+                        }
+                    });
+                });
+            } 
         });
+    }); 
+
+    //recheck if sensor is still active, if not cancel the timers
+    $recheckAlarm = $loop->addPeriodicTimer(0.5, function ($recheckAlarm) use ($startAlarm, $gpio, $controller, $loop) {
+        $client = new PhpCoap\Client\Client( $loop );
+        $url = "coap://".$controller->ip."/value_".$gpio;
+        mylog("checkSensor:".$url);
+        $client->get($url, function( $data ) use ($gpio, $loop, $startAlarm, $recheckAlarm) {
+            mylog("checkSensor return=".$data);
+            if( $data == '"0"' ) {
+                mylog("recheck: false alarm handleSensor ".$gpio);
+                $loop->cancelTimer($startAlarm);
+                $loop->cancelTimer($recheckAlarm);
+            }
+        });
+    });   
+}
+
+function checkAndHandleSensorLocal($gpio, $inputName, $alarmId, $controller) {
+    $loop = React\EventLoop\Loop::get();
+    $doorSensorTriggerTime =find_setting_by_name("alarm");
+    mylog("handleSensor on master ".$controller->name.":".$inputName." triggerTime=".$doorSensorTriggerTime);
+
+    //wait for the given trigger time, activate alarm if sensor is still active.
+    $startAlarm = $loop->addTimer($doorSensorTriggerTime, function () use ($gpio, $inputName, $alarmId, $controller, $loop) {
+        mylog("recheck handleSensor ".$gpio);
+
+        if(checkValue($gpio, $controller) == 1) {
+            setAlarm($controller, $alarmId, 1);
+            saveReport("Unkown", "Alarm for ".$controller->name." from ".$inputName);
+
+            //check if the door is closed, to turn of the alarm
+            $stopAlarm = $loop->addPeriodicTimer(0.5, function ($stopAlarm) use ($gpio, $inputName, $alarmId, $controller, $loop) {
+
+                if(checkValue($gpio, $controller) == 0) {
+                    setAlarm($controller, $alarmId, 0);
+                    saveReport("Unkown", "Alarm stopped for ".$controller->name." from ". $inputName);
+                    $loop->cancelTimer($stopAlarm);
+                }
+            });
+        } 
+    });
+
+    //recheck if sensor is still active, if not cancel the timers
+    $recheckAlarm = $loop->addPeriodicTimer(0.5, function ($recheckAlarm) use ($startAlarm, $gpio, $controller, $loop) {
+        if(checkValue($gpio, $controller) == 0) {
+            mylog("recheck: false alarm handleSensor ".$gpio);
+            $loop->cancelTimer($startAlarm);
+            $loop->cancelTimer($recheckAlarm);
+        }
+    });
+}
+
+/*
+* Set Alarm
+* 
+*   $controller : Controller object
+*   $alarmId : gpio value of the sensor
+*   $value : 1=on, 0=off
+*
+* Used by match_listener
+*/
+function setAlarm($controller, $alarmId, $value) {
+    //resolve the gpio of an alarm
+    $gid = ($alarmId == 1) ? GVAR::$GPIO_ALARM1 :GVAR::$GPIO_ALARM2;
+    mylog("setAlarm cid=".$controller->id." gid=".$value." value=".$value);
+    if( $controller->id == 1 ) {
+        setGPIO($gid, $value);
+    } else {
+        //setGPIO($gid, $value);
+        //TODO +2 is te vies
+        $uri = "output_".($alarmId + 2)."_".$value;
+        mylog($uri);
+        return apiCall($controller->ip, $uri);
+    }
+}
 
 
+/*
+* Check sensor value 
+* 
+*   $gpio : gpio value of the sensor
+*   $controller : Controller object
+*   returns current value
+*
+* Used by match_listener
+*/
+function checkValue($gpio, $controller) {
+    mylog("checkValue cid=".$controller->id." gpio=".$gpio);
+    if( $controller->id == 1 ) {
+        return getGPIO($gpio);
+    } else { //is never used
+        //TODO* this is not working need to wrap it in a defered async closure thingie 
+        // and this is why we have checkAndHandleSensorLocal and checkAndHandleSensor
+        $uri = "value_".$gpio;
+        mylog($uri);
+        return apiCall($controller->ip, $uri);
     }
 }
 
@@ -284,6 +402,30 @@ function openDoor($door, $controller) {
 }
 
 /*
+* Change Door State - Open or Close a door
+* 
+*   $door : Door object
+*   $controller : Controller object
+*   $state : 0 or 1 
+*   returns  
+*
+* Used by webinterface
+*/
+function changeOutputState($outputEnum, $controller, $state) {
+    if( $controller->id == 1 ) {
+        //call method on master, is quicker and more reliable
+        //and nesting coap-client calls is not working currently
+        $gid = getOutputGPIO($outputEnum);
+        setGPIO($gid, $state);
+        //TODO actual return state
+        return true;
+    } else {
+        $uri = "output/".$outputEnum."/".$state;
+        $msg = apiCall($controller->ip, $uri);
+    }
+}
+
+/*
 * Operate a door 
 *   $door : Door object
 *   $open : 1=open, 0=close
@@ -297,7 +439,7 @@ function operateDoor($door, $open) {
 
     //if( checkIfMaster() ) {
     if( $door->controller_id == 1) { //Master = 1
-        $gid = getDoorGPIO($door->id);
+        $gid = getOutputGPIO($door->id);
 
         $currentValue = getGPIO($gid);
         mylog("openLock ".$currentValue."=".$open."\n");
@@ -319,7 +461,7 @@ function operateDoor($door, $open) {
         // $gpios[] = GVAR::$RD2_GLED_PIN;
 
 /*
-        $cmd = "coap-client -m get coap://".$controller->ip."/status/".getDoorGPIO($door->enum);
+        $cmd = "coap-client -m get coap://".$controller->ip."/status/".getOutputGPIO($door->enum);
         $msg = shell_exec($cmd);
         mylog("----------");
         mylog(json_decode($msg)[0]);

@@ -27,13 +27,20 @@ $doors = find_doors();
                     </div>
                     <div class="card-footer ">
                         <hr>
-                        <button class="btn btn-info btn-block" type="button" 
+                        <button class="btn btn-success btn-block" type="button" 
                             onclick="app.timerAlert('<?= $door->name ?> is open', <?= $door_open ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')"><?= $door->name ?> </button>
 
-                        <!-- <hr>
-                            <button class="btn btn-warning btn-small" type="button">Door sensor 1</button>
-                            <button class="btn btn-warning btn-small" type="button">Door sensor 2</button>
-                             -->
+                        <button class="btn btn-warning" type="button" 
+                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum ?>/1')"><?=  L("open"); ?> </button>
+                        <button class="btn btn-info" type="button" 
+                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum ?>/0')"><?=  L("close"); ?> </button>
+                    
+                        <hr>
+                        <button class="btn btn-warning" type="button" 
+                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum + 2 ?>/1')"> Alarm<?=  $door->enum; ?> on </button>
+                        <button class="btn btn-info" type="button" 
+                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum + 2?>/0')">Alarm<?=  $door->enum; ?> off</button>
+                             
                     </div>
                 </div>
             </div>

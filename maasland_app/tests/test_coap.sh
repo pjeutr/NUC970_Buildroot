@@ -17,21 +17,24 @@
 echo "Test coap calls ${BASH_VERSION}..."
 #coap-client -m get coap://192.168.178.137/.well-known/core
 
-master="192.168.178.179"
-slave="192.168.178.137"
+master="127.0.0.1"
+#master="192.168.178.184"
+slave="192.168.178.179"
 
 echo "Test Slave"
 #match2 
-coap-client -m get coap://$slave/status_68-66
-coap-client -m get coap://$slave/output_1_1
-coap-client -m get coap://$slave/output_1_0
-coap-client -m get coap://$slave/activate_2_6_2-10
+# coap-client -m get coap://$slave/status_68-66
+# coap-client -m get coap://$slave/output_1_1
+# coap-client -m get coap://$slave/output_1_0
+# coap-client -m get coap://$slave/activate_2_6_2-10
 
 #match4 
-# coap-client -m get coap://$slave/status_68-71
-# coap-client -m get coap://$slave/output_1_1
-# coap-client -m get coap://$slave/output_1_1
-# coap-client -m get coap://$slave/activate_1_6_3-11
+coap-client -m get coap://$slave/status_66-67-69-70 #show status of sensors
+coap-client -m get coap://$slave/output_1_1
+coap-client -m get coap://$slave/output_1_0
+coap-client -m get coap://$slave/output_3_1
+coap-client -m get coap://$slave/output_3_0
+coap-client -m get coap://$slave/activate_1_6_3-11
 
 echo "Test Master"
 coap-client -m get coap://$master/x_3

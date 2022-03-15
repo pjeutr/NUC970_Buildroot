@@ -108,9 +108,12 @@ $wiegandObserver->onModify(function($file_name){
     mylog(json_encode($result));
 });	
 
+$lastMicrotime = 0;
 //$inputObserver = new \Calcinai\Rubberneck\Observer($loop, InotifyWait::class);
 $inputObserver = new \Pjeutr\PhpNotify\Observer($loop, 1);
-$inputObserver->onModify(function($file_name){
+$inputObserver->onModify(function($file_name) use ($loop, $lastMicrotime){
+	global $lastMicrotime;
+
 	mylog("Modified:". $file_name. "\n");
 	//determine the input number for this file
 	$input = resolveInput($file_name);
@@ -119,9 +122,17 @@ $inputObserver->onModify(function($file_name){
 	//mylog("value:". $value. "\n");
 	//take action if a button is pressed
 	if($value == 1) { 
+		//Debounce a swich 200ms would be normal, but since there's a open/close reaction almost a second is also fine
+		$microtimeNow = microtime(true);
+		mylog("microtimeNow:". $microtimeNow."-".$lastMicrotime."=".($microtimeNow - $lastMicrotime));
+		if ($microtimeNow - $lastMicrotime < .9) {
+			mylog("DEBOUNCE ACTIVE");
+			return;
+		}
+		$lastMicrotime = $microtimeNow;
+
 		mylog("Button:". $input);
-		//for now but bogus 6666 behind
-		$result =  callApi($input, "");
+		$result =  callApi($input, $value); //$value is always 1...
         mylog(json_encode($result));
 	}   
 	//TODO sleep / prevent klapperen 
@@ -152,7 +163,13 @@ $server->on( 'request', function( $req, $res, $handler ) {
 	mylog("url=".$url);
 
 	$from = $handler->getPeerHost(); //will allways be master
-	//TODO security check if it's really the master?
+
+	//Security check if it's really the master
+	if(getMasterControllerIP() != $from) {
+		error_log("WARNING: Coap request from=".$from." master=".getMasterControllerIP());
+		$res->setPayload( json_encode( "illegal encryption key" ) );//confuse the hacker ;)
+		$handler->send( $res );
+	}
 
 	// $path = explode('_',$url);
 	// $type = $path[0];
@@ -176,6 +193,10 @@ $server->on( 'request', function( $req, $res, $handler ) {
 			mylog("coapListener: Activate door ".$output." for ".$param."s gpios=".json_encode($gpios));
 			$result = activateOutput($output, $param, explode("-", $gpios));
 			break;
+		case 'value':
+	    	$result = getGPIO($output);
+	    	mylog("coapListener: Value gpio=".$output."=".$result);
+	        break;
 	    case 'status':
 			$gpios = explode("-", $output);
 			mylog("coapListener: Status gpios=".json_encode($gpios));
