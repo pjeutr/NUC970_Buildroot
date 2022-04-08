@@ -24,6 +24,7 @@
 #define WG_UNKNOWN_MODE 	_IO(WG_CMD_MAGIC, 0x07)
 #define DEV_NAME "wiegand"
 #define SYSFS_NAME "wiegand"
+#define DRIVER_VERSION "v1.2"
 
 #define RD1_D1_PIN     NUC980_PA1   //reader1 d1 input
 #define RD1_D0_PIN     NUC980_PA0   //reader1 d0 input
@@ -188,7 +189,7 @@ static void recieve_data_convert(void)
 {
 	switch(flag_recieve_mode){
 	case WG_26_MODE:
-		printk("\nWiegand 26 bits with parity \n");
+		printk("Wiegand 26 bits with parity \n");
 		wiegand_26_to_keycode(&keycode);
 		convert_finish_flag = 1;
 		wake_up_interruptible(&read_waitq);  
@@ -328,12 +329,12 @@ static int wiegand_open(struct inode *inode, struct file *file)
   * Wiegand read function, when there is no data, the upper application passes read(fd, buf, size)
   * Indirect calls will cause this function to sleep, and it will not wake up and return from the queue until there is data.
   */
-ssize_t wiegand_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
+static ssize_t wiegand_read(struct file *file, char __user *buf, size_t size, loff_t *ppos)
 {
 	int err;
 	//enable_irq(gpio_to_irq(wiegand_set[0].pin_num));
 	//enable_irq(gpio_to_irq(wiegand_set[1].pin_num));
-	printk("wiegand_read called.\n");
+	printk("wiegand_read called. %s : %s\n", DRIVER_VERSION, wiegand_buffer);
 
 	wait_event_interruptible (read_waitq, convert_finish_flag); // Data has not been converted, please wait here
 	convert_finish_flag = 0;
@@ -349,7 +350,11 @@ ssize_t wiegand_read(struct file *file, char __user *buf, size_t size, loff_t *p
 
 	//disable_irq_nosync(gpio_to_irq(wiegand_set[0].pin_num));
 	//disable_irq_nosync(gpio_to_irq(wiegand_set[1].pin_num));
-	return 0;
+
+	size = strlen(wiegand_buffer);
+	strcpy(buf, wiegand_buffer);
+
+	return 0;	
 }	
 
 /* Upper-level applications can query data through the poll mechanism
@@ -409,6 +414,7 @@ static int __init wiegand_init(void)
 {
 	//create character device
 	int err, i, retval;
+	printk("wiegand_init called. %s\n", DRIVER_VERSION);
 
 	if (major) {
 		devid = MKDEV(major, 0);
@@ -516,7 +522,7 @@ out:
 static void __exit wiegand_exit(void)
 {
 	int i; 
-	printk("wiegand_exit called.\n");
+	printk("wiegand_exit called. %s\n", DRIVER_VERSION);
 	kobject_put(wiegandKObj);
 	del_timer (& refresh_timer);
 

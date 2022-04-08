@@ -17,13 +17,14 @@
 
 #define EPOLL_SIZE ( 256 )
 #define MAX_EVENTS (  20 )
+#define EPOLL_VERSION "v1.2"
 
 int main(int argc, char* argv[])
 {
   char *filename;
 
   if (argc != 2) {
-    printf("Usage: epoll_userspace /dev/wiegand\n");
+    printf("%s Usage: epoll_userspace /dev/wiegand\n", EPOLL_VERSION);
     filename = "/dev/wiegand";
   } else {
     filename = argv[1];
@@ -52,7 +53,7 @@ int main(int argc, char* argv[])
     
   ev.data.fd = fd;
   //ev.events  = ( EPOLLIN | EPOLLOUT );
-  ev.events  = ( EPOLLIN | EPOLLET ); //POLLET fixte het
+  ev.events  = ( EPOLLIN | EPOLLET ); //POLLET=EdgeTrigger, fixte het 
   
   //Add the fd to the epoll
   if( epoll_ctl( epoll_fd, EPOLL_CTL_ADD, fd, &ev ) )
@@ -65,9 +66,9 @@ int main(int argc, char* argv[])
   while( 1 ) 
   {
     //Print which device is being watched  
-    printf("%s MODIFY from epoll_userspace\n", filename);
+    printf("%s MODIFY from epoll_userspace %s\n", filename, EPOLL_VERSION);
 
-    ret = epoll_wait( epoll_fd, events, MAX_EVENTS, -1);;   //wait for 5secs
+    ret = epoll_wait( epoll_fd, events, MAX_EVENTS, -1);   //wait for ever
   
     if( ret < 0 ) 
     {
@@ -78,32 +79,12 @@ int main(int argc, char* argv[])
     
     for( n=0; n<ret; n++ )
     {    
-      //fprintf(stdout, "n ret=%d\n", ret);
+      //printf("n ret=%d\n", ret);
+      //printf("%d events %d\n", EPOLLIN, events[n].events);
       if( ( events[n].events & EPOLLIN )  == EPOLLIN )
       {
         read(events[n].data.fd, &kernel_val, sizeof(kernel_val));
-        char *x;
-        int size = asprintf(stdout, "EPOLLIN : Kernel_val = %s\n", kernel_val);
-        free(x);
-
-        if (size == -1 ) {
-           perror("Failed to asprintf\n");
-        }
-        //fprintf(stdout, "%s\n", "dummy");
-        //fprintf(stderr, "%s\n", "demummy");
-        //perror("en doorrr\n");
-        asprintf(stdout, "EPOLLIN : Kernel_val = %s\n", kernel_val);
-        //puts("Get value 1231\n");
-        //  cat /sys/kernel/wiegand/read
-        // int c;
-        // FILE* file = fopen("/sys/kernel/wiegand/read", "r");
-        // //fprintf(stdout, "EPOLLIN : read1");
-        // if (file) {
-        //     printf("EPOLLIN : read2");
-        //     while ((c = getc(file)) != EOF)
-        //         putchar(c);
-        //     fclose(file);
-        // }
+        printf("EPOLLIN : Kernel_val = %s\n", kernel_val);
         fflush(stdout);
       }
       
