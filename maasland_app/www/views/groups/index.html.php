@@ -40,7 +40,7 @@ set('title', L("groups"));
                                         <div class="row border border-left-0 border-right-0 border-left-0 border-top-0">
 
                                             <div class="col-sm-4 form-group">
-                                            <label>Door:</label>
+                                            <label><?=  L("door"); ?>:</label>
                                               <select name="rule[door_id]" class="selectpicker" id="rule_door_id" 
                                               data-title="Choose a door" data-style="btn-default btn-outline">
                                                 <?php
@@ -51,7 +51,7 @@ set('title', L("groups"));
                                               </select>    
                                             </div>
                                             <div class="col-sm-4 form-group">
-                                            <label>Timezone:</label>
+                                            <label><?=  L("timezone"); ?>:</label>
                                               <select name="rule[timezone_id]" class="selectpicker" id="rule_timezone_id"
                                               data-title="Choose a timezone" data-style="btn-default btn-outline">
                                                 <?php
@@ -63,7 +63,7 @@ set('title', L("groups"));
                                             </div>
                                             <div class="col-sm-4 form-group mt-4">
                                             <button type="submit" class="btn btn-link text-success">
-                                              <i class="fa fa-edit"></i> <?= L::button_change ?>
+                                              <i class="fa fa-edit"></i> <?= L::button_save ?>
                                             </button>
                                             <?= deleteLink_to(L::button_delete, 'grules', $rule->id) ?> 
                                             </div>

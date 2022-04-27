@@ -32,7 +32,9 @@ echo configureGPIO();
 
 //check and do restore factory settings
 if(checkIfFactoryReset()){
+	echo "Factory reset is invoked\n";
 	doFactoryReset();
+	echo "Factory has finished\n";
 }
 
 //create THE eventloop. (get's instance, or creates new)

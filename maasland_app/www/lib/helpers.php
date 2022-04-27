@@ -3,8 +3,9 @@
 //date_default_timezone_set('Europe/Amsterdam');
 //date_default_timezone_set('Europe/London');
 //date_default_timezone_set('Australia/Sydney');
-$tz = "Europe/Amsterdam";
-
+function getTimezone() {
+    return "Europe/Amsterdam";
+}
 
 //Custom log
 function mylog($message) {
@@ -193,7 +194,7 @@ function swal_message_success($message) {
 }
 
 function print_date($timestamp) {
-    $tz = "Europe/Amsterdam";
+    //$tz = "Europe/Amsterdam";
     //https://stackoverflow.com/questions/20288789/php-date-with-timezone
     //date_default_timezone_set($tz); //bad practic volgen bovenstaande link
     //https://stackoverflow.com/questions/3792066/convert-utc-dates-to-local-time-in-php
@@ -201,7 +202,7 @@ function print_date($timestamp) {
     // create a $dt object with the UTC timezone
     $dt = new DateTime($timestamp, new DateTimeZone('UTC'));
     // change the timezone of the object without changing its time
-    $dt->setTimezone(new DateTimeZone($tz)); 
+    $dt->setTimezone(new DateTimeZone( getTimezone() )); 
     return $dt->format('d-m-Y H:i:s');
 }
 

@@ -338,16 +338,19 @@ function checkDoorSchedule($door) {
     //mylog($tz);
     mylog("checkDoorSchedule door=".$door->id." tz=".$door->timezone_id);
     if($door->timezone_id) {
+        //$now = new DateTime('now', new DateTimeZone('Europe/Amsterdam'));
         $now = new DateTime();
-        mylog($now);
+        //mylog($now);
         //check if it is the right day of the week
         $weekday = $now->format('w');//0 (for Sunday) through 6 (for Saturday) 
         $weekdays = explode(",",$tz->weekdays);
         if(in_array($weekday, $weekdays)) {
             mylog("checkDoorSchedule begin/end");
             //check if it is the right time
-            $begin = new DateTime($tz->start);
-            $end = new DateTime($tz->end);
+            $begin = new DateTime($tz->start, new DateTimeZone(getTimezone()));
+            $end = new DateTime($tz->end, new DateTimeZone(getTimezone()));
+            //mylog($begin);
+            //mylog($end);
             if ($now >= $begin && $now <= $end) {
                 return true;
             }
