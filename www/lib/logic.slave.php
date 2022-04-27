@@ -129,7 +129,7 @@ function doFactoryReset() {
     //$file = '/maasland_app/www/db/dev.db';
     $backup = '/maasland_app/www/db/prod_bak.db';
 
-    //this method can only be invoked from cli (inputListner), webserver has no permission to writh files
+    //this method can only be invoked from cli (inputListner), webserver has no permission to write files
     if (!@copy($file, $backup)) {
         $errors= error_get_last();
         mylog("COPY ERROR: ".$errors['type']);
@@ -140,6 +140,8 @@ function doFactoryReset() {
         mylog(json_encode(error_get_last()));
         mylog("failed to restore factory settings $file...");
     } else {
+        //set proper file permissions after creation 
+        chmod($file,0775);
         mylog("Factory settings were restored $file...");
     }
 }

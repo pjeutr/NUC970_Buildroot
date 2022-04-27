@@ -24,24 +24,18 @@ function before($route = array())
     if(! isset($_SESSION["lang"]) ) {
       $_SESSION["lang"] = "en";
     }
-
     //Load language file
     //$i18n = new i18n();
-    $i18n = new i18n('languages/lang_{LANGUAGE}.ini', 'langcache/', 'en');
-    // $i18n->setCachePath('./tmp/cache');
-    // $i18n->setFilePath('lib/php-i18n/lang/lang_{LANGUAGE}.ini'); // language file path
-    // $i18n->setFallbackLang('en');
-    // $i18n->setPrefix('I');
-    $i18n->setForcedLang($_SESSION["lang"]); // force english, even if another user language is available
-    // $i18n->setSectionSeparator('_');
-    // $i18n->setMergeFallback(false); // make keys available from the fallback language
+    $i18n = new i18n('languages/lang_{LANGUAGE}.ini', 'langcache/');// language file path
+    $i18n->setFallbackLang('en');
+    //$i18n->setForcedLang($_SESSION["lang"]); // force english, even if another user language is available
+    $i18n->setMergeFallback(false); // make keys available from the fallback language
     $i18n->init();
 
-    mylog("l=".request_method()."_".request_uri()."_".php_sapi_name());
+    mylog("l=".request_method()."_x_".request_uri()."_".php_sapi_name()."_".$_SESSION["lang"]);
 
     /*
       if factoryResetSwitch
-        doFactoryReset
         showMessage factoryeset
 
       //calls from master,slave or tests
@@ -62,7 +56,7 @@ function before($route = array())
     */
 
     if (checkIfFactoryReset()) {
-        doFactoryReset();
+        //doFactoryReset(); //no proper file permissions to do from webserver
         echo messagePage(L("message_factoryreset"));
         stop_and_exit();
     }
@@ -191,6 +185,7 @@ function logout_page() {
 //set language session
 dispatch_get('lang/:lang',  'set_lang');
 function set_lang() {
+    mylog('http://'.$_SERVER['HTTP_HOST'].'/ == '.params('lang'));
     $_SESSION["lang"] = params('lang');
     redirect_to('http://'.$_SERVER['HTTP_HOST'].'/');
 }
@@ -216,11 +211,6 @@ function run_script() {
 dispatch_get('dev/:switch',  'set_dev');
 function set_dev() {
     $_SESSION["dev"] = params('switch');
-    return html('dashboard.html.php');
-}
-dispatch('resetfirmware', 'reset_page');
-function reset_page() {
-    doFactoryReset();
     return html('dashboard.html.php');
 }
 dispatch('info', 'info_page');

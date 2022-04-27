@@ -19,8 +19,8 @@ echo "\nBuzzer=". getGPIO(GVAR::$BUZZER_PIN);
 echo "\nRunning led=". getGPIO(GVAR::$RUNNING_LED);
 echo "\nButton1=". getGPIO(GVAR::$GPIO_BUTTON1);
 echo "\nButton2=". getGPIO(GVAR::$GPIO_BUTTON2);
-echo "\nDoorstatus1=". getGPIO(GVAR::$GPIO_DOORSTATUS1)."_".getGPIO(GVAR::$GPIO_DOORSTATUS1N);
-echo "\nDoorstatus2=". getGPIO(GVAR::$GPIO_DOORSTATUS2)."_".getGPIO(GVAR::$GPIO_DOORSTATUS2N);
+echo "\nSensor1=". getGPIO(GVAR::$GPIO_DOORSTATUS1)."_".getGPIO(GVAR::$GPIO_DOORSTATUS1N);
+echo "\nSensor2=". getGPIO(GVAR::$GPIO_DOORSTATUS2)."_".getGPIO(GVAR::$GPIO_DOORSTATUS2N);
 echo "\nDoor1=". getGPIO(GVAR::$GPIO_DOOR1);
 echo "\nDoor2=". getGPIO(GVAR::$GPIO_DOOR2);
 echo "\nFirmware=". getGPIO(GVAR::$GPIO_FIRMWARE)." => ";
@@ -28,7 +28,8 @@ echo "\nFirmware=". getGPIO(GVAR::$GPIO_FIRMWARE)." => ";
 if(checkIfFactoryReset()) {
 	echo "doFactoryReset ";
 	try {
-		doFactoryReset();
+		//don't do this by default, works only when called from cli
+		//doFactoryReset();
 	} catch (Exception $e) {
 	    echo 'Caught exception: ',  $e->getMessage(), "\n";
 	}

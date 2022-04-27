@@ -220,7 +220,7 @@ $flashMessage = flash_now();
                         -->
                             <li class="nav-item">
                                 <a href="./?/logout" class="nav-link">
-                                    <i class="nc-icon nc-key-25"></i> Log out
+                                    <i class="nc-icon nc-key-25"></i> <?=  L("button_logout"); ?>
                                 </a>
                             </li>
                         </ul>

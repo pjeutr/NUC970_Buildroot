@@ -18,7 +18,7 @@ set('title', L("settings"));
                         <button type="submit" name="submit" class="btn btn-success btn-outline">
                             <i class="fa fa-upload"></i> <?=  L("setting_upload"); ?>
                         </button>
-                        <?= iconLink_to(L("setting_download") , 'setting_download', 'btn-outline', 'fa fa-download') ?>
+                        <?= iconLink_to(L("setting_download") , 'settings_download', 'btn-outline', 'fa fa-download') ?>
                     </form>
 
 
@@ -66,7 +66,7 @@ set('title', L("settings"));
         </div>
         <div class="flex-row-2 flex-cell" role="cell">
             <button type="submit" class="btn btn-success">
-                <i class="fa fa-edit"></i> <?=  L("button_change"); ?>
+                <i class="fa fa-edit"></i> <?=  L("button_save"); ?>
             </button>
         </div>
 

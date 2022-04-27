@@ -35,11 +35,11 @@ $doors = find_doors();
                         <button class="btn btn-info" type="button" 
                             onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum ?>/0')"><?=  L("close"); ?> </button>
                     
-                        <hr>
+                        <!-- <hr>
                         <button class="btn btn-warning" type="button" 
                             onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum + 2 ?>/1')"> Alarm<?=  $door->enum; ?> on </button>
                         <button class="btn btn-info" type="button" 
-                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum + 2?>/0')">Alarm<?=  $door->enum; ?> off</button>
+                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum + 2?>/0')">Alarm<?=  $door->enum; ?> off</button> -->
                              
                     </div>
                 </div>

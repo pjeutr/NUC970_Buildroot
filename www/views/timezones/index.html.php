@@ -1,6 +1,6 @@
 <?php 
 set('id', 4);
-set('title', 'Timezones');
+set('title', L("timezones"));
 ?>
 
 <div class="content">
@@ -30,9 +30,9 @@ set('title', 'Timezones');
     <td><?= $row->end //date("H:i", $row->end) ?></td>
     <td><?= $row->weekdays ?></td>
     <!-- <td><?= link_to($row->name, 'timezones', $row->id) ?></td> -->
-    <td><?= iconLink_to("Edit", 'timezones/'.$row->id.'/edit', 'btn-link', null) ?>
+    <td><?= iconLink_to(L::button_edit, 'timezones/'.$row->id.'/edit', 'btn-link', null) ?>
         &nbsp;
-        <?= deleteLink_to('Delete', 'timezones', $row->id) ?>
+        <?= deleteLink_to(L::button_delete, 'timezones', $row->id) ?>
 </tr>
 <?php } ?>
                             </tbody>

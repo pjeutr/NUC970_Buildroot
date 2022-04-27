@@ -51,7 +51,7 @@ set('title', L("doors"));
                             <form class="doorForm" id="row" action="<?= url_for('controller', $controller->id) ?>" method="POST">
                             <input type="hidden" name="_method" id="_method" value="PUT">
 
-                            <?php foreach (["Reader 1","Reader 2","Button 1","Button 2"] as $key=>$value) { 
+                            <?php foreach ([L::term_reader." 1",L::term_reader." 2",L::term_button." 1",L::term_button." 2"] as $key=>$value) { 
                                 $switch_1 = $controller->reader_1;
                                 $switch_2 = $controller->reader_2;
                                 $switch_3 = $controller->button_1;
@@ -88,7 +88,7 @@ set('title', L("doors"));
                                 </div>
                             </div>
 
-                            <?php foreach (["Sensor 1","Sensor 2"] as $key=>$value) {
+                            <?php foreach ([L::term_sensor." 1",L::term_sensor." 2"] as $key=>$value) {
                                 $nr = $key + 1; ?>
 
                                 <div class="row border border-top-0">

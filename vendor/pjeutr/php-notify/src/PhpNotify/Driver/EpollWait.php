@@ -12,7 +12,6 @@ class EpollWait extends AbstractDriver implements DriverInterface {
         //$subprocess_cmd = sprintf(self::$cli_command.' %s 2>/dev/null', $path);
         //removing pipe, to prevent starting inotifywait wrapped in a shell (takes 4% memory extra for each entry)
         $subprocess_cmd = sprintf(self::$cli_command.' %s', $path);
-
         $this->observer->getLoop()->addReadStream(popen($subprocess_cmd, 'r'), [$this, 'onData']);
 
         return true;
