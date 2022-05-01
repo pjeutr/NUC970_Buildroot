@@ -2,7 +2,7 @@
 
 # GET /doors
 function doors_index() {
-    set('controllers', find_controllers());
+    set('controllers', find_all_controllers());
     //TODO put doors in controllers
     set('doors', find_doors());
     return html('doors/index.html.php');

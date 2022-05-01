@@ -147,22 +147,6 @@ function doFactoryReset() {
 }
 
 /*
-*   Get available controllers to command for the master
-*   -
-*/
-function available_controllers() {
-    $result = mdnsBrowse("_maasland._udp");
-    mylog($result);
-    //Remove master controller
-    $masterIp = mdnsBrowse("_master._sub._maasland._udp")[0][7];
-    $result = array_filter($result, function($v) use($masterIp){ 
-        mylog($v[7] ."". $masterIp);
-        return $v[7] != $masterIp; 
-    });
-    return json($result);
-}
-
-/*
 *   Check if this controller is Master
 *   Slave controllers don't use database and webgui
 *   if Master => S1 Value is 0

@@ -25,6 +25,15 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v1.0.2
+- Schedule update every minute
+- Controller search shows only unkown controllers
+- Controller overview with status
+- Reportlines changed to doorName@controllerName reader x
+- Adding Refresh button 
+- Delete reports older than 30days
+- Status indicatie op dashboard of controllers online zijn.
+- “Ja” en “Annuleren” bij verwijderen van gebruikers etc
 v0.7.6 - fix slave alarm, add dashboard open/close and alarm on/off, debounce buttons
 v0.7.5 - fix gpio resolver, enforce unique controller IP
 v0.7.4 - fix getValue and .env include software version in status/gvar

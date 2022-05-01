@@ -14,14 +14,19 @@ set('title', 'Contollers');
                     <div class="card-body table-responsive">
                         <table class="table table-hover table-striped">
                             <thead>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Ip</th>
+                                <th><?=  L("id"); ?></th>
+                                <th><?=  L("online"); ?></th>
+                                <th><?=  L("name"); ?></th>
+                                <th><?=  L("ip"); ?></th>
                             </thead>
                             <tbody>
                                 <?php foreach ($controllers as $row) { ?>
                                 <tr>
                                 	<td><?= $row->id ?></td>
+                                    <td><div class="statusIcon" 
+                                        data-url="http://<?= $row->ip ?>/?/api/overview">
+                                        <i class="fa fa-spinner fa-spin"></i>
+                                    </div></td>
                                     <td><?= $row->name ?></td>
                                     <td><?= $row->ip ?></td>
                                     <td><?= iconLink_to("Edit", 'controllers/'.$row->id.'/edit', 'btn-link', null) ?>

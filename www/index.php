@@ -221,9 +221,9 @@ dispatch('opcache', 'opcache_page');
 function opcache_page() {
     return opcache_get_status();
 }
-dispatch('gpio', 'gpio_page');
-function gpio_page() {
-    return html('gpio.html.php');
+dispatch('cleanup_db', 'cleanup_page');
+function cleanup_page() {
+    return cleanupReports(30);
 }
 
 // main controller
@@ -235,7 +235,26 @@ dispatch_put   ('settings/:id', 'settings_update');
 dispatch_get   ('settings_download',   'settings_download');
 dispatch_post  ('settings_upload',   'settings_upload');
 
- //webapi / coap alternatives
+//webapi
+dispatch('api/version', 'version_page');
+function version_page() {
+    header('Access-Control-Allow-Origin: *');
+    header('Content-Type: application/x-javascript; charset='.strtolower(option('encoding')));
+    return json_encode(["version" => GVAR::$DASHBOARD_VERSION]);
+}
+dispatch('api/overview', 'overview_page');
+function overview_page() {
+    header('Access-Control-Allow-Origin: *');
+    header('Content-Type: application/x-javascript; charset='.strtolower(option('encoding')));
+    return json_encode([
+      "version" => GVAR::$DASHBOARD_VERSION,
+      "1" => getOutputStatus(1),
+      "2" => getOutputStatus(2),
+      "3" => getOutputStatus(3),
+      "4" => getOutputStatus(4)
+    ]);
+}
+//webapi / coap alternatives
 dispatch_get   ('api/status/:door', 'outputStatus');
 dispatch_get   ('api/output/:door/:state/', 'output');
 dispatch_get   ('api/activate/:door/:duration/:gpios/', 'activate');

@@ -10,6 +10,7 @@ set('title', L("reports"));
                 <div class="card strpied-tabled-with-hover">
                     <div class="card-header ">
                         <?= iconLink_to(L("button_downloadcsv"), 'reports_csv', 'btn-outline', 'fa fa-download') ?>
+                        <?= iconLink_to('', 'reports', 'btn-outline', 'fa fa-refresh') ?>
                     </div>
                     <div class="card-body table-responsive">
                         <table class="table  table-hover table-striped">

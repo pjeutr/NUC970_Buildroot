@@ -30,12 +30,12 @@ if( !checkIfMaster() ) {
 configDB();
 
 $now = new DateTime();
-$actor = "Cron"; 
+$actor = "Scheduled"; 
 $action = "Systemcheck ";
 //find door->timezone_id fields	 
 
 //check if everything is alive
-//if($now->format('H:i') == "2:00") { //every night at 2
+if($now->format('H:i') == "04:00") { //every night at 2, needs timezone adjustment so 4
 // if($now->format('i') == 45) { //every hour
 
 // 	exec("ps -o pid,user,comm,stat,args | grep -i 'inputListener' | grep -v grep", $pids);
@@ -52,23 +52,30 @@ $action = "Systemcheck ";
 // 	} else {
 // 	    $action = "Systemcheck, inputListener OK. ".count($pids)." pids:".join(',', $pids);
 // 	}
-
 // 	//check if listener still running?
-// 	saveReport($actor, $action);
-// }
+
+	//delete rows older than x days in reports
+	$days = 30;
+	$action = cleanupReports($days);
+	mylog($action);
+	if($action > 0) {
+		saveReport($actor, "Older than $days days. $action rows deleted in reports.");
+	}
+}
 
 $doors = find_doors();
 foreach ($doors as $door) {
-	mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->enum.":".$door->id.":".$door->name." tz=".$door->timezone_id."\n");
+	//mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->enum.":".$door->id.":".$door->name." tz=".$door->timezone_id);
 	//
+
 	if( $door->timezone_id ) {
 		if(checkDoorSchedule($door)) {
 			$changed = operateDoor($door, 1);
-			$action = "Scheduled ".$door->name." opened";
+			$action = $door->name."@".$door->cname." opened";
 			if($changed) saveReport($actor, $action);
 		} else {
 			$changed = operateDoor($door, 0);
-			$action = "Scheduled  ".$door->name." closed";
+			$action = $door->name."@".$door->cname." closed";
 			if($changed) saveReport($actor, $action);
 		}
 		mylog($action);

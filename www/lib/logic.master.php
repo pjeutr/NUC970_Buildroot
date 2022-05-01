@@ -61,7 +61,7 @@ function handleInput($from, $input, $keycode) {
             if($user) {
                 $actor = $user->name;
                 $result = handleUserAccess($user, $input, $controller);
-                $action = $action." ".$result;
+                $action = $result." ".$action;
             } 
             break;
         case 3:
@@ -323,7 +323,7 @@ function handleUserAccess($user, $readerId, $controller) {
 
     //open the door 
     $msg = openDoor($door, $controller);
-    
+    $msg = $door->name."@".$controller->name;
     return $msg;    
 }
 
@@ -445,11 +445,11 @@ function operateDoor($door, $open) {
         $gid = getOutputGPIO($door->id);
 
         $currentValue = getGPIO($gid);
-        mylog("openLock ".$currentValue."=".$open."\n");
+        mylog("openLock ".$currentValue."=".$open);
 
         //check if lock state has changed
         if($currentValue != $open) {
-            //mylog("STATE CHANGED=".$open);
+            mylog("STATE CHANGED=".$open);
             setGPIO($gid, $open);
             return true;
         }
@@ -489,6 +489,30 @@ function operateDoor($door, $open) {
 }
 
 
+/*
+*   Get available controllers to command for the master
+*   -
+*/
+function available_controllers() {
+    $result = mdnsBrowse("_maasland._udp");
+    mylog($result);
 
+    //Remove controllers already used
+    $controllers = find_controller_ips();
+    mylog($controllers);
+
+    //Remove master controller
+    $masterIp = mdnsBrowse("_master._sub._maasland._udp")[0][7];
+    $result = array_filter($result, function($v) use($masterIp, $controllers){ 
+        mylog($v[7] ."-x-". $masterIp);
+        return !in_array($v[7], $controllers) && $v[7] != $masterIp;
+        //return $v[7] != $masterIp; 
+    });
+    mylog($result);
+    // if(empty($result)) {
+    //     return json( [["","","","","","","g","h"]] );
+    // }   
+    return json($result);
+}
 
 

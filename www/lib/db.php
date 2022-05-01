@@ -14,6 +14,20 @@ function find_string_by_sql($sql = '', $params = array()) {
     return null;
 }
 
+function find_columnvalues_by_sql($sql = '', $params = array()) {
+    $db = option('db_conn');
+
+    $stmt = $db->prepare($sql);
+    if ($stmt) {
+        if ($stmt->execute()) {
+            return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+        }
+    } else {
+        echo "Error: " . $sql . "<br>" . $db->error;
+    }
+    return null;
+}
+
 function find_objects_by_sql($sql = '', $params = array()) {
     $db = option('db_conn');
 
@@ -56,6 +70,14 @@ function delete_object_by_id($obj_id, $table) {
 
     $stmt = $db->prepare("DELETE FROM `$table` WHERE id = ?");
     $stmt->execute(array($obj_id));
+}
+
+function delete_objects_where($where, $table) {
+    $db = option('db_conn');
+    mylog("DELETE FROM $table WHERE $where");
+    $stmt = $db->prepare("DELETE FROM $table WHERE $where");
+    $stmt->execute();
+    return $stmt->rowCount();
 }
 
 function add_colon($x) { return ':' . $x; };
