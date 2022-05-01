@@ -1,1 +1,1 @@
-*/5 * * * * /maasland_app/scripts/flexess_cron.php
+*/1 * * * * /maasland_app/scripts/flexess_cron.php
