@@ -4,13 +4,14 @@ set('title', L("dashboard_name"));
 
 $door_open = find_setting_by_id(1) * 1000;//2 * 1000;
 $doors = find_doors();
+$controllers = find_controllers();
 ?>
 
 <div class="content">
     <div class="container-fluid">
-        <h5><?=  L("dashboard_buttons"); ?></h5>
+        <!-- <h5><?=  L("dashboard_buttons"); ?></h5> -->
         <div class="row">
-        <?php foreach ($doors as $door) {  ?> 
+            <?php if(!empty($controllers)) {  ?> 
             <div class="col-lg-3 col-sm-6">
                 <div class="card card-stats">
                     <div class="card-body ">
@@ -18,6 +19,37 @@ $doors = find_doors();
                             <div class="col-3">
                                 <div class="icon-mid text-center icon-warning">
                                     <i class="nc-icon nc-vector text-success"></i>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                Controllers status
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer ">
+                        <?php foreach ($controllers as $controller) {  ?> 
+                            <hr>
+                            <span class="statusIcon" 
+                                data-url="http://<?= $controller->ip ?>/?/api/version"
+                                data-url2="http://<?= $controller->ip ?>/?/api/overview"
+                                >
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </span>
+                            <?= $controller->ip ?> 
+                            <a href="/?/controllers/<?= $controller->id ?>/edit"><?= $controller->name ?></a>
+                        <?php } ?> 
+                    </div>
+                </div>
+            </div>
+            <?php } ?> 
+        <?php foreach ($doors as $door) {  ?> 
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="icon-mid text-center icon-warning">
+                                    <i class="nc-icon nc-key-25 text-success"></i>
                                 </div>
                             </div>
                             <div class="col-7">

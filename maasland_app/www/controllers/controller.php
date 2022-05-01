@@ -47,7 +47,7 @@ function input_update() {
     set('swalMessage', $swalMessage);
 
     //redirect('doors');
-    set('controllers', find_controllers());
+    set('controllers', find_all_controllers());
     set('doors', find_doors());
     return html('doors/index.html.php');
 }

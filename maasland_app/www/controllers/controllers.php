@@ -36,7 +36,7 @@ function controllers_update() {
         redirect('controllers/'.$controller->id.'/edit');
     }
     
-    redirect('controllers');
+    redirect('doors');
 }
 
 # GET /controllers/new
@@ -56,16 +56,15 @@ function controllers_create() {
     create_door_obj(make_door_obj(array('name' => 'Door 1','enum' => 1,'controller_id' => $controllerId,'timezone_id' => null )));
     create_door_obj(make_door_obj(array('name' => 'Door 2','enum' => 2,'controller_id' => $controllerId,'timezone_id' => null) ));
 
-    redirect('controllers');
+    redirect('doors');
 }
 
 # DELETE /controllers/:id
 function controllers_destroy() {
     delete_controller_by_id(filter_var(params('id'), FILTER_VALIDATE_INT));
-
     //When deleting a controller, we also neet to delete the asociated doors
     delete_door_by_controller_id(filter_var(params('id'), FILTER_VALIDATE_INT));
-    redirect('controllers');
+    redirect('doors');
 }
 
 function get_controller_or_404() {

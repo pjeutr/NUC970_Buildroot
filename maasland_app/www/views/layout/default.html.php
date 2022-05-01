@@ -47,9 +47,9 @@ $flashMessage = flash_now();
             timezone = "<?php echo $timezone;?>",
             timeDiff = serverTime - Date.now();
 
-        console.log(serverTime+"-"+timezone+"-"+timeDiff);
+        //console.log(serverTime+"-"+timezone+"-"+timeDiff);
         setInterval(function () {
-          serverClock.innerHTML= moment().add(timeDiff).zone(timezone).format('DD-MM-Y H:mm:ss');
+          serverClock.innerHTML= moment().add(timeDiff).utcOffset(timezone).format('DD-MM-Y HH:mm:ss');
         }, 1000);
 
     </script>    
@@ -116,16 +116,16 @@ $flashMessage = flash_now();
 
                     <?php if( isset($_SESSION["dev"]) ) { ?>
                     <hr>
-                    <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/gpio">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>GPIO</p>
-                        </a>
-                    </li>
                     <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="/admin/phpliteadmin.php">
                             <i class="nc-icon nc-settings-tool-66"></i>
                             <p>DB</p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/cleanup_db">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Prune reports</p>
                         </a>
                     </li>
                     <li <?php echo ($id == 12) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
@@ -200,7 +200,9 @@ $flashMessage = flash_now();
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navigation">
                         <ul class="nav navbar-nav ml-auto">
-                            <sub><div id="serverClock"><?= date("d-m-Y H:i:s");?> - <?= $timezone;?></div></sub>
+                            <sub><div id="serverClock"><?= 
+                            (new DateTime("now", new DateTimeZone('Europe/Amsterdam')))
+                            ->format("d-m-Y H:i:s") ?></div></sub>
                         </ul> 
                         <ul class="nav navbar-nav ml-auto">
                             <!--
@@ -310,7 +312,8 @@ $flashMessage = flash_now();
 <script src="/assets/js/plugins/bootstrap-show-password.min.js"></script>
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
-<script src="/assets/js/app.js?8"></script>
+<script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?a"></script>
+<script src="/assets/js/app.js?l"></script>
 <script type="text/javascript">
     // Content for SweetAlert
     <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>

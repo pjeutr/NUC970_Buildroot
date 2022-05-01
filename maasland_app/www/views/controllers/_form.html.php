@@ -13,7 +13,7 @@
        <div class="input-group">
         <select xclass="form-control custom-select" size="3" id="controller_chooser" name="controller[chooser]" 
         title="Scan for a new contoller and press this button">
-        <option selected><?php echo L::choose ?></option>
+        <option value="0"><?php echo L::choose ?></option>
       </select>
       <div class="input-group-append">
         <button class="btn btn-success" type="button" title="Search for available contollers and press this button" id="scan_key">

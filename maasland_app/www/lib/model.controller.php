@@ -1,7 +1,15 @@
 <?php
 
 function find_controllers() {
+    return find_objects_by_sql("SELECT * FROM controllers WHERE id > 1");
+}
+
+function find_all_controllers() {
     return find_objects_by_sql("SELECT * FROM controllers");
+}
+
+function find_controller_ips() {
+    return find_columnvalues_by_sql("SELECT ip FROM controllers");
 }
 
 function find_controller_by_id($id) {

@@ -8,6 +8,7 @@ class GVAR
 {
     //error_log("Load gpio voor Match board");
     public static $BOARD_TYPE = "Match2: Dev1";
+    public static $DASHBOARD_VERSION = "1.0.2";
 
     //outputs
     public static $GPIO_DOOR1 = 68; //NUC980_PC4
