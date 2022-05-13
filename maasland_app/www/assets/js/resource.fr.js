@@ -1,6 +1,8 @@
 var resource = {
 
 confirmDeletion: "Oui",
+confirmDeletion2: "Deleted!",
+confirmDeletionText2: "The item has been deleted.",
 cancel: "Annuler",
 ok: "Ok",
 sorry: "Sorry",

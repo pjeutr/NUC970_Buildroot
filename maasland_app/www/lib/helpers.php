@@ -187,16 +187,16 @@ function swal_message($message, $title="Oops", $type="error") {
     return "{type: '$type' ,title: '$title', html: '$message'}";
 }
 function swal_message_error($message) {
-    return swal_message($message, "Oops", "error");
+    return swal_message($message, L("message_error_title"), "error");
 }
 function swal_message_success($message) {
-    return swal_message($message, "Great", "success");
+    return swal_message($message, L("message_success_title"), "success");
 }
 
 function print_date($timestamp) {
     //$tz = "Europe/Amsterdam";
     //https://stackoverflow.com/questions/20288789/php-date-with-timezone
-    //date_default_timezone_set($tz); //bad practic volgen bovenstaande link
+    //date_default_timezone_set($tz); //bad practic volgen bovenstaande lL("message_changes_saved_title")ink
     //https://stackoverflow.com/questions/3792066/convert-utc-dates-to-local-time-in-php
 
     // create a $dt object with the UTC timezone

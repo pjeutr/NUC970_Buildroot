@@ -63,7 +63,7 @@ function door_open() {
     $door = find_door_by_id($doorId);
     $controller = find_controller_by_id($controllerId);
     $result = openDoor($door, $controller);
-    saveReport("WebAdmin", $door->name."@".$controller->name);
+    saveReport("WebAdmin", $door->name);//."@".$controller->name);
     return (json(array($result)));
 }
 function switchOutput() {

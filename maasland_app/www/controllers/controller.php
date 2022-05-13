@@ -41,7 +41,7 @@ function input_update() {
 
     $swalMessage = swal_message_error("Something went wrong!");
     if(update_with_sql($sql, [$switch[1],$switch[2],$switch[3],$switch[4],$sensor[1],$sensor[2],$id])) {
-        $swalMessage = swal_message_success("The changes were save!");
+        $swalMessage = swal_message_success(L("message_changes_saved"));
     }
 
     set('swalMessage', $swalMessage);

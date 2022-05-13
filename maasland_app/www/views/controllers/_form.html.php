@@ -30,7 +30,7 @@
   <div class="form-group">
     <label><?php echo L::networkaddress; ?>:</label>
     <input type="text" class="form-control" name="controller[ip]" id="controller_ip" value="<?php echo h($controller->ip) ?>" placeholder="<?php echo L::generic_sub." ".L::networkaddress; ?>"/>
-    <small id="codeHelp" class="form-text text-muted">Press search to find an ip address</small>
+    <small id="codeHelp" class="form-text text-muted"><?php echo L::networkaddress_remark; ?></small>
   </div>
   <div class="form-group">
     <label><?php echo L::remarks; ?>:</label>
