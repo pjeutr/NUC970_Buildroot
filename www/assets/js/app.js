@@ -422,7 +422,7 @@ app = {
             m.setAttribute('value', 'DELETE'); 
             f.appendChild(m); 
             f.submit();
-            swal("Deleted!", "The item has been deleted.", "success");
+            swal(resource.confirmDeletion2, resource.confirmDeletionText2, "success");
         });
     },
 

@@ -61,7 +61,7 @@ function handleInput($from, $input, $keycode) {
             if($user) {
                 $actor = $user->name;
                 $result = handleUserAccess($user, $input, $controller);
-                $action = $result." ".$action;
+                $action = $result;//." ".$action;
             } 
             break;
         case 3:
@@ -323,7 +323,7 @@ function handleUserAccess($user, $readerId, $controller) {
 
     //open the door 
     $msg = openDoor($door, $controller);
-    $msg = $door->name."@".$controller->name;
+    $msg = $door->name;//."@".$controller->name;
     return $msg;    
 }
 
@@ -503,11 +503,11 @@ function available_controllers() {
 
     //Remove master controller
     $masterIp = mdnsBrowse("_master._sub._maasland._udp")[0][7];
-    $result = array_filter($result, function($v) use($masterIp, $controllers){ 
+    $result = array_values(array_filter($result, function($v) use($masterIp, $controllers){ 
         mylog($v[7] ."-x-". $masterIp);
         return !in_array($v[7], $controllers) && $v[7] != $masterIp;
         //return $v[7] != $masterIp; 
-    });
+    }));
     mylog($result);
     // if(empty($result)) {
     //     return json( [["","","","","","","g","h"]] );

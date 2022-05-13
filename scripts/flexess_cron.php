@@ -71,11 +71,11 @@ foreach ($doors as $door) {
 	if( $door->timezone_id ) {
 		if(checkDoorSchedule($door)) {
 			$changed = operateDoor($door, 1);
-			$action = $door->name."@".$door->cname." opened";
+			$action = $door->name." opened";
 			if($changed) saveReport($actor, $action);
 		} else {
 			$changed = operateDoor($door, 0);
-			$action = $door->name."@".$door->cname." closed";
+			$action = $door->name." closed";
 			if($changed) saveReport($actor, $action);
 		}
 		mylog($action);

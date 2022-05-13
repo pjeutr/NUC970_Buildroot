@@ -16,6 +16,13 @@ function configure() {
 
 function before($route = array())
 {   
+    //Trying to make a session persistant, mainly to preserver language choice
+    //TODO make login timout after 1 hour?
+    ini_set('session.cookie_lifetime', 2147483647);//2147483647 is absolute max
+    ini_set('session.gc_maxlifetime', 2147483647);
+    ini_set('session.save_path', '/maasland_app/www/sessions');
+    ini_set('session.cookie_path', '/maasland_app/www/sessions');
+
     //start session
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
