@@ -263,6 +263,11 @@ function checkValue($gpio, $controller) {
 */
 function handleUserAccess($user, $readerId, $controller) {
     mylog("handleUserAccess user".$user->name." readerId=".$readerId);
+    //Check if user is active
+    if(! is_user_active($user) ) {
+        return "User is inactive";
+    }
+
     //Check maximum visits for user 
     if(!empty($user->max_visits) && $user->visit_count > $user->max_visits) {
         return "Maximum visits reached:  visits = ".$user->max_visits;

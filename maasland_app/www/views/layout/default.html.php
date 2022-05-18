@@ -40,7 +40,7 @@ $flashMessage = flash_now();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.1a" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="/assets/css/app.css?6" rel="stylesheet" />
+    <link href="/assets/css/app.css?1" rel="stylesheet" />
     <script type="text/javascript">
         //calculate clock with php server time
         var serverTime = <?php echo $serverTime;?>,
@@ -312,11 +312,12 @@ $flashMessage = flash_now();
 <script src="/assets/js/plugins/bootstrap-show-password.min.js"></script>
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
-<script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?1"></script>
-<script src="/assets/js/app.js?1"></script>
+<script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?2"></script>
+<script src="/assets/js/app.js?2"></script>
 <script type="text/javascript">
     // Content for SweetAlert
     <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>
+    <?= isset($flashMessage['swalMessage']) ? 'swal( '.swal_message_success($flashMessage['swalMessage']).');' : '' ?>
 </script>
 </html>
 

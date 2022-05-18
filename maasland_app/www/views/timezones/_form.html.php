@@ -46,7 +46,7 @@
         $('#weekdays').weekdays({
             //get value of associated input
             selectedIndexes: $('#weekdays_form').val(),
-            //days: [ "Domingo" ,"Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"] ,
+            days: resource.weekdays ,
         });
 
         $("#timezoneForm").validate({

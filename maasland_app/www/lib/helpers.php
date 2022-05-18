@@ -224,6 +224,11 @@ function mdate($format = 'u', $utimestamp = null) {
     return date(preg_replace('`(?<!\\\\)u`', $milliseconds, $format), $timestamp);
 }
 
+function weekDaysPlus($stringArray) {
+    $pieces = explode(",", $stringArray);
+    $result = array_map(function($n){return $n+1;}, $pieces);
+    return implode(",",$result);
+}
 
 /* 
 *   cli functions - only used by cli 

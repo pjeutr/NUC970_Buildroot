@@ -16,7 +16,7 @@
     <div class="input-group">
       <input type="text" class="form-control" name="user[keycode]" id="user_keycode" value="<?php echo h($user->keycode) ?>" placeholder="<?=  L("key_sub"); ?>"/>
       <div class="input-group-append">
-        <button class="btn btn-success" type="button" title="Scan a key and press this button" id="scan_key">
+        <button class="btn btn-success" type="button" title="<?=  L("key_button_remark"); ?>" id="scan_key">
         <?=  L("key_button"); ?></button>
       </div>
     </div>
@@ -35,25 +35,45 @@
   </div>
   <div class="form-group">
     <label><?=  L("startdate"); ?>:</label>
-    <input type="text" class="form-control datepicker" name="user[start_date]" id="datetimepicker" value="<?php echo h($user->start_date) ?>" placeholder="<?=  L("generic_sub")." ".L("startdate");?>"/>
+    <input type="text" class="form-control datetimepicker" name="user[start_date]" id="datetimepicker" value="<?php echo h($user->start_date) ?>" placeholder="<?=  L("generic_sub")." ".L("startdate");?>"/>
     <small id="emailHelp" class="form-text text-muted"><?=  L("startdate_remark"); ?></small>
   </div>
   <div class="form-group">
     <label><?=  L("enddate"); ?>:</label>
-    <input type="text" class="form-control datepicker" name="user[end_date]" id="datetimepicker" value="<?php echo h($user->end_date) ?>" placeholder="<?=  L("generic_sub")." ".L("enddate");?>"/>
+    <input type="text" class="form-control datetimepicker" name="user[end_date]" id="datetimepicker" value="<?php echo h($user->end_date) ?>" placeholder="<?=  L("generic_sub")." ".L("enddate");?>"/>
     <small id="emailHelp" class="form-text text-muted"><?=  L("enddate_remark"); ?></small>
   </div>
   <div class="form-group">
     <label><?=  L("maxvisits"); ?>:</label>
-    <input type="text" class="form-control number" name="user[max_visits]" id="datetimepicker" value="<?php echo h($user->max_visits) ?>" placeholder="<?=  L("generic_sub"); ?> <?=  L("maxvisits"); ?>"/>
+    <div class="input-group">
+      <input type="text" class="form-control number" name="user[max_visits]" id="datetimepicker" value="<?php echo h($user->max_visits) ?>" placeholder="<?=  L("generic_sub"); ?> <?=  L("maxvisits"); ?>"/>
+      <div class="input-group-append">
+        <button name="reset_visits" class="btn btn-success" type="submit" id="reset_visits" title="<?=  L("reset_visits_remark"); ?>">
+        <?=  L("reset_visits"); ?> (<?php echo h($user->visit_count) ?>)</button>
+      </div>
+    </div>
     <small id="emailHelp" class="form-text text-muted"><?=  L("maxvisits_remark"); ?></small>
+    
   </div>
+
   <div class="form-group">
     <label><?=  L("remarks"); ?>:</label>
     <!-- TODO https://stackoverflow.com/questions/37629860/automatically-resizing-textarea-in-bootstrap -->
     <textarea type="text" class="form-control" name="user[remarks]" id="user_remarks" placeholder="<?=  L("remarks_sub"); ?>" 
      style="height:100%;" rows="3"><?php echo h($user->remarks) ?></textarea>
   </div>
+
+  <div class="form-group">
+    <div class="form-check">
+        <input type="hidden" name="user[updated_at]" value="0">
+        <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" name="user[updated_at]" value="1" <?= is_user_active($user) ? "" : "checked" ?>>
+            <span class="form-check-sign"></span>
+            <?=  L("inactive"); ?>
+        </label>
+    </div>
+  </div> 
+
     <?php echo buttonLink_to(L("button_cancel"), 'users'), "\n" ?>
     <button type="submit" class="btn btn-success">
         <i class="fa fa-save"></i> <?=  L("button_save"); ?>
