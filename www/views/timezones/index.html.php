@@ -28,7 +28,7 @@ set('title', L("timezones"));
     <td><?= $row->name ?></td>
     <td><?= $row->start //date("H:i", $row->start) ?></td>
     <td><?= $row->end //date("H:i", $row->end) ?></td>
-    <td><?= $row->weekdays ?></td>
+    <td><?= weekDaysPlus($row->weekdays) ?></td>
     <!-- <td><?= link_to($row->name, 'timezones', $row->id) ?></td> -->
     <td><?= iconLink_to(L::button_edit, 'timezones/'.$row->id.'/edit', 'btn-link', null) ?>
         &nbsp;

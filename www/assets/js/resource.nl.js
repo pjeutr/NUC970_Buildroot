@@ -11,5 +11,7 @@ useLastKeyButton: " Gebruik laatst gescande pas",
 controllerSearchButton: "Zoek naar controllers",
 loading: "Laden…",
 
-noControllersFound: "Geen nieuwe controllers gevonden"
+noControllersFound: "Geen nieuwe controllers gevonden",
+
+weekdays: ["zo","ma", "di", "wo", "do", "vr", "za"]
 }

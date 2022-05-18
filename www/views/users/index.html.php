@@ -24,7 +24,7 @@ set('title', L("users"));
                             </thead>
                             <tbody>
                                 <?php foreach ($users as $row) { ?>
-                                <tr>
+                                <tr <?= is_user_active($row) ? "" : " class='danger' " ?>>
                                 	<td><?= $row->id ?></td>
                                     <td><?= $row->name ?></td>
                                     <td><?= $row->keycode ?></td>

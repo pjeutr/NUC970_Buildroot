@@ -11,5 +11,7 @@ useLastKeyButton: "Use last scanned key",
 controllerSearchButton: "Search for controllers",
 loading: "Loading…",
 
-noControllersFound: "No new controllers found"
+noControllersFound: "No new controllers found",
+
+weekdays: ["Sun","Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 }

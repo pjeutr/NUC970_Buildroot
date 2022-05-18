@@ -127,6 +127,7 @@ $().ready(function() {
     // Init Datetimepicker
     if ($("#datetimepicker").length != 0) {
         $('.datetimepicker').datetimepicker({
+            format: 'DD/MM/YYYY HH:mm',
             icons: {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",

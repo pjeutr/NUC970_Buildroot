@@ -1157,7 +1157,7 @@ a.text-success:focus, a.text-success:hover {
 }
 
 .weekdays-day:hover {
-    background-color: #78b414;
+    background-color: #7fbdb4;
     color: white;
     font-weight: bold;
     border: 1px solid white;
@@ -1166,7 +1166,7 @@ a.text-success:focus, a.text-success:hover {
 }
 
 .weekdays-list .weekday-selected {
-    background-color: #78b414;
+    background-color: #7fbdb4;
     color: white;
     font-weight: bold;
     border: 1px solid white;
