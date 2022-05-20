@@ -274,10 +274,19 @@ function handleUserAccess($user, $readerId, $controller) {
     }
     //Check start/end date for user 
     $now = new DateTime();
-    $startDate = new DateTime($user->start_date);
-    $endDate = new DateTime($user->end_date);
-    if ($now < $startDate || $now > $endDate) {
-        return "Access has expired: Start date = ".$user->start_date." End date = ".$user->end_date;
+    mylog($now);
+    $startDate = DateTime::createFromFormat(getDateTimeFormat(), $user->start_date, new DateTimeZone(getTimezone() ) );
+    mylog($startDate);
+    // $diff = $now->diff($startDate);
+    // mylog("diff=".$diff->h."_".$now->diff($startDate)->i);
+    if($now < $startDate) {
+        return "Access has not started: Start date = ".$user->start_date;
+    }
+
+    $endDate = DateTime::createFromFormat(getDateTimeFormat(), $user->end_date, new DateTimeZone( getTimezone() ) );
+    mylog($endDate);
+    if ($now > $endDate) {
+        return "Access has expired: End date = ".$user->end_date;
     }
 
     //APB, if the user is back within APB time, deny access

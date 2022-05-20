@@ -313,7 +313,7 @@ $flashMessage = flash_now();
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
 <script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?2"></script>
-<script src="/assets/js/app.js?2"></script>
+<script src="/assets/js/app.js?4"></script>
 <script type="text/javascript">
     // Content for SweetAlert
     <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>
