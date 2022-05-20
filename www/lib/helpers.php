@@ -6,6 +6,9 @@
 function getTimezone() {
     return "Europe/Amsterdam";
 }
+function getDateTimeFormat() {
+    return 'd/m/Y H:i';
+}
 
 //Custom log
 function mylog($message) {
