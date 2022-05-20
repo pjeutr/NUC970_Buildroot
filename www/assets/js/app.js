@@ -128,6 +128,10 @@ $().ready(function() {
     if ($("#datetimepicker").length != 0) {
         $('.datetimepicker').datetimepicker({
             format: 'DD/MM/YYYY HH:mm',
+            widgetPositioning: {
+                horizontal: 'auto',
+                vertical: 'auto'
+            },
             icons: {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
@@ -363,6 +367,40 @@ $().ready(function() {
             }
         });
     });
+
+
+    //used at reports and users
+    $('#datatables').DataTable({
+        "pagingType": "full_numbers",
+        "lengthMenu": [
+            [25, 50, -1],
+            [25, 50, "All"]
+        ],
+        order: [[1, "asc"]],
+        responsive: true,
+        language: {
+            //decimal:        "",
+            emptyTable:     resource.tableEmptyTable,
+            info:           resource.tableInfo,
+            infoEmpty:      resource.tableInfoEmpty,
+            infoFiltered:   resource.tableInfoFiltered,
+            infoPostFix:    "",
+            thousands:      ",",
+            lengthMenu:     resource.tableLengthMenu,
+            loadingRecords: "Loading...",
+            processing:     "",
+            search:         "_INPUT_",
+            searchPlaceholder: resource.tableSearchPlaceholder,
+            zeroRecords:    resource.tableZeroRecords,
+            paginate: {
+                first:      resource.tableButtonFirst,
+                last:       resource.tableButtonLast,
+                next:       resource.tableButtonNext,
+                previous:   resource.tableButtonPrev
+            }
+        }
+    });
+
 });
 
 app = {

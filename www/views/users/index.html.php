@@ -12,7 +12,7 @@ set('title', L("users"));
                     	<?= iconLink_to(L::button_new." ".L::user, 'users/new', 'btn-outline', 'fa-user') ?>
                     </div>
                     <div class="card-body table-responsive">
-                        <table class="table table-hover table-striped">
+                        <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
                             <thead>
                                 <th><?=  L("id"); ?></th>
                                 <th><?=  L("name"); ?></th>

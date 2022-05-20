@@ -13,7 +13,8 @@ set('title', L("reports"));
                         <?= iconLink_to('', 'reports', 'btn-outline', 'fa fa-refresh') ?>
                     </div>
                     <div class="card-body table-responsive">
-                        <table class="table  table-hover table-striped">
+                        
+                        <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
                             <thead>
                                 <th><?=  L("id"); ?></th>
                                 <th><?=  L("key"); ?></th>

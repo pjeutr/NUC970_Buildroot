@@ -269,7 +269,7 @@ function handleUserAccess($user, $readerId, $controller) {
     }
 
     //Check maximum visits for user 
-    if(!empty($user->max_visits) && $user->visit_count > $user->max_visits) {
+    if(!empty($user->max_visits) && $user->visit_count >= $user->max_visits) {
         return "Maximum visits reached:  visits = ".$user->max_visits;
     }
     //Check start/end date for user 
@@ -285,7 +285,7 @@ function handleUserAccess($user, $readerId, $controller) {
 
     $endDate = DateTime::createFromFormat(getDateTimeFormat(), $user->end_date, new DateTimeZone( getTimezone() ) );
     mylog($endDate);
-    if ($now > $endDate) {
+    if ($endDate && $now > $endDate) {
         return "Access has expired: End date = ".$user->end_date;
     }
 
