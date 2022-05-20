@@ -8,7 +8,7 @@ open_door()
 {
     #?/api/activate/{door}/{duration}/{gpios}
     #curl http://127.0.0.1/?/api/activate/$1/0/2-10
-    curl http://192.168.178.179/?/api/activate/$1/2/2-10
+    curl http://192.168.178.87/?/api/activate/$1/2/2-10
     #wget -q -O - "http://192.168.178.137/?/door/$1" 
     printf "door $1 opened\n"
 }

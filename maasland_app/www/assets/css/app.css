@@ -1,3 +1,17 @@
+a {
+    color: #7fbdb4;
+}
+
+a:hover,
+a:focus {
+    color: #549997;
+    text-decoration: none;
+}
+
+.navbar .navbar-nav .nav-item .nav-link:hover {
+    color: #7fbdb4;
+}
+
 td {
     vertical-align: top;
 }
@@ -1180,5 +1194,30 @@ a.text-success:focus, a.text-success:hover {
 
 .weekdays-list :last-child{
     border-right: 1px solid #dee2e6;
+}
+
+
+.pagination>li>a {
+    color: #549997;
+    background-color: transparent;
+    border: 1px solid #549997;
+    border-radius: .25rem;
+}
+.pagination .page-item:last-child .page-link, 
+.pagination .page-item:first-child .page-link,
+.pagination .page-item .page-link {
+    border-radius: .25rem;
+    font-size: 0.875rem;
+    line-height: 1.42857143;
+    color: #549997;
+}
+.pagination .page-item.active .page-link {
+    border-radius: .25rem;
+    background-color: #7fbdb4;
+}
+.dataTables_info {
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: #9A9A9A;
 }
 
