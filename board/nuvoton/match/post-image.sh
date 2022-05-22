@@ -19,7 +19,7 @@
 # 32M => 33554432 / 126976(0x1F000) = -c 264 
 # 31M => 32505856 / 126976(0x1F000) = 256 => -c 232
 #mkfs.ubifs -d maasland_app -e 0x1F000 -c 232 -m 0x800 -o output/images/maasland_app.ubifs
-mkfs.ubifs -F -d maasland_app -e 0x1F000 -c 264 -m 0x800 -o output/images/maasland_app.ubifs
+mkfs.ubifs -F -d maasland_app -e 0x1F000 -c 1536 -m 0x800 -o output/images/maasland_app.ubifs
 ubinize -o output/images/maasland_app.ubi -m 0x800 -p 0x20000 -s 2048 board/nuvoton/match/ubinize.cfg
 
 # -e --leb-size=SIZE

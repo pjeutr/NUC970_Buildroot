@@ -71,7 +71,7 @@ static struct wiegand_io wiegand_set[] = {
 
 static void print_debug(unsigned long *data)
 {
-	printk("nr=%.5d keycode=%lu reader=%d\n",counter, keycode, last_reader_nr);
+	printk(KERN_NOTICE "nr=%.5d keycode=%lu reader=%d\n",counter, keycode, last_reader_nr);
 }
 
 static unsigned char wiegand_26_to_keycode(unsigned long *data)
@@ -189,7 +189,7 @@ static void recieve_data_convert(void)
 {
 	switch(flag_recieve_mode){
 	case WG_26_MODE:
-		printk("Wiegand 26 bits with parity \n");
+		printk(KERN_NOTICE "Wiegand 26 bits with parity \n");
 		wiegand_26_to_keycode(&keycode);
 		convert_finish_flag = 1;
 		wake_up_interruptible(&read_waitq);  
@@ -208,7 +208,7 @@ static void recieve_data_convert(void)
 	// 	break;
 	case WG_UNKNOWN_MODE:
 		// no parity check, just convert to get a number
-		printk("\nWiegand skip parity - ");
+		printk(KERN_NOTICE "\nWiegand skip parity - ");
 		wiegand_unkown_to_keycode(&keycode);
 		convert_finish_flag = 1;
 		wake_up_interruptible(&read_waitq);  
@@ -231,7 +231,7 @@ static irqreturn_t wiegand_irq0(int irq, void *dev_id) //   data 1
 	if(flag_timeout){
 		flag_timeout = 0;
 	}
-	printk("1");
+	//printk("1");
 	reader_nr = 1;
 	wiegand_buffer[bit_count] = 1;
 	bit_count++;
@@ -256,7 +256,7 @@ static irqreturn_t wiegand_irq1(int irq, void *dev_id)  // data 0
 	if(flag_timeout){
 		flag_timeout = 0;
 	}
-	printk("0");
+	//printk("0");
 	reader_nr = 1;
 	wiegand_buffer[bit_count] = 0;
 	bit_count++;
@@ -280,7 +280,7 @@ static irqreturn_t wiegand_irq2(int irq, void *dev_id)  // data 1
 	if(flag_timeout){
 		flag_timeout = 0;
 	}
-	printk("1");
+	//printk("1");
 	reader_nr = 2;
 	wiegand_buffer[bit_count] = 1;
 	bit_count++;
@@ -304,7 +304,7 @@ static irqreturn_t wiegand_irq3(int irq, void *dev_id)  // data 0
 	if(flag_timeout){
 		flag_timeout = 0;
 	}
-	printk("0");
+	//printk("0");
 	reader_nr = 2;
 	wiegand_buffer[bit_count] = 0;
 	bit_count++;
@@ -334,7 +334,7 @@ static ssize_t wiegand_read(struct file *file, char __user *buf, size_t size, lo
 	int err;
 	//enable_irq(gpio_to_irq(wiegand_set[0].pin_num));
 	//enable_irq(gpio_to_irq(wiegand_set[1].pin_num));
-	printk("wiegand_read called. %s : %s\n", DRIVER_VERSION, wiegand_buffer);
+	//printk("wiegand_read called. %s : %s\n", DRIVER_VERSION, wiegand_buffer);
 
 	wait_event_interruptible (read_waitq, convert_finish_flag); // Data has not been converted, please wait here
 	convert_finish_flag = 0;
@@ -414,7 +414,7 @@ static int __init wiegand_init(void)
 {
 	//create character device
 	int err, i, retval;
-	printk("wiegand_init called. %s\n", DRIVER_VERSION);
+	printk(KERN_NOTICE "wiegand_init called. %s\n", DRIVER_VERSION);
 
 	if (major) {
 		devid = MKDEV(major, 0);

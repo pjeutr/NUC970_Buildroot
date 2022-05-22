@@ -1,0 +1,2 @@
+/maasland_app/www/opcache-status/*
+/maasland_app/www/opcache-gui/*

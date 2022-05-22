@@ -1,8 +1,14 @@
 #!/bin/sh
 
+#ipv6 is enabled in the kernel, for further us in the future
+#but it doubles result when searchin for available controllers, 
+#/maasland_app/tests/network.sh
+sysctl -w net.ipv6.conf.all.disable_ipv6=1
+sysctl -w net.ipv6.conf.default.disable_ipv6=1
+
 # fstab or mount is not automatically attaching a ubi device
 # ubi.mtd=3 in the command line form uboot gave an error (only for rootfs?)
-ubiattach -p /dev/mtd3
+# ubiattach -p /dev/mtd3 WERKT NU WEL
 
 # Start all init scripts in /etc/init.d
 # executing them in numerical order.
