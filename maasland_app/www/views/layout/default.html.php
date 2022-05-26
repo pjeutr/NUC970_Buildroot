@@ -40,7 +40,7 @@ $flashMessage = flash_now();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.1a" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="/assets/css/app.css?1.1d" rel="stylesheet" />
+    <link href="/assets/css/app.css?1.1.4" rel="stylesheet" />
     <script type="text/javascript">
         //calculate clock with php server time
         var serverTime = <?php echo $serverTime;?>,
@@ -135,6 +135,12 @@ $flashMessage = flash_now();
                         </a>
                     </li>
                     <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/opcache_reset">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Opcache reset</p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="/opcache-gui/index.php">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Opcache management</p>
@@ -150,6 +156,12 @@ $flashMessage = flash_now();
                         <a class="nav-link" href="./?/tests/network.sh">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Network test</p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/update_firmware">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Update firmware (WARNING!)</p>
                         </a>
                     </li>
                     <?php } ?>
@@ -312,8 +324,8 @@ $flashMessage = flash_now();
 <script src="/assets/js/plugins/bootstrap-show-password.min.js"></script>
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
-<script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?1.1"></script>
-<script src="/assets/js/app.js?1.1"></script>
+<script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?1.1.4"></script>
+<script src="/assets/js/app.js?1.1.4"></script>
 <script type="text/javascript">
     // Content for SweetAlert
     <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>

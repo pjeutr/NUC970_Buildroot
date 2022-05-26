@@ -25,10 +25,19 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
-v1.0.2
+v1.1.4 - fix reports initial sort, add someone | doorname message | add git update in dev menu
+v1.1.3 - final initial settings
+v1.1.2 - fix start/end time bug + lowlevel cleanup + ipv6
+v1.1.0
+- added datetimepicker to timezones and adjust weekdays in overview
+- reset visits @userdetail
+- add "Disable access" @userdetail
+- more language changes
+v1.0.3 - report line adjustment + language changes
+v1.0.2 
+- !!!Slave controller overview with status
 - Schedule update every minute
 - Controller search shows only unkown controllers
-- Controller overview with status
 - Reportlines changed to doorName@controllerName reader x
 - Adding Refresh button 
 - Delete reports older than 30days

@@ -376,7 +376,7 @@ $().ready(function() {
             [25, 50, -1],
             [25, 50, "All"]
         ],
-        order: [[1, "asc"]],
+        order: [[0, "desc"]],
         responsive: true,
         language: {
             //decimal:        "",

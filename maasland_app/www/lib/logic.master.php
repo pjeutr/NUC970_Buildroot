@@ -62,7 +62,10 @@ function handleInput($from, $input, $keycode) {
                 $actor = $user->name;
                 $result = handleUserAccess($user, $input, $controller);
                 $action = $result;//." ".$action;
-            } 
+            } else {
+                $door = find_door_for_input_device("reader_".$input, $controller->id);
+                $action = $door->name. ": Access refused";
+            }
             break;
         case 3:
         case 4:
