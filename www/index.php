@@ -225,13 +225,20 @@ dispatch('info', 'info_page');
 function info_page() {
     return phpinfo();
 }
-dispatch('opcache', 'opcache_page');
-function opcache_page() {
-    return opcache_get_status();
+dispatch('opcache_reset', 'opcache_flush');
+function opcache_flush() {
+    return opcache_reset();
 }
 dispatch('cleanup_db', 'cleanup_page');
 function cleanup_page() {
     return cleanupReports(30);
+}
+dispatch_get('update_firmware',  'update_firmware');
+function update_firmware() {
+  echo("firmware update");
+        $r = shell_exec("/maasland_app/scripts/git_replace.sh");
+        mylog($r);
+    return "<pre>".($r)."</pre>";
 }
 
 // main controller
