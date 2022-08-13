@@ -178,8 +178,7 @@ function getMasterControllerIP() {
             $masterControllerIp = $result[0][7];
         }
         if(empty($masterControllerIp)) {
-            die ("ERROR: Master Controller not found :".json_encode($result)."\n");
-            //TODO refreshing the page, till it's active? No, selfrefreshing pages are evil
+            error_log("ERROR: Master Controller not found :".json_encode($result)."\n");
         }
         return $masterControllerIp;
     } else {

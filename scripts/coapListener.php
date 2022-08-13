@@ -135,8 +135,6 @@ $inputObserver->onModify(function($file_name) use ($loop, $lastMicrotime){
 		$result =  callApi($input, $value); //$value is always 1...
         mylog(json_encode($result));
 	}   
-	//TODO sleep / prevent klapperen 
-	//sleep(1);
 });
 
 //listen voor gpio inputs
