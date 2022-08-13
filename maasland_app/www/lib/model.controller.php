@@ -38,6 +38,11 @@ function find_door_for_reader_id($id, $cid) {
     return find_object_by_sql($sql);
 }
 
+function find_door_for_enum($enum, $cid) {
+    $sql = "SELECT d.id, d.name, d.timezone_id FROM controllers c, doors d WHERE c.id = ".$cid." AND d.enum = ".$enum;
+    return find_object_by_sql($sql);
+}
+
 function find_alarm_for_sensor_id($id, $cid) {
     $sql = "SELECT ".$id." FROM controllers c WHERE c.id = ".$cid;
     return find_string_by_sql($sql);

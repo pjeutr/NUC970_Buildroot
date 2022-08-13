@@ -70,8 +70,9 @@ function switchOutput() {
     $outputEnum = filter_var(params('output'), FILTER_VALIDATE_INT);
     $controllerId = filter_var(params('controller'), FILTER_VALIDATE_INT);
     $state = filter_var(params('state'), FILTER_VALIDATE_INT);
-    saveReport("WebAdmin", "Switch output ".$outputEnum." on controller ".$controllerId);
+    $door = find_door_for_enum($outputEnum, $controllerId);
     $controller = find_controller_by_id($controllerId);
+    saveReport("WebAdmin", "Switch ".$door->name." ".($state?"open":"closed")." on ".$controller->name);
     $result = changeOutputState($outputEnum, $controller, $state);
     return (json(array($result)));
 }

@@ -40,8 +40,16 @@ class Client extends \Evenement\EventEmitter
 	function get( $uri, $callback )
 	{
 		$req = $this->request( CoapRequest::GET, $uri );
-		$req->on( 'response', function ( $resp ) use ($callback) {
+
+		//prevent hanging/blocking request, with a timout of 3 seconds
+		$timeout = $this->loop->addTimer(3, function () use ($req, $uri){
+		    mylog("coapCall:TIMEOUT:".$uri);
+		    $req->close();
+		});
+
+		$req->on( 'response', function ( $resp ) use ($callback, $timeout) {
 			call_user_func( $callback, $resp->getPayload() );
+			$this->loop->cancelTimer($timeout);
 		});
 		$req->send();
 	}
