@@ -5,6 +5,8 @@
 
 # .git will be placed in current dir, /maasland_app/ has space
 cd /maasland_app/
+# remove old git repos info to prevent errors
+rm -rf .git/
 
 # prevents: error message "unable to get local issuer certificate"
 git config --global http.sslVerify false
