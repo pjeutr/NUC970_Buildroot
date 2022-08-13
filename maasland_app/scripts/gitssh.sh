@@ -1,2 +1,2 @@
 #!/bin/sh
-dbclient -y -i -o StrictHostKeyChecking=no /etc/dropbear/dropbear_ecdsa_host_key $*
+dbclient -y -o StrictHostKeyChecking=no -i /etc/dropbear/dropbear_ecdsa_host_key $*
