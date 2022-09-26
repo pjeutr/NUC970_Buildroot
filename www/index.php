@@ -70,7 +70,9 @@ function before($route = array())
     }
 
     //calls from master,slave or tests
-    if (strpos(request_uri(), "api") !== false) {
+    if((strpos(request_uri(), "api") !== false) ||
+    (strpos(request_uri(), "tests") !== false) ||
+    (strpos(request_uri(), "manage") !== false)) { 
       if(true) { //from master || local || ip in controllers //allow cli
         //TODO authentication 
         //apiCalls, do nothing, pass through
@@ -221,22 +223,23 @@ function set_dev() {
     $_SESSION["dev"] = params('switch');
     return html('dashboard.html.php');
 }
-dispatch('info', 'info_page');
+dispatch('manage/info', 'info_page');
 function info_page() {
     return phpinfo();
 }
-dispatch('opcache_reset', 'opcache_flush');
+dispatch('manage/opcache_reset', 'opcache_flush');
 function opcache_flush() {
-    return opcache_reset();
+    return opcache_reset()." <br>opcache cleaned. ";
 }
-dispatch('cleanup_db', 'cleanup_page');
+dispatch('manage/cleanup_db', 'cleanup_page');
 function cleanup_page() {
-    return cleanupReports(30);
+    return cleanupReports(30)." records older than 30 days, were removed. ";
 }
-dispatch_get('update_firmware',  'update_firmware');
+dispatch_get('manage/update_firmware',  'update_firmware');
 function update_firmware() {
   echo("firmware update");
-        $r = shell_exec("/maasland_app/scripts/git_replace.sh");
+        $r = shell_exec("/maasland_app/scripts/git_replace_private.sh");
+        //$r = shell_exec("/maasland_app/scripts/git_replace.sh");
         mylog($r);
     return "<pre>".($r)."</pre>";
 }
