@@ -87,6 +87,7 @@ const message_changes_saved = 'The changes were saved!';
 const message_success_title = 'Great';
 const message_error_title = 'Oops';
 const message_visitreset = 'The number of visits of user %s has been set to 0';
+const message_no_master_found = 'No master controller found! <br> You can change jumpers and make this controller the master.';
 const dashboard_name = 'Dashboard';
 const dashboard_buttons = 'Open Door';
 const dashboard_title = 'This controller has %s';
