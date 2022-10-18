@@ -123,7 +123,7 @@ $flashMessage = flash_now();
                         </a>
                     </li>
                     <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/cleanup_db">
+                        <a class="nav-link" href="./?/manage/cleanup_db">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Prune reports</p>
                         </a>
@@ -135,7 +135,7 @@ $flashMessage = flash_now();
                         </a>
                     </li>
                     <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/opcache_reset">
+                        <a class="nav-link" href="./?/manage/opcache_reset">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Opcache reset</p>
                         </a>
@@ -159,7 +159,7 @@ $flashMessage = flash_now();
                         </a>
                     </li>
                     <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/update_firmware">
+                        <a class="nav-link" href="./?/manage/update_firmware">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Update firmware (WARNING!)</p>
                         </a>

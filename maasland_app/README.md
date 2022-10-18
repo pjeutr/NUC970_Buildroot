@@ -25,6 +25,8 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v1.1.8 - make firmwareupdate available at slave
+v1.1.6 - fix blocking master and add gitssh
 v1.1.4 - fix reports initial sort, add someone | doorname message | add git update in dev menu
 v1.1.3 - final initial settings
 v1.1.2 - fix start/end time bug + lowlevel cleanup + ipv6

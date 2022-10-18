@@ -3,7 +3,7 @@
 /*
 * coapServer & Listener
 *
-* Runs on all controllers
+* Runs on master controller
 * - Detects input changes (readers/buttons/sensors) and calls them locally
 * - Listen for input changes on slaves (input)
 */
@@ -88,7 +88,7 @@ $wiegandObserver->watch('/dev/wiegand');
 
 
 /*
-* Run coapListener
+* Run coapListener, listens for key/button changes from the slave
 */
 
 $server = new PhpCoap\Server\Server( $loop );
