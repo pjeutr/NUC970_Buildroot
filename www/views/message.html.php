@@ -72,7 +72,13 @@
                                     <?= isset($message) ? '<div class="alert alert-danger">'.$message.'</div>' : "" ?> 
                                 </div>
                                 <div class="card-footer ml-auto mr-auto">
-                                    <a href="<?= getMasterURL() ?>" class="btn btn-warning btn-wd">Go to master controller</a>
+                                    <?php
+                                    if(strcmp(getMasterURL(), 'http:///') == 0) {
+                                        echo L("message_no_master_found");
+                                    } else { ?>
+                                        <a href="<?= getMasterURL() ?>" class="btn btn-warning btn-wd">Go to master controller</a>
+                                    <?php } ?>
+
                                 </div>
                             </div>
                         </form>

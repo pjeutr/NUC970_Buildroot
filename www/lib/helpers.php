@@ -28,6 +28,27 @@ function mylog($message) {
     return null;
 }
 
+//blink a led too let the user see there is an error
+//$speed/10 => 2 = .2s
+function blinkMessageLed($speed) {
+    mylog("blinkMessageLed $speed".PHP_EOL);
+    $loop = React\EventLoop\Loop::get();
+
+    $value = 1;
+    $timer = $loop->addPeriodicTimer($speed/10, function () use (&$value) {
+        $value = ($value==1 ? 0 : 1);
+        exec("echo ".$value." >/sys/class/gpio/gpio".GVAR::$RUNNING_LED."/value");
+    });
+
+    //turn blinking off after 10 seconds
+    //TODO start/stop construcion instead?
+    $loop->addTimer(10.0, function () use ($loop, $timer) {
+        $loop->cancelTimer($timer);
+        //turn led off, too indicate something was wrong., off = 1
+        exec("echo 1 >/sys/class/gpio/gpio".GVAR::$RUNNING_LED."/value");
+    });
+}
+
 //Make object with empty values, from an array of names
 function make_empty_obj($values) {
     $user_data = new stdClass();

@@ -18,4 +18,4 @@ git remote add -f origin https://github.com/pjeutr/DuoApp.git
 git checkout -f main
 
 # restart services to empty opcache
-/scripts/restart_services.sh
+#/scripts/restart_services.sh
