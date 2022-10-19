@@ -179,7 +179,7 @@ function getMasterControllerIP() {
         }
         if(empty($masterControllerIp)) {            
             error_log("ERROR: Master Controller not found :".json_encode($result)."\n");
-            blinkMessageLed(2);
+            blinkMessageLed(5);
         }
         return $masterControllerIp;
     } else {
@@ -260,7 +260,6 @@ function configureGPIO() {
     }
     mylog("Activate wiegand readers");
     setGPIO(GVAR::$OUT12V_PIN, 1);
-    setGPIO(GVAR::$RUNNING_LED, 0); //0 = on / 1 = off
 
     //we need it, might as well get it already
     getMasterControllerIP();
