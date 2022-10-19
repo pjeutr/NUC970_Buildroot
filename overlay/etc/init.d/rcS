@@ -52,3 +52,7 @@ insmod /scripts/wiegand-driver.ko
 #cat /sys/module/wiegand_gpio/sections/.text
 #echo gdbserver --multi :10000
 
+# shortcuts to commands
+alias vim="vi"
+alias status="/maasland_app/tests/status.php"
+alias network="/maasland_app/tests/network.sh"
