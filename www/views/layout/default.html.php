@@ -107,6 +107,16 @@ $flashMessage = flash_now();
                             <p><?php echo L::reports; ?></p>
                         </a>
                     </li>
+
+                    <?php if(useLedgerMode()) { ?>
+                        <li <?php echo ($id == 6) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                            <a class="nav-link" href="./?/ledger">
+                                <i class="nc-icon nc-bullet-list-67"></i>
+                                <p><?php echo L::ledger; ?></p>
+                            </a>
+                        </li>
+                    <?php } ?>
+
                     <li <?php echo ($id == 7) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/settings">
                             <i class="nc-icon nc-settings-gear-64"></i>

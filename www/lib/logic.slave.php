@@ -180,6 +180,9 @@ function getMasterControllerIP() {
         if(empty($masterControllerIp)) {            
             error_log("ERROR: Master Controller not found :".json_encode($result)."\n");
             blinkMessageLed(5);
+        } else {
+            //turn led on, too indicate everyting is ok, on = 0
+            exec("echo 0 >/sys/class/gpio/gpio".GVAR::$RUNNING_LED."/value");
         }
         return $masterControllerIp;
     } else {

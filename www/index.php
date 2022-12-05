@@ -208,6 +208,7 @@ function dashboard_page() {
 }
 dispatch('reports', 'report_index');
 dispatch('reports_csv', 'report_csv');
+dispatch('ledger', 'ledger_index');
 
 //DEV pages
 dispatch_get('tests/:name',  'run_script');
