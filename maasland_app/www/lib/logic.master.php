@@ -532,4 +532,17 @@ function available_controllers() {
     return json($result);
 }
 
+/*
+*   Special mode, where users are tracked if they are in or out
+*   - reader1=in 
+*   - reader2=out
+*/
+function useLedgerMode($door, $controller) {
+    $ledger=find_setting_by_name("ledger");
+    if($ledger > 1) {
+        return true;
+    }
+    return false;
+}
+
 
