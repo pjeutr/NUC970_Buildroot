@@ -539,7 +539,7 @@ function available_controllers() {
 */
 function useLedgerMode($door, $controller) {
     $ledger=find_setting_by_name("ledger");
-    if($ledger > 1) {
+    if(!empty($ledger) && $ledger=="qwerty") {
         return true;
     }
     return false;

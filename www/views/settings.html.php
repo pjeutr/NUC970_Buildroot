@@ -51,6 +51,10 @@ set('title', L("settings"));
         $fieldType = 'checkbox';
         $fieldAtrribute = 'data-toggle="switch" '.($row->value ? 'checked=""': '').' data-on-color="info" data-off-color="info" data-eye-open-class="fa-toggle-off"  data-eye-close-class="fa-toggle-on"';
     }
+    if( $row->type == 5) {
+        $fieldType = 'text';
+        $fieldAtrribute = useLedgerMode() ? 'style="color:green"' : 'style="color:red"';
+    }
         ?>                        
 <form class="settingsForm" id="row_<?= $row->name ?>" action="<?= url_for('settings', $row->id) ?>" method="POST">
     <input type="hidden" name="_method" id="_method" value="PUT">

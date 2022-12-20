@@ -13,6 +13,7 @@ const setting_apb = 'Anti-passback(in seconden)';
 const setting_alarm = 'Alarm (in seconds)';
 const setting_upload = 'Configuratie uploaden';
 const setting_download = 'Configuratie downloaden';
+const setting_ledger = 'Aanwezigheid bijhouden';
 const controller = 'controller';
 const ledger = 'Aanwezigheidslijst';
 const presence = 'Aanwezig';
