@@ -8,10 +8,18 @@ use League\Csv\Reader;
 function main_page() {
     return html('main.html.php');
 }
+
+# GET /ledger
 function ledger_index() {
-    set('reports', find_reports());
+    set('ledger', find_ledgers());
     return html('ledger.html.php'); 
 }
+# DELETE /ledger/:id
+function ledger_destroy() {
+    delete_ledger_by_id(filter_var(params('id'), FILTER_VALIDATE_INT));
+    redirect('ledger');
+}
+
 function report_index() {
     set('reports', find_reports());
     return html('reports.html.php');
