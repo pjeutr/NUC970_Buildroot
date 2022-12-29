@@ -51,16 +51,21 @@ set('title', L("doors"));
                             <form class="doorForm" id="row" action="<?= url_for('controller', $controller->id) ?>" method="POST">
                             <input type="hidden" name="_method" id="_method" value="PUT">
 
-                            <?php foreach ([L::term_reader." 1",L::term_reader." 2",L::term_button." 1",L::term_button." 2"] as $key=>$value) { 
-                                $switch_1 = $controller->reader_1;
-                                $switch_2 = $controller->reader_2;
-                                $switch_3 = $controller->button_1;
-                                $switch_4 = $controller->button_2;
-                                $nr = $key + 1; ?>
+                            <?php foreach ([
+                                L::term_reader.(useLedgerMode()?" 1 (IN)":" 1"),
+                                L::term_reader.(useLedgerMode()?" 2 (OUT)":" 2"),
+                                L::term_button." 1",
+                                L::term_button." 2"] 
+                                as $key=>$value) { 
+                                    $switch_1 = $controller->reader_1;
+                                    $switch_2 = $controller->reader_2;
+                                    $switch_3 = $controller->button_1;
+                                    $switch_4 = $controller->button_2;
+                                    $nr = $key + 1; ?>
 
                                 <div class="row border border-top-0">
                                     <div class="col-sm-4 p-3 bg-custom">
-                                        <?= $value ?> 
+                                        <?= $value ?>
                                     </div>
                                     <div class="col-sm-4 custom-cell">
                                         <input class="form-check-input" type="radio" 

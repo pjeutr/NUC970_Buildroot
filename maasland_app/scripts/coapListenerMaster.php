@@ -13,6 +13,7 @@ require_once '/maasland_app/www/lib/logic.master.php';
 //load models for used db methods
 require_once '/maasland_app/www/lib/model.report.php';
 require_once '/maasland_app/www/lib/model.user.php';
+require_once '/maasland_app/www/lib/model.ledger.php';
 require_once '/maasland_app/www/lib/model.settings.php';
 require_once '/maasland_app/www/lib/model.door.php';
 require_once '/maasland_app/www/lib/model.controller.php';

@@ -335,6 +335,11 @@ function handleUserAccess($user, $readerId, $controller) {
         return "Time of the day restriction: ".$now->format('H:m')." is not between ".$tz->start." and ".$tz->end;
     }
     
+    //update attendance list, keeping score of who is in or out.
+    if(useLedgerMode()) {
+        update_ledger($user, $readerId);
+    }
+
     //update last_seen en visit_count
     update_user_statistics($user);
 
@@ -537,7 +542,7 @@ function available_controllers() {
 *   - reader1=in 
 *   - reader2=out
 */
-function useLedgerMode($door, $controller) {
+function useLedgerMode() {
     $ledger=find_setting_by_name("ledger");
     if(!empty($ledger) && $ledger=="qwerty") {
         return true;
