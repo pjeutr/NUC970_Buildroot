@@ -5,12 +5,37 @@ set('title', L("dashboard_name"));
 $door_open = find_setting_by_id(1) * 1000;//2 * 1000;
 $doors = find_doors();
 $controllers = find_controllers();
+$presents = count_presents();
 ?>
 
 <div class="content">
     <div class="container-fluid">
         <!-- <h5><?=  L("dashboard_buttons"); ?></h5> -->
         <div class="row">
+            <?php if(useLedgerMode()) { ?>
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="icon-mid text-center icon-warning">
+                                    <i class="nc-icon nc-badge text-success"></i>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <?php echo L::ledger; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer ">
+                        <hr>
+                        <i class="fa fa-check text-success"></i><?= $presents->hi ?> in
+                        <br>
+                        <i class="fa fa-times text-danger"></i><?= $presents->bye ?> out
+                    </div>
+                </div>
+            </div>
+            <?php } ?>
             <?php if(!empty($controllers)) {  ?> 
             <div class="col-lg-3 col-sm-6">
                 <div class="card card-stats">
