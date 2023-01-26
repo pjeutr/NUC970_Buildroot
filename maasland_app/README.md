@@ -25,6 +25,8 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v1.5.0 - Attendence accounting
+v1.4.1 - New SD flasher
 v1.2.2 - Add blinking led, to signal if network or master is missing
 v1.2 - make build to use flahs from SD card
 v1.1.8 - make firmwareupdate available at slave
