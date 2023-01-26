@@ -1,0 +1,48 @@
+[TYPE]
+//Format: write type (1~4)
+//1: SPI NOR  2: SPI NAND  3: NAND  4: EMMC
+2
+[DDR]
+//Format: file name
+// NUC980DF61YC.ini
+// NUC980DF71YC.ini
+// NUC980DK61Y.ini
+// NUC980DK61YC.ini
+// NUC980DR61Y.ini
+NUC980DK61Y.ini
+[Loader]
+//Format: file name, execution address
+u-boot-spl.bin, 0x200
+[ENV]
+//Format: file name, offset
+env.txt, 0x80000
+[Data0]
+//Format: file name, offset
+u-boot.bin, 0x100000
+[Data1]
+//Format: file name, offset
+uImage, 0x200000
+[Data2]
+//Format: file name, offset
+maasland_app.ubi, 0x2000000
+[Data3]
+//Format: file name, offset
+//maasland_app.ubi, 0x4000000
+[Erase]
+EraseAll=1
+//Start=0,Length=2048
+
+[UserDefine]
+PageSize=2048, SpareArea=64
+QuadReadCmd=0x6B, ReadStatusCmd=0x35, WriteStatusCmd=0x31, StatusValue=0x2,
+DummyByte=0x1
+
+//page_size=2048
+//spare_area=64
+//quad_read_command = 0x6b
+//read_status_command = 0xff
+//write_status_command = 0xff
+//status_value = 0xff
+//dummy_bytes = 0x1
+//blockperflash=1024
+//pageperflash=64

@@ -1,0 +1,74 @@
+Flash from SD card
+- dipswitch 1 = On, 2 = off
+- press reset
+- wait till flashing led stops
+- dipswitch 1 = Off, 2 = off
+- press reset
+- if led is on, the board has started correctly
+
+flashing quickly 100ms = no network
+flashing 500ms = slave finds no master
+no led = diagnose hook board up with usb to vcom
+-----
+Make image from card
+sudo dd if=/dev/disk4 of=matchSDv1_4_1.img bs=1m status=progress
+
+-----
+Comments on making new sdcard for Match
+
+insert card
+- gvar.match4.php add SD to version number
+- cp *.ubi u-boot* uImage (5 files)
+
+make image met DiskUtility op "No Name" (File>New Image)
+scp matchSDv1_3_1.img do3.sloots.nu:/home/maasland/maaslandserver.com/public/firmware/matchSDv1_3_1.img
+https://maaslandserver.com/firmware/matchSDv1_3_1.img
+
+
+unzip matchSDminimal.zip
+insert SD card, but unmount the partion
+sudo dd of=/dev/disk3 if=matchSDminimal.img bs=1024 status=progress conv=sparse
+mount SD card
+cp uImage rootfs.ubi maasland_app.ubi /Volumes/NO\ NAME/
+
+-------
+
+To make a card from scratch:
+
+nuwriter maak 2G stick (64M geeft foutmelding/is te klein?)
+
+SDcard in Match - !vcom cable naar windows
+jumpers=1-0,2-1
+vbox usb -> Winbond, NuWriter Connect
+Driver will start at match board
+vbox usb -> Winbond iousbhostdevice, NuWriter -> Reconnect
+select SD_Writer.bin -> Program
+
+0x305f4 / 0x200 = 0x182 = 386 => 387
+
+Format Reserve space=387 1st Part size = 111 , beettie grooter 200
+unmount "NO NAME"
+sudo dd if=/dev/disk3 of=matchSDfresh.img bs=1m status=progress
+
+gParted verklein naar 55M (press ignore on geometry questions)
+diskutil File>NewImage>ro save as dmg
+Balena etcher make image on 64M
+-------
+diskutil list
+dd if=/dev/disk3 of=fresh.img bs=1m
+schrijf naar 64M kaart, unmount eerst "NO NAME"
+touch dummy
+dd if=/dev/zero of=dummy bs=1M
+rm dummy
+
+-----------
+files on card
+-rwxrwxrwx  1 pjeutr  staff       918 Sep 13 10:25 NUC980DK61Y.ini
+-rwxrwxrwx  1 pjeutr  staff         0 Oct 27 17:15 _matchSDv1_4_2
+-rwxrwxrwx  1 pjeutr  staff       955 Nov 17 09:38 config            contains flash.ini
+-rwxrwxrwx  1 pjeutr  staff      2792 Nov 15 00:28 env.txt
+-rwxrwxrwx  1 pjeutr  staff  31195136 Dec 21 00:53 maasland_app.ubi
+-rwxrwxrwx  1 pjeutr  staff      2871 Dec 18 23:48 u-boot-spl.bin
+-rwxrwxrwx  1 pjeutr  staff    346152 Dec 18 23:48 u-boot.bin
+-rwxrwxrwx  1 pjeutr  staff   3026680 Dec 18 23:53 uImage
+
