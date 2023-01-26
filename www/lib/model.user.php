@@ -7,6 +7,18 @@ function find_users() {
         "a.name as group_name, b.remarks as remarks, b.keycode as keycode, b.updated_at as updated_at " .
         "FROM users b " .
         "LEFT JOIN groups a ON a.id=b.group_id";
+
+        //In ledger mode we like to add people's presence 
+        if(useLedgerMode()) {
+            $sql =
+            "SELECT l.present as present, ".
+            "b.id as id, b.name as name, b.last_seen as last_seen, b.visit_count as visit_count, b.group_id as group_id, " .
+            "a.name as group_name, b.remarks as remarks, b.keycode as keycode, b.updated_at as updated_at " .
+            "FROM users b " .
+            "LEFT JOIN groups a ON a.id=b.group_id ".
+            "LEFT JOIN ledger l ON b.id=l.user_id";
+        }
+
     return find_objects_by_sql($sql);
 }
 

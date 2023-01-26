@@ -65,8 +65,7 @@ if($now->format('H:i') == "04:00") { //every night at 2, needs timezone adjustme
 
 $doors = find_doors();
 foreach ($doors as $door) {
-	//mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->enum.":".$door->id.":".$door->name." tz=".$door->timezone_id);
-	//
+	mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->enum.":".$door->id.":".$door->name." tz=".$door->timezone_id);
 
 	if( $door->timezone_id ) {
 		if(checkDoorSchedule($door)) {

@@ -9,10 +9,12 @@
 -- VACUUM;
 
 CREATE TABLE "ledger" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL , 
+  "user_id" id NOT NULL,
   "name" VARCHAR, 
   "present" INTEGER, 
   "keycode" TEXT,
-  "time_out" DATETIME, "time_in" DATETIME DEFAULT CURRENT_TIMESTAMP )
+  "time_out" DATETIME, "time_in" DATETIME DEFAULT CURRENT_TIMESTAMP );
+CREATE UNIQUE INDEX 'unique_user_id' ON ledger (user_id);
 
 CREATE TABLE "groups" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
   "name" VARCHAR,
