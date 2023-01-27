@@ -350,7 +350,8 @@ function handleUserAccess($user, $readerId, $controller) {
 }
 
 /*
-*   Check if a door is in a Schedule
+*   Check if a door is Scheduled to open
+*       returns true if it is open and false for closed
 *   $doorId : id in the db
 *   Used by match_listener and webinterface
 */
@@ -476,43 +477,10 @@ function operateDoor($door, $open) {
             return true;
         }
         return false;
-    } else {
+    } else { 
+        //get slave data, to get ip address
         $controller = find_controller_by_id($door->controller_id );
         mylog($controller);
-
-        $gpios = array();
-        //TODO could also use leds? see openDoor
-        // $gpios[] = GVAR::$RD1_GLED_PIN;
-        // $gpios[] = GVAR::$RD2_GLED_PIN;
-
-/*
-        $cmd = "coap-client -m get coap://".$controller->ip."/status/".getOutputGPIO($door->enum);
-        $msg = shell_exec($cmd);
-        mylog("----------");
-        mylog(json_decode($msg)[0]);
-        mylog("----------");
-        //TODO find a way nice way to pick the value
-        $currentValue = 1;
-        mylog("openLock ".$currentValue."=".$open."\n");
-
-        //TODO check if already open? anticipate tz change during
-        if($currentValue != $open) { */
-
-        //coap-client -m get coap://192.168.178.94/status_68-66-2-10-71
-        //$gpio = "68-66-2-10-71";
-        // $loop = React\EventLoop\Loop::get();
-        // $client = new PhpCoap\Client\Client( $loop );
-        // $url = "coap://".$controller->ip."/status/_".$gpio;
-        // mylog("checkDoor:".$url);
-        // $client->get($url, function( $data ) use ($gpio, $inputName, $alarmId, $controller, $loop, $stopAlarm) {
-        //     mylog("checkDoor return=".$data);
-        //     //--
-        //     if( $data == '"0"' ) {
-        //         //setAlarm($controller, $alarmId, 0);
-        //         //saveReport("Unkown", "Alarm stopped for ".$controller->name." from ". $inputName);
-        //         //$loop->cancelTimer($stopAlarm);
-        //     }
-        // });
 
         $gid = getOutputGPIO($door->enum);
         $url = "coap://".$controller->ip."/status_".$gid;
@@ -520,7 +488,9 @@ function operateDoor($door, $open) {
         //request
         $loop = React\EventLoop\Loop::get();
         $client = new PhpCoap\Client\Client( $loop );
-        $client->get($url, function( $data ) use ($gid, $open, $door, $controller, $gpios){
+
+        //coap-client -m get coap://$slave/output_1_1
+        $client->get($url, function( $data ) use ($gid, $open, $door, $controller){
             mylog("checkDoor return=".$data);
             //$obj->{'foo-bar'}
             $currentValue = json_decode($data)[0]->{"$gid"}; //[{"68":"0"}]
@@ -529,17 +499,30 @@ function operateDoor($door, $open) {
             if($currentValue != $open) {
                 mylog("STATE CHANGED=".$open);
 
-                $uri = "output/".$door->enum."/".$open."/".implode("-",$gpios);
-                $msg = apiCall($controller->ip, $uri);
-                mylog($msg);
-                return true;
+                $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
+                mylog("openDoor:".$url);
+                //request
+                $loop = React\EventLoop\Loop::get();
+                $client = new PhpCoap\Client\Client( $loop );
+                $client->get($url, function( $data ) use ($open, $door) {
+                    mylog("openDoor return=".$data);
+
+                    //next lines should not be necessary
+                    $action = $door->name." is ".(($open == 1)?"opened":"closed");
+                    //if($changed) 
+                    saveReport("Scheduled", $action);
+                    //but return true is not working... 
+                    //TODO have to fix this with closure?
+
+                    return true;
+                });                
             } else {
                 mylog("NO CHANGE");
+                return false;
             }
         }); 
         
     }
-    return false;
 }
 
 
