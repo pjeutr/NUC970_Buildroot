@@ -297,7 +297,7 @@ function handleUserAccess($user, $readerId, $controller) {
     $diff =  $now->getTimestamp() - $lastSeen->getTimestamp();
     $apb = find_setting_by_name('apb'); //apb is defined in seconds
     mylog("lastseen=".$lastSeen->format("c")." now=".$now->format("c")." diff=".$diff." seconds");
-    if($diff < $apb && $diff !== 0) {
+    if($diff < $apb && $diff > 0) {
         return "APB restriction: no access within ".$diff." seconds, must be longer than ".$apb." seconds";
     }
 
@@ -497,14 +497,46 @@ function operateDoor($door, $open) {
 
         //TODO check if already open? anticipate tz change during
         if($currentValue != $open) { */
-        if(true) {
-            //mylog("STATE CHANGED=".$open);
 
-            $uri = "output/".$door->enum."/".$open."/".implode("-",$gpios);
-            $msg = apiCall($controller->ip, $uri);
-            mylog($msg);
-            return true;
-        }
+        //coap-client -m get coap://192.168.178.94/status_68-66-2-10-71
+        //$gpio = "68-66-2-10-71";
+        // $loop = React\EventLoop\Loop::get();
+        // $client = new PhpCoap\Client\Client( $loop );
+        // $url = "coap://".$controller->ip."/status/_".$gpio;
+        // mylog("checkDoor:".$url);
+        // $client->get($url, function( $data ) use ($gpio, $inputName, $alarmId, $controller, $loop, $stopAlarm) {
+        //     mylog("checkDoor return=".$data);
+        //     //--
+        //     if( $data == '"0"' ) {
+        //         //setAlarm($controller, $alarmId, 0);
+        //         //saveReport("Unkown", "Alarm stopped for ".$controller->name." from ". $inputName);
+        //         //$loop->cancelTimer($stopAlarm);
+        //     }
+        // });
+
+        $gid = getOutputGPIO($door->enum);
+        $url = "coap://".$controller->ip."/status_".$gid;
+        mylog("checkDoor:".$url);
+        //request
+        $loop = React\EventLoop\Loop::get();
+        $client = new PhpCoap\Client\Client( $loop );
+        $client->get($url, function( $data ) use ($gid, $open, $door, $controller, $gpios){
+            mylog("checkDoor return=".$data);
+            //$obj->{'foo-bar'}
+            $currentValue = json_decode($data)[0]->{"$gid"}; //[{"68":"0"}]
+            mylog("currentValue return=".$currentValue);
+
+            if($currentValue != $open) {
+                mylog("STATE CHANGED=".$open);
+
+                $uri = "output/".$door->enum."/".$open."/".implode("-",$gpios);
+                $msg = apiCall($controller->ip, $uri);
+                mylog($msg);
+                return true;
+            } else {
+                mylog("NO CHANGE");
+            }
+        }); 
         
     }
     return false;
