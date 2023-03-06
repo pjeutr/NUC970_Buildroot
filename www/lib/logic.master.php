@@ -457,7 +457,8 @@ function changeOutputState($outputEnum, $controller, $state) {
 *   $open : 1=open, 0=close
 *   returns true if state was changed
 *
-* Only used by cron / scheduler
+* Only used by cron / scheduler 
+* and remove_timezone in the gui
 */
 
 function operateDoor($door, $open) {

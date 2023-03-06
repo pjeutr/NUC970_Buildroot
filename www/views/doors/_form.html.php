@@ -16,15 +16,28 @@
 
     <div class="form-group">
         <label><?php echo L::timezone; ?>:</label>
-        <select name="door[timezone_id]" class="selectpicker" id="rule_timezone_id"
-        data-title="<?php echo L::timezone_warning; ?>" data-style="btn-default btn-outline">
-        <option value=""></option>
-        <?php
-            foreach ($timezones as $tz) {
-                echo option_tag($tz->id, $tz->name, $door->timezone_id), "\n";
-            }
-        ?>
-        </select>    
+        <div class="input-group">
+        
+            <select class="form-control" name="door[timezone_id]" class="selectpicker" id="rule_timezone_id"
+            data-title="<?php echo L::timezone_warning; ?>" data-style="btn-default btn-outline">
+                <option value=""></option>
+                <?php
+                    foreach ($timezones as $tz) {
+                        echo option_tag($tz->id, $tz->name, $door->timezone_id), "\n";
+                    }
+                ?>
+            </select>   
+
+            <?php if($door->timezone_id) { ?>
+
+            <button class="btn btn-danger" type="submit" title="<?=  L("door_timezone_button_info"); ?>" name="remove_timezone" value="true">
+            <?=  L("door_timezone_button"); ?></button>
+            <?php } else {?>
+                <!-- dummy, otherwise select looks strange -->
+                <button disabled="true"></button>
+            <?php } ?>
+
+        </div>
         <small id="codeHelp" class="form-text text-muted"><?php echo L::timezone_remark; ?></small>
     </div>
 
