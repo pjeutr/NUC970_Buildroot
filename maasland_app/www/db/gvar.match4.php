@@ -8,7 +8,7 @@ class GVAR
 {
     //mylog('Load gpio voor Flexeria board'.PHP_EOL);
     public static $BOARD_TYPE = "Match4: FlexeriaDuo";
-    public static $DASHBOARD_VERSION = "1.5.2";
+    public static $DASHBOARD_VERSION = "1.5.3";
 
     //outputs 71 32
     public static $GPIO_DOOR1 = 71; //NUC980_PC7
