@@ -29,6 +29,9 @@ unzip matchSDminimal.zip
 insert SD card, but unmount the partion
 sudo dd of=/dev/disk3 if=matchSDminimal.img bs=1024 status=progress conv=sparse
 mount SD card
+
+
+
 cp uImage rootfs.ubi maasland_app.ubi /Volumes/NO\ NAME/
 
 -------
