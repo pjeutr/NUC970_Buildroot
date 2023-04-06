@@ -437,7 +437,7 @@ function openDoor($door, $controller) {
 *
 * Used by webinterface
 */
-function changeOutputState($outputEnum, $controller, $state) {
+function changeOutputState($outputEnum, $controller, $door, $state) {
     if( $controller->id == 1 ) {
         //call method on master, is quicker and more reliable
         //and nesting coap-client calls is not working currently
@@ -446,12 +446,19 @@ function changeOutputState($outputEnum, $controller, $state) {
         //TODO actual return state
         return true;
     } else {
-        $uri = "output/".$outputEnum."/".$state;
-        $msg = apiCall($controller->ip, $uri);
-        //TODO apiCall refactor
-        //Als call failed in slave TIMEOUT, in reports vermelden
-        //if($msg==-1) FlexessDuo.local Controller does not respond : Switch Voordeur closed on FlexessDuo.local
-        mylog("changeOutputState apiCall return=".$msg);
+        $url = "coap://".$controller->ip."/output_".$outputEnum."_".$state;
+        mylog("coapCall:".$url);
+        //request
+        $loop = React\EventLoop\Loop::get();
+        $client = new PhpCoap\Client\Client( $loop );
+        $client->get($url, function( $msg ) use ($controller, $door, $state){
+            mylog("changeOutputState apiCall return=".$msg);
+            if($msg == -1) {
+                saveReport("WebAdmin", $controller->name." Controller does not respond");
+            } else {
+                saveReport("WebAdmin", "Switch ".$door->name." ".($state?"open":"closed")." on ".$controller->name);
+            }
+        });
     }
 }
 
@@ -498,6 +505,13 @@ function operateDoor($door, $open) {
         $client->get($url, function( $data ) use ($gid, $open, $door, $controller){
             mylog("checkDoor return=".$data);
             //$obj->{'foo-bar'}
+            if($data == -1) {
+                $action = $controller->name." Controller does not respond";
+                mylog($action);
+                saveReport("Scheduled", $action);
+                return false;
+            }
+
             $currentValue = json_decode($data)[0]->{"$gid"}; //[{"68":"0"}]
             mylog("currentValue return=".$currentValue);
 

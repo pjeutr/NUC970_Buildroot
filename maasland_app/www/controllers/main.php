@@ -112,10 +112,7 @@ function switchOutput() {
     $state = filter_var(params('state'), FILTER_VALIDATE_INT);
     $door = find_door_for_enum($outputEnum, $controllerId);
     $controller = find_controller_by_id($controllerId);
-    saveReport("WebAdmin", "Switch ".$door->name." ".($state?"open":"closed")." on ".$controller->name);
-    //TODO apiCall refactor
-    //saveReport moet naar changeOutputState, afhankelijk van false of true. In geval van timeout
-    $result = changeOutputState($outputEnum, $controller, $state);
+    $result = changeOutputState($outputEnum, $controller, $door, $state);
     return (json(array($result)));
 }
 function outputStatus() {

@@ -25,7 +25,7 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
-v1.5.5 - apiCall refactor
+v1.5.5 - apiCall refactor + flexess_cron lock
 v1.5.4 - vacuum db after delete + increase import upload + timezone bug in scheduled + door shortcuts on dashboard 
 v1.5.3 - Add remove timezone button
 v1.5.2 - Fix scheduled excessive logging
