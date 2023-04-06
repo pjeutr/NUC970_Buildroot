@@ -42,11 +42,10 @@ class Client extends \Evenement\EventEmitter
 		$req = $this->request( CoapRequest::GET, $uri );
 
 		//prevent hanging/blocking request, with a timout of 3 seconds
-		$timeout = $this->loop->addTimer(3, function () use ($callback, $req, $uri){
+		$timeout = $this->loop->addTimer(3, function () use ($req, $uri, $callback){
 		    mylog("coapCall:TIMEOUT:".$uri);
 		    $req->close();
-		    //return to caller null of -1?, false can mean state of door was not changed
-		    //TODO apiCall refactor
+		    //return to caller null of -1?, NOT false can mean state of door was not changed
 		    call_user_func( $callback, -1);
 		});
 

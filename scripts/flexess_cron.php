@@ -1,6 +1,28 @@
 #!/usr//bin/php
 <?php
+//exit;
 
+// Too prevent multiple instances of this file, we use a lock file
+$lock_file = fopen('/var/run/flexess_cron.pid', 'c');
+$got_lock = flock($lock_file, LOCK_EX | LOCK_NB, $wouldblock);
+if ($lock_file === false || (!$got_lock && !$wouldblock)) {
+    throw new Exception(
+        "Unexpected error opening or locking lock file. Perhaps you " .
+        "don't  have permission to write to the lock file or its " .
+        "containing directory?"
+    );
+}
+else if (!$got_lock && $wouldblock) {
+	error_log("WARNING:CRON ALREADY RUNNING!");
+    exit("Another instance is already running; terminating.\n");
+}
+
+// Lock acquired; let's write our PID to the lock file for the convenience
+// of humans who may wish to terminate the script.
+ftruncate($lock_file, 0);
+fwrite($lock_file, getmypid() . "\n");
+
+//import necassary dependancies
 require_once '/maasland_app/vendor/autoload.php';
 require_once '/maasland_app/www/lib/limonade.php';
 require_once '/maasland_app/www/lib/db.php';
@@ -20,7 +42,6 @@ require_once '/maasland_app/www/lib/model.timezone.php';
 echo configureGPIO();
 
 //Quit quickly if not master, listener check is also not possible
-//TODO, don't start on slave so we don't need this (Run cron through React?)
 if( !checkIfMaster() ) {
 	mylog("Stop Cron, this controller is not master");
 	exit();
@@ -33,6 +54,22 @@ $now = new DateTime();
 $actor = "Scheduled"; 
 $action = "Systemcheck ";
 //find door->timezone_id fields	 
+
+//ps -a | grep [i]nputListener\.php && echo "Running" || echo "Not running"
+$lstnr = shell_exec("ps -a | grep [i]nputListener\.php");
+if (empty($lstnr)) {
+	error_log("WARNING:INPUTLISTENER NOT RUNNING!");
+	$startLstnr = shell_exec("/etc/init.d/S60flexess start");
+	//error_log($startLstnr);
+}
+
+//check and log cpu load, give Warning if it is getting big
+$str = substr(strrchr(shell_exec("uptime"),":"),1);
+$load = array_map("trim",explode(",",$str));
+if ($load[0] > 0.80) {
+	error_log("WARNING:HEAVY LOAD!");
+}
+mylog("ld=".$load[0]);
 
 //check if everything is alive
 if($now->format('H:i') == "04:00") { //every night at 2, needs timezone adjustment so 4
@@ -81,8 +118,12 @@ foreach ($doors as $door) {
 	}
 }
 
-
-	
+mylog("remove lock");
+// All done; we blank the PID file and explicitly release the lock 
+// (although this should be unnecessary) before terminating.
+ftruncate($lock_file, 0);
+flock($lock_file, LOCK_UN);
+mylog("lock removed");
 
 
 

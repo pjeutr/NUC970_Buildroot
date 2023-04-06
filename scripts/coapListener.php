@@ -19,11 +19,13 @@ function callApi($input, $data) {
     $loop = React\EventLoop\Loop::get();
 	$client = new PhpCoap\Client\Client( $loop );
 	$client->get($url, function( $data ) {
-		//TODO apiCall refactor
-        //Als call failed in master with TIMEOUT, beep beep beep? light flash?
-        //if($result==-1) FlexessDuo.local Controller does not respond : Switch Voordeur closed on FlexessDuo.local
-		mylog("coapCall return=".json_encode($data));
-		return $data;
+		if($data == -1) {
+            error_log("coapCall, Master controller could not be reached.");
+            //TODO if call failed to master with TIMEOUT, beep beep beep? light flash?
+        } else {
+            mylog("coapCall, return=".json_encode($data));
+        }
+        return $data;
 	});
 }
 
