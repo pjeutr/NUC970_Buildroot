@@ -55,7 +55,7 @@ if($now->format('H:i') == "04:00") { //every night at 2, needs timezone adjustme
 // 	//check if listener still running?
 
 	//delete rows older than x days in reports
-	$days = 30;
+	$days = 7;
 	$action = cleanupReports($days);
 	mylog($action);
 	if($action > 0) {

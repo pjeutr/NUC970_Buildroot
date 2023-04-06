@@ -131,7 +131,7 @@ function settings_upload() {
         // }
 
         // Check file size
-        if ($_FILES["fileToUpload"]["size"] > 500*1000) { //500k
+        if ($_FILES["fileToUpload"]["size"] > 7*1024*1024) { //7M, max in php.ini is 8M
           $messageArr[] = "The file is too large.";
           $uploadOk = 0;
         }

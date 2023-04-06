@@ -25,6 +25,11 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v1.5.5 - apiCall refactor
+v1.5.4 - vacuum db after delete + increase import upload + timezone bug in scheduled + door shortcuts on dashboard 
+v1.5.3 - Add remove timezone button
+v1.5.2 - Fix scheduled excessive logging
+v1.5.1 - Fix scheduled excessive switching
 v1.5.0 - Attendence accounting
 v1.4.1 - New SD flasher
 v1.2.2 - Add blinking led, to signal if network or master is missing

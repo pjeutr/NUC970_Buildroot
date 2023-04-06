@@ -1,5 +1,9 @@
 <?php
 
+function raw_sql($sql = '', $params = array()) {
+    return find_string_by_sql($sql);
+}
+
 function find_string_by_sql($sql = '', $params = array()) {
     $db = option('db_conn');
 

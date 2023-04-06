@@ -55,8 +55,8 @@ $presents = count_presents();
                         <?php foreach ($controllers as $controller) {  ?> 
                             <hr>
                             <span class="statusIcon" 
-                                data-url="http://<?= $controller->ip ?>/?/api/version"
-                                data-url2="http://<?= $controller->ip ?>/?/api/overview"
+                                data-url2="http://<?= $controller->ip ?>/?/api/version"
+                                data-url="http://<?= $controller->ip ?>/?/api/overview"
                                 >
                                 <i class="fa fa-spinner fa-spin"></i>
                             </span>
@@ -78,7 +78,15 @@ $presents = count_presents();
                                 </div>
                             </div>
                             <div class="col-7">
-                                <?= $door->cname ?> <sub><?=  L("controller"); ?></sub>
+                                <a href="/?/doors/<?= $door->id ?>/edit"><?= $door->cname ?></a><br>
+
+                                <?php if(!empty($door->timezone_id)) {  ?> 
+                                <a href="/?/timezones/<?= $door->timezone_id ?>/edit">
+                                    <i class="nc-icon nc-watch-time"></i>
+                                    <?= $door->timezone_id ?></a>
+                                <?php } ?> 
+
+                                <!-- <sub><?=  L("controller"); ?></sub> -->
                             </div>
                         </div>
                     </div>

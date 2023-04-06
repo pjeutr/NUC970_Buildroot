@@ -362,8 +362,8 @@ function checkDoorSchedule($door) {
     mylog("checkDoorSchedule door=".$door->id." tz=".$door->timezone_id);
     if($door->timezone_id) {
         //$now = new DateTime('now', new DateTimeZone('Europe/Amsterdam'));
-        $now = new DateTime();
-        //mylog($now);
+        $now = new DateTime('now', new DateTimeZone(getTimezone()));
+        mylog($now);
         //check if it is the right day of the week
         $weekday = $now->format('w');//0 (for Sunday) through 6 (for Saturday) 
         $weekdays = explode(",",$tz->weekdays);
@@ -372,8 +372,8 @@ function checkDoorSchedule($door) {
             //check if it is the right time
             $begin = new DateTime($tz->start, new DateTimeZone(getTimezone()));
             $end = new DateTime($tz->end, new DateTimeZone(getTimezone()));
-            //mylog($begin);
-            //mylog($end);
+            mylog($begin);
+            mylog($end);
             if ($now >= $begin && $now <= $end) {
                 return true;
             }
@@ -448,6 +448,10 @@ function changeOutputState($outputEnum, $controller, $state) {
     } else {
         $uri = "output/".$outputEnum."/".$state;
         $msg = apiCall($controller->ip, $uri);
+        //TODO apiCall refactor
+        //Als call failed in slave TIMEOUT, in reports vermelden
+        //if($msg==-1) FlexessDuo.local Controller does not respond : Switch Voordeur closed on FlexessDuo.local
+        mylog("changeOutputState apiCall return=".$msg);
     }
 }
 

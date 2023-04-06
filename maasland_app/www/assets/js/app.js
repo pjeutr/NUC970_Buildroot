@@ -356,7 +356,7 @@ $().ready(function() {
         }).done(function(response){
             result = JSON.parse(response);
             //console.log(result);
-            $tooltip = "Version "+result['version'];//+" "+result['1']+" "+result['2']+" "+result['3']+" "+result['4'];
+            $tooltip = "Version "+result['version']+"-"+result['1']+"-"+result['2'];
             $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
                 '" class="fa fa-check text-success"></i>'); 
         }).fail(function(jqXHR, textStatus){

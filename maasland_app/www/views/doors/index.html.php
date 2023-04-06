@@ -42,7 +42,12 @@ set('title', L("doors"));
                                     </div>
                                     <div class="float-right">
                                         <?= iconLink_to(L::button_change, 'doors/'.$row->id.'/edit', 'btn-link text-success', null) ?>
-                                        <?= $row->timezone_id ?>
+
+                                        <?php if(!empty($row->timezone_id)) {  ?> 
+                                        <a href="/?/timezones/<?= $row->timezone_id ?>/edit">
+                                            <i class="nc-icon nc-watch-time"></i>
+                                            <?= $row->timezone_id ?></a>
+                                        <?php } ?> 
                                     </div>
                                 </div>
                                 <?php }

@@ -21,8 +21,11 @@ function get_last_scanned_key() {
 function cleanupReports($days) {
     mylog("cleanupReports");
     //cleanup reports, older than x days
-    $count = delete_objects_where("created_at < date('now', '-7 day')", 'reports'); 
+    $count = delete_objects_where("created_at < date('now', '-$days day')", 'reports'); 
     mylog($count);
+    //Vacuum after cleanup
+    mylog("vacuum");
+    raw_sql("vacuum");
     return $count;
 }
 
