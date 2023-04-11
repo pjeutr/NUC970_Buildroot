@@ -21,7 +21,8 @@ function callApi($input, $data) {
 	$client->get($url, function( $data ) {
 		if($data == -1) {
             error_log("coapCall, Master controller could not be reached.");
-            //TODO if call failed to master with TIMEOUT, beep beep beep? light flash?
+            //Sound 4 beeps on the slave controller to warn the user.
+            beepMessageBuzzer(2);
         } else {
             mylog("coapCall, return=".json_encode($data));
         }
