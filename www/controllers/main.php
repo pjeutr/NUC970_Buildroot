@@ -126,6 +126,12 @@ function output() {
     $result = operateOutput($door, $state);
     return (json(array($result)));
 }
+function callFunction() {
+    $name = filter_var(params('name'), FILTER_VALIDATE_INT);
+    $value = filter_var(params('value'), FILTER_VALIDATE_INT);
+    $result = beepMessageBuzzer($value);
+    return (json(array($result)));
+}
 function activate() {
     $door = filter_var(params('door'), FILTER_VALIDATE_INT);
     $duration = filter_var(params('duration'), FILTER_VALIDATE_INT);

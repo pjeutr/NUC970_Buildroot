@@ -280,6 +280,7 @@ dispatch_get   ('api/status/:door', 'outputStatus');
 dispatch_get   ('api/output/:door/:state/', 'output');
 dispatch_get   ('api/activate/:door/:duration/:gpios/', 'activate');
 dispatch_get   ('api/input/:input/:keycode/', 'input');
+dispatch_get   ('api/function/:name/:value/', 'callFunction');
 
 //ajax
 dispatch_get   ('door/:controller/:door',  'door_open'); //->coap

@@ -44,7 +44,7 @@ class Client extends \Evenement\EventEmitter
 		//prevent hanging/blocking request, with a timout of 3 seconds
 		$timeout = $this->loop->addTimer(3, function () use ($req, $uri, $callback){
 		    mylog("coapCall:TIMEOUT:".$uri);
-		    $req->close();
+		    //$req->close(); //Uncaught Error: Call to a member function close() on null 
 		    //return to caller null of -1?, NOT false can mean state of door was not changed
 		    call_user_func( $callback, -1);
 		});

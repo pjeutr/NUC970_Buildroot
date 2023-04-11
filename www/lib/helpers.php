@@ -28,7 +28,27 @@ function mylog($message) {
     return null;
 }
 
-//blink a led too let the user see there is an error
+//beep the buzzer, to let the user hear there is an error
+//$speed/10 => 2 = .2s
+function beepMessageBuzzer($speed) {
+    mylog("beepMessageBuzzer $speed".PHP_EOL);
+    $loop = React\EventLoop\Loop::get();
+
+    $value = 1;
+    $timer = $loop->addPeriodicTimer($speed/10, function () use (&$value) {
+        $value = ($value==1 ? 0 : 1);
+        exec("echo ".$value." >/sys/class/gpio/gpio".GVAR::$BUZZER_PIN."/value");
+    });
+
+    //turn buzzer off after 2 seconds
+    $loop->addTimer(2.0, function () use ($loop, $timer) {
+        $loop->cancelTimer($timer);
+        //turn led off, too indicate something was wrong., off = 1
+        exec("echo 0 >/sys/class/gpio/gpio".GVAR::$BUZZER_PIN."/value");
+    });
+}
+
+//blink a led, to let the user see there is an error
 //$speed/10 => 2 = .2s
 function blinkMessageLed($speed) {
     mylog("blinkMessageLed $speed".PHP_EOL);
@@ -41,7 +61,6 @@ function blinkMessageLed($speed) {
     });
 
     //turn blinking off after 10 seconds
-    //TODO start/stop construcion instead?
     $loop->addTimer(10.0, function () use ($loop, $timer) {
         $loop->cancelTimer($timer);
         //turn led off, too indicate something was wrong., off = 1
