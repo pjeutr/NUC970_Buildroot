@@ -7,16 +7,14 @@ class PacketStream extends \Evenement\EventEmitter
 	protected $writable = true;
 	protected $readable = true;
 	protected $sock;
-	protected $loop;
 
 	const MAX_PACKET_SIZE = 4096;
 
 
-	function __construct( $sock, \React\EventLoop\LoopInterface $loop )
+	function __construct( $sock )
 	{
 		$this->sock = $sock;
-		$this->loop = $loop;
-		$this->buffer = new PacketBuffer( $this->sock, $loop );
+		$this->buffer = new PacketBuffer( $this->sock );
 
 		$this->buffer->on( 'sent', function() {
 			$this->emit( 'sent', func_get_args() );
@@ -37,12 +35,12 @@ class PacketStream extends \Evenement\EventEmitter
 
 	function resume()
 	{
-		$this->loop->addReadStream( $this->sock, array( $this, 'handleRecv' ) );
+		\React\EventLoop\Loop::addReadStream( $this->sock, array( $this, 'handleRecv' ) );
 	}
 
 	function pause()
 	{
-		$this->loop->removeReadStream( $this->sock );
+		\React\EventLoop\Loop::removeReadStream( $this->sock );
 	}
 
 	function handleRecv( $sock )
@@ -66,7 +64,7 @@ class PacketStream extends \Evenement\EventEmitter
 	{
 		$this->buffer->close();
 		@fclose( $this->sock );
-		$this->loop->removeReadStream( $this->sock );
+		\React\EventLoop\Loop::removeReadStream( $this->sock );
 		$this->buffer->removeAllListeners();
         $this->removeAllListeners();
 	}

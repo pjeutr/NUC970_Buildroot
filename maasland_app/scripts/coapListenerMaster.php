@@ -31,9 +31,8 @@ mylog("mdnsPublish return=".json_encode($r));
 * Listen for input changes (inputListener)
 */
 //TODO class meegeven werkte niet, daarom maar de index van array
-//$inputObserver = new \Calcinai\Rubberneck\Observer($loop, EpollWait::class);
-$wiegandObserver = new \Pjeutr\PhpNotify\Observer($loop, 0);
-$wiegandObserver->onModify(function($file_name)  use ($loop){
+$wiegandObserver = new \Pjeutr\PhpNotify\Observer(0);
+$wiegandObserver->onModify(function($file_name) {
 	//find the value
 	$value = getInputValue($file_name);
 	$parts = explode(':',$value);
@@ -47,9 +46,8 @@ $wiegandObserver->onModify(function($file_name)  use ($loop){
 });	
 
 $lastMicrotime = 0;
-//$inputObserver = new \Calcinai\Rubberneck\Observer($loop, InotifyWait::class);
-$inputObserver = new \Pjeutr\PhpNotify\Observer($loop, 1);
-$inputObserver->onModify(function($file_name) use ($loop, $lastMicrotime){
+$inputObserver = new \Pjeutr\PhpNotify\Observer(1);
+$inputObserver->onModify(function($file_name) use ($lastMicrotime){
 	global $lastMicrotime;
 
 	mylog("Modified:". $file_name. "\n");
@@ -92,7 +90,7 @@ $wiegandObserver->watch('/dev/wiegand');
 * Run coapListener, listens for key/button changes from the slave
 */
 
-$server = new PhpCoap\Server\Server( $loop );
+$server = new PhpCoap\Server\Server();
 $server->receive( 5683, '0.0.0.0' );
 
 $server->on( 'request', function( $req, $res, $handler ) {

@@ -16,8 +16,7 @@ function callApi($input, $data) {
     $url = "coap://".getMasterControllerIP()."/x_".$input."_".$data;
     mylog("coapCall:".$url);
     //request
-    $loop = React\EventLoop\Loop::get();
-	$client = new PhpCoap\Client\Client( $loop );
+	$client = new PhpCoap\Client\Client();
 	$client->get($url, function( $data ) {
 		if($data == -1) {
             error_log("coapCall, Master controller could not be reached.");
@@ -34,8 +33,7 @@ function callApi($input, $data) {
 * Listen for input changes (inputListener)
 */
 //TODO class meegeven werkte niet, daarom maar de index van array
-//$inputObserver = new \Calcinai\Rubberneck\Observer($loop, EpollWait::class);
-$wiegandObserver = new \Pjeutr\PhpNotify\Observer($loop, 0);
+$wiegandObserver = new \Pjeutr\PhpNotify\Observer(0);
 $wiegandObserver->onModify(function($file_name){
 	//find the value
 	$value = getInputValue($file_name);
@@ -49,9 +47,8 @@ $wiegandObserver->onModify(function($file_name){
 });	
 
 $lastMicrotime = 0;
-//$inputObserver = new \Calcinai\Rubberneck\Observer($loop, InotifyWait::class);
-$inputObserver = new \Pjeutr\PhpNotify\Observer($loop, 1);
-$inputObserver->onModify(function($file_name) use ($loop, $lastMicrotime){
+$inputObserver = new \Pjeutr\PhpNotify\Observer(1);
+$inputObserver->onModify(function($file_name) use ($lastMicrotime){
 	global $lastMicrotime;
 
 	mylog("Modified:". $file_name. "\n");
@@ -92,7 +89,7 @@ $wiegandObserver->watch('/dev/wiegand');
 /*
 * Run coapListener, listens for commands from the master, open door/sound alarm
 */
-$server = new PhpCoap\Server\Server( $loop );
+$server = new PhpCoap\Server\Server();
 $server->receive( 5683, '0.0.0.0' );
 
 $server->on( 'request', function( $req, $res, $handler ) {

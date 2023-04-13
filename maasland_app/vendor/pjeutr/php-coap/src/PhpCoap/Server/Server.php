@@ -6,13 +6,10 @@ use PhpCoap\PacketStream;
 
 class Server extends \Evenement\EventEmitter
 {
-	private $loop;
-
 	private $sessions = array();
 
-	function __construct( \React\EventLoop\LoopInterface $loop )
+	function __construct()
 	{
-		$this->loop = $loop;
 	}
 
 	function receive( $port, $host = '127.0.0.1' )
@@ -24,7 +21,7 @@ class Server extends \Evenement\EventEmitter
 			throw \Exception( sprintf( "Error( %s ) : %s", $errno, $errstr ) );
 		}
 
-		$this->packetStream = new PacketStream( $this->sock, $this->loop );
+		$this->packetStream = new PacketStream( $this->sock );
 		$this->packetStream->on( 'packet', array( $this, 'handlePacket' ) );
 	}
 
