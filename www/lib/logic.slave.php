@@ -97,9 +97,7 @@ function activateOutput($outputEnum, $duration, $gpios) {
     $hasChanged = operateOutput($outputEnum, 1, $gpios);
     //if the state was not changed, the door was already open. Presumably by the scheduler, or another reader/button
     if($hasChanged) {
-        //get instance for THE eventloop
-        $loop = React\EventLoop\Loop::get();
-        $loop->addTimer($duration, function () use ($outputEnum, $gpios) {
+        React\EventLoop\Loop::addTimer($duration, function () use ($outputEnum, $gpios) {
             //close door
             operateOutput($outputEnum, 0, $gpios);
             mylog('Done'.PHP_EOL);

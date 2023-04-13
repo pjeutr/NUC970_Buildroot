@@ -8,10 +8,9 @@ class PacketBuffer extends \Evenement\EventEmitter
 	public $listening = false;
 	private $packets = array();
 
-	function __construct( $sock, \React\EventLoop\LoopInterface $loop )
+	function __construct( $sock )
 	{
 		$this->sock = $sock;
-		$this->loop = $loop;
 	}
 
 	function send( $packet, $peer = null )
@@ -23,7 +22,7 @@ class PacketBuffer extends \Evenement\EventEmitter
         {
             $this->listening = true;
 
-            $this->loop->addWriteStream($this->sock, array($this, 'handleSend'));
+            \React\EventLoop\Loop::addWriteStream($this->sock, array($this, 'handleSend'));
         }
 	}
 
@@ -43,7 +42,7 @@ class PacketBuffer extends \Evenement\EventEmitter
 		if ( count( $this->packets ) == 0 )
 		{
 			$this->listening = false;
-			$this->loop->removeWriteStream( $this->sock );
+			\React\EventLoop\Loop::removeWriteStream( $this->sock );
 			$this->emit( 'sent-all' );
 		}
 	}
@@ -51,7 +50,7 @@ class PacketBuffer extends \Evenement\EventEmitter
 	function close()
 	{
 		$this->packets = array();
-		$this->loop->removeWriteStream( $this->sock );
+		\React\EventLoop\Loop::removeWriteStream( $this->sock );
 	}
 
 }

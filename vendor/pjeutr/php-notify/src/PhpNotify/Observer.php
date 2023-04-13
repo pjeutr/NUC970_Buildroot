@@ -7,7 +7,6 @@
 namespace Pjeutr\PhpNotify;
 
 use Evenement\EventEmitterTrait;
-use React\EventLoop\LoopInterface;
 
 use Pjeutr\PhpNotify\Driver;
 
@@ -18,11 +17,6 @@ class Observer {
     const EVENT_CREATE = 'create';
     const EVENT_MODIFY = 'modify';
     const EVENT_DELETE = 'delete';
-
-    /**
-     * @var \React\EventLoop\LibEvLoop|LoopInterface
-     */
-    private $loop;
 
     /**
      * @var Driver\DriverInterface
@@ -44,19 +38,13 @@ class Observer {
 
     /**
      * Observer constructor
-     * @param LoopInterface $loop
      */
-    public function X__construct(LoopInterface $loop) {
-
-        $this->loop = $loop;
-
+    public function X__construct() {
         $driver_class = self::getBestDriver();
         $this->driver = new $driver_class($this);
     }
 
-    public function __construct(LoopInterface $loop, $driver_nr) {
-        $this->loop = $loop;
-
+    public function __construct($driver_nr) {
         $driver_class = self::$drivers[$driver_nr];
         if(!$driver_class::hasDependencies()) {
             die ("ERROR: system driver not found for :".$driver_class."\n");
@@ -73,12 +61,6 @@ class Observer {
     public function getSubscribedEvents(){
         return array_keys($this->listeners);
     }
-
-
-    public function getLoop() {
-        return $this->loop;
-    }
-
 
     public static function getBestDriver(){
 

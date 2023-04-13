@@ -118,18 +118,17 @@ function handleInput($from, $input, $keycode) {
 *   Used by inputListener 
 */
 function checkAndHandleSensor($gpio, $inputName, $alarmId, $controller) {
-    $loop = React\EventLoop\Loop::get();
     $doorSensorTriggerTime =find_setting_by_name("alarm");
     mylog("handleSensor on slave ".$controller->name.":".$inputName." triggerTime=".$doorSensorTriggerTime);
 
     //wait for the given trigger time, than check again
-    $startAlarm = $loop->addTimer($doorSensorTriggerTime, function () use ($gpio, $inputName, $alarmId, $controller, $loop) {
+    $startAlarm = \React\EventLoop\Loop::addTimer($doorSensorTriggerTime, function () use ($gpio, $inputName, $alarmId, $controller) {
         mylog("recheck handleSensor ".$gpio);
         //--TODO*
-        $client = new PhpCoap\Client\Client( $loop );
+        $client = new PhpCoap\Client\Client();
         $url = "coap://".$controller->ip."/value_".$gpio;
         mylog("checkSensor:".$url);
-        $client->get($url, function( $data ) use ($gpio, $inputName, $alarmId, $controller, $loop) {
+        $client->get($url, function( $data ) use ($gpio, $inputName, $alarmId, $controller) {
             mylog("checkSensor return=".$data);
             //--
             if( $data == '"1"' ) {
@@ -137,18 +136,18 @@ function checkAndHandleSensor($gpio, $inputName, $alarmId, $controller) {
                 saveReport("Unkown", "Alarm on ".$controller->name." from ".$inputName);
 
                 //check if the door is closed, to turn of the alarm
-                $stopAlarm = $loop->addPeriodicTimer(0.5, function ($stopAlarm) use ($gpio, $inputName, $alarmId, $controller, $loop) {
+                $stopAlarm = \React\EventLoop\Loop::addPeriodicTimer(0.5, function ($stopAlarm) use ($gpio, $inputName, $alarmId, $controller) {
                     //--TODO*
-                    $client = new PhpCoap\Client\Client( $loop );
+                    $client = new PhpCoap\Client\Client();
                     $url = "coap://".$controller->ip."/value_".$gpio;
                     mylog("checkSensor:".$url);
-                    $client->get($url, function( $data ) use ($gpio, $inputName, $alarmId, $controller, $loop, $stopAlarm) {
+                    $client->get($url, function( $data ) use ($gpio, $inputName, $alarmId, $controller, $stopAlarm) {
                         mylog("checkSensor return=".$data);
                         //--
                         if( $data == '"0"' ) {
                             setAlarm($controller, $alarmId, 0);
                             saveReport("Unkown", "Alarm stopped for ".$controller->name." from ". $inputName);
-                            $loop->cancelTimer($stopAlarm);
+                            \React\EventLoop\Loop::cancelTimer($stopAlarm);
                         }
                     });
                 });
@@ -157,28 +156,27 @@ function checkAndHandleSensor($gpio, $inputName, $alarmId, $controller) {
     }); 
 
     //recheck if sensor is still active, if not cancel the timers
-    $recheckAlarm = $loop->addPeriodicTimer(0.5, function ($recheckAlarm) use ($startAlarm, $gpio, $controller, $loop) {
-        $client = new PhpCoap\Client\Client( $loop );
+    $recheckAlarm = \React\EventLoop\Loop::addPeriodicTimer(0.5, function ($recheckAlarm) use ($startAlarm, $gpio, $controller) {
+        $client = new PhpCoap\Client\Client();
         $url = "coap://".$controller->ip."/value_".$gpio;
         mylog("checkSensor:".$url);
-        $client->get($url, function( $data ) use ($gpio, $loop, $startAlarm, $recheckAlarm) {
+        $client->get($url, function( $data ) use ($gpio, $startAlarm, $recheckAlarm) {
             mylog("checkSensor return=".$data);
             if( $data == '"0"' ) {
                 mylog("recheck: false alarm handleSensor ".$gpio);
-                $loop->cancelTimer($startAlarm);
-                $loop->cancelTimer($recheckAlarm);
+                \React\EventLoop\Loop::cancelTimer($startAlarm);
+                \React\EventLoop\Loop::cancelTimer($recheckAlarm);
             }
         });
     });   
 }
 
 function checkAndHandleSensorLocal($gpio, $inputName, $alarmId, $controller) {
-    $loop = React\EventLoop\Loop::get();
     $doorSensorTriggerTime =find_setting_by_name("alarm");
     mylog("handleSensor on master ".$controller->name.":".$inputName." triggerTime=".$doorSensorTriggerTime);
 
     //wait for the given trigger time, activate alarm if sensor is still active.
-    $startAlarm = $loop->addTimer($doorSensorTriggerTime, function () use ($gpio, $inputName, $alarmId, $controller, $loop) {
+    $startAlarm = \React\EventLoop\Loop::addTimer($doorSensorTriggerTime, function () use ($gpio, $inputName, $alarmId, $controller) {
         mylog("recheck handleSensor ".$gpio);
 
         if(checkValue($gpio, $controller) == 1) {
@@ -186,23 +184,23 @@ function checkAndHandleSensorLocal($gpio, $inputName, $alarmId, $controller) {
             saveReport("Unkown", "Alarm for ".$controller->name." from ".$inputName);
 
             //check if the door is closed, to turn of the alarm
-            $stopAlarm = $loop->addPeriodicTimer(0.5, function ($stopAlarm) use ($gpio, $inputName, $alarmId, $controller, $loop) {
+            $stopAlarm = \React\EventLoop\Loop::addPeriodicTimer(0.5, function ($stopAlarm) use ($gpio, $inputName, $alarmId, $controller) {
 
                 if(checkValue($gpio, $controller) == 0) {
                     setAlarm($controller, $alarmId, 0);
                     saveReport("Unkown", "Alarm stopped for ".$controller->name." from ". $inputName);
-                    $loop->cancelTimer($stopAlarm);
+                    \React\EventLoop\Loop::cancelTimer($stopAlarm);
                 }
             });
         } 
     });
 
     //recheck if sensor is still active, if not cancel the timers
-    $recheckAlarm = $loop->addPeriodicTimer(0.5, function ($recheckAlarm) use ($startAlarm, $gpio, $controller, $loop) {
+    $recheckAlarm = \React\EventLoop\Loop::addPeriodicTimer(0.5, function ($recheckAlarm) use ($startAlarm, $gpio, $controller) {
         if(checkValue($gpio, $controller) == 0) {
             mylog("recheck: false alarm handleSensor ".$gpio);
-            $loop->cancelTimer($startAlarm);
-            $loop->cancelTimer($recheckAlarm);
+            \React\EventLoop\Loop::cancelTimer($startAlarm);
+            \React\EventLoop\Loop::cancelTimer($recheckAlarm);
         }
     });
 }
@@ -449,8 +447,7 @@ function changeOutputState($outputEnum, $controller, $door, $state) {
         $url = "coap://".$controller->ip."/output_".$outputEnum."_".$state;
         mylog("coapCall:".$url);
         //request
-        $loop = React\EventLoop\Loop::get();
-        $client = new PhpCoap\Client\Client( $loop );
+        $client = new PhpCoap\Client\Client();
         $client->get($url, function( $msg ) use ($controller, $door, $state){
             mylog("changeOutputState apiCall return=".$msg);
             if($msg == -1) {
@@ -473,9 +470,8 @@ function changeOutputState($outputEnum, $controller, $door, $state) {
 */
 
 function operateDoor($door, $open) {
-    mylog("door= ".json_encode($door));
+    $deferred = new React\Promise\Deferred();
 
-    //if( checkIfMaster() ) {
     if( $door->controller_id == 1) { //Master = 1
         $gid = getOutputGPIO($door->id);
 
@@ -484,12 +480,15 @@ function operateDoor($door, $open) {
 
         //check if lock state has changed
         if($currentValue != $open) {
-            mylog("STATE CHANGED=".$open);
+            $action = $door->name." is ".(($open == 1)?"opened":"closed");
             setGPIO($gid, $open);
-            return true;
+            mylog("CHANGED:".$action);
+            saveReport("Scheduled", $action);
+            $deferred->resolve($action);
         }
-        return false;
-    } else { 
+        $deferred->resolve("NO CHANGE on ".$door->name);
+
+    } else { //Slave
         //get slave data, to get ip address
         $controller = find_controller_by_id($door->controller_id );
         mylog($controller);
@@ -497,51 +496,46 @@ function operateDoor($door, $open) {
         $gid = getOutputGPIO($door->enum);
         $url = "coap://".$controller->ip."/status_".$gid;
         mylog("checkDoor:".$url);
-        //request
-        $loop = React\EventLoop\Loop::get();
-        $client = new PhpCoap\Client\Client( $loop );
 
-        //coap-client -m get coap://$slave/output_1_1
-        $client->get($url, function( $data ) use ($gid, $open, $door, $controller){
+        //request coap-client -m get coap://$slave/status_1
+        $client = new PhpCoap\Client\Client();
+        $client->get($url, function( $data ) use ($gid, $open, $door, $controller, $deferred){
             mylog("checkDoor return=".$data);
-            //$obj->{'foo-bar'}
+
+            //check if request was successfull
             if($data == -1) {
                 $action = $controller->name." Controller does not respond";
                 mylog($action);
                 saveReport("Scheduled", $action);
-                return false;
+                $deferred->resolve($action);
+
+                //Stop and return the promise
+                return $deferred->promise();
             }
 
+            //check if lock state has changed
             $currentValue = json_decode($data)[0]->{"$gid"}; //[{"68":"0"}]
             mylog("currentValue return=".$currentValue);
-
             if($currentValue != $open) {
-                mylog("STATE CHANGED=".$open);
 
+                //change lock state
                 $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
                 mylog("openDoor:".$url);
-                //request
-                $loop = React\EventLoop\Loop::get();
-                $client = new PhpCoap\Client\Client( $loop );
-                $client->get($url, function( $data ) use ($open, $door) {
+                //request coap-client -m get coap://$slave/output_1_1
+                $client = new PhpCoap\Client\Client();
+                $client->get($url, function( $data ) use ($open, $door, $deferred) {
                     mylog("openDoor return=".$data);
-
-                    //next lines should not be necessary
                     $action = $door->name." is ".(($open == 1)?"opened":"closed");
-                    //if($changed) 
                     saveReport("Scheduled", $action);
-                    //but return true is not working... 
-                    //TODO have to fix this with closure?
-
-                    return true;
+                    $deferred->resolve($action);
                 });                
             } else {
-                mylog("NO CHANGE");
-                return false;
+                $deferred->resolve("NO CHANGE on ".$door->name);
             }
         }); 
-        
-    }
+    }    
+    // Return the promise
+    return $deferred->promise();
 }
 
 

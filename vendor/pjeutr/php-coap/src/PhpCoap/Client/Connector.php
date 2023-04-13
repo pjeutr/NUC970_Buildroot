@@ -4,6 +4,7 @@ namespace PhpCoap\Client;
 
 use React\Promise;
 use React\Promise\Deferred;
+use React\EventLoop\Loop;
 use PhpCoap\PacketStream;
 use PhpCoap\CoapRequest;
 use PhpCoap\CoapResponse;
@@ -12,11 +13,8 @@ use PhpCoap\CoapResponse;
 class Connector extends \Evenement\EventEmitter
 {
 
-	private $loop;
-
-	function __construct( \React\EventLoop\LoopInterface $loop )
+	function __construct()
 	{
-		$this->loop = $loop;
 	}
 
 	function create( $host, $port )
@@ -31,10 +29,8 @@ class Connector extends \Evenement\EventEmitter
 			return;
 		}
 
-		$loop = $this->loop;
-
-		$this->loop->addWriteStream( $sock, function( $sock ) use ( $loop, $deferred ) {
-			$loop->removeWriteStream( $sock );
+		Loop::addWriteStream( $sock, function( $sock ) use ( $deferred ) {
+			Loop::removeWriteStream( $sock );
 
 			$deferred->resolve( $sock );
 		});
@@ -45,6 +41,6 @@ class Connector extends \Evenement\EventEmitter
 
 	function handleConnect( $sock )
 	{
-		return new PacketStream( $sock, $this->loop );
+		return new PacketStream( $sock );
 	}
 }

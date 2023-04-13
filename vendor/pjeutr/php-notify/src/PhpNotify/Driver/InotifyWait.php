@@ -25,7 +25,7 @@ class InotifyWait extends AbstractDriver implements DriverInterface {
         //remove -r, recusive is not necessary
         $subprocess_cmd = sprintf('inotifywait -m %s', $path);
 
-        $this->observer->getLoop()->addReadStream(popen($subprocess_cmd, 'r'), [$this, 'onData']);
+        \React\EventLoop\Loop::addReadStream(popen($subprocess_cmd, 'r'), [$this, 'onData']);
 
         return true;
     }

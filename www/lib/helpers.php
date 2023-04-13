@@ -32,17 +32,16 @@ function mylog($message) {
 //$speed/10 => 2 = .2s
 function beepMessageBuzzer($speed) {
     mylog("beepMessageBuzzer $speed".PHP_EOL);
-    $loop = React\EventLoop\Loop::get();
 
     $value = 1;
-    $timer = $loop->addPeriodicTimer($speed/10, function () use (&$value) {
+    $timer = React\EventLoop\Loop::addPeriodicTimer($speed/10, function () use (&$value) {
         $value = ($value==1 ? 0 : 1);
         exec("echo ".$value." >/sys/class/gpio/gpio".GVAR::$BUZZER_PIN."/value");
     });
 
     //turn buzzer off after 2 seconds
-    $loop->addTimer(2.0, function () use ($loop, $timer) {
-        $loop->cancelTimer($timer);
+    React\EventLoop\Loop::addTimer(2.0, function () use ($timer) {
+        React\EventLoop\Loop::cancelTimer($timer);
         //turn led off, too indicate something was wrong., off = 1
         exec("echo 0 >/sys/class/gpio/gpio".GVAR::$BUZZER_PIN."/value");
     });
@@ -52,17 +51,16 @@ function beepMessageBuzzer($speed) {
 //$speed/10 => 2 = .2s
 function blinkMessageLed($speed) {
     mylog("blinkMessageLed $speed".PHP_EOL);
-    $loop = React\EventLoop\Loop::get();
 
     $value = 1;
-    $timer = $loop->addPeriodicTimer($speed/10, function () use (&$value) {
+    $timer = React\EventLoop\Loop::addPeriodicTimer($speed/10, function () use (&$value) {
         $value = ($value==1 ? 0 : 1);
         exec("echo ".$value." >/sys/class/gpio/gpio".GVAR::$RUNNING_LED."/value");
     });
 
     //turn blinking off after 10 seconds
-    $loop->addTimer(10.0, function () use ($loop, $timer) {
-        $loop->cancelTimer($timer);
+    React\EventLoop\Loop::addTimer(10.0, function () use ($timer) {
+        React\EventLoop\Loop::cancelTimer($timer);
         //turn led off, too indicate something was wrong., off = 1
         exec("echo 1 >/sys/class/gpio/gpio".GVAR::$RUNNING_LED."/value");
     });
@@ -110,39 +108,16 @@ function saveReport($user, $msg, $key = "empty") { //empty => null
 */
 function apiCall($host, $uri) {
     $msg = "dummy";
-    if(false) {
-        $url = "http://".$host."/?/api/".$uri;
-        mylog("apiCall:".$url);
-        //$msg = file_get_contents($url);
 
-        $loop = React\EventLoop\Loop::get();
-        $client = new React\HttpClient\Client( $loop );
-        $request = $client->request('GET', $url);
-        $request->on('response', function ( $response ) {
-            $response->on('data', function ( $data ) {
-                mylog("apiCall return=".$data);
-                return $data;
-            });
-        });
-        $request->end();
-        $loop->run();
-    } else {
-        // $cmd = "coap-client -m get coap://".$host."/".$uri;
-        // mylog("coapCall:".$cmd);
-        // //TODO hangs here shell_exec alternative
-        // $msg = shell_exec($cmd);//." 2>/dev/null &");
-        // mylog("shell_exec returns");
+    $url = "coap://".$host."/".str_replace('/','_',$uri);
+    mylog("coapCall:".$url);
+    //request
+    $client = new PhpCoap\Client\Client();
+    $client->get($url, function( $data ) {
+        mylog("coapCall return=".$data);
+        return $data;
+    });        
 
-        $url = "coap://".$host."/".str_replace('/','_',$uri);
-        mylog("coapCall:".$url);
-        //request
-        $loop = React\EventLoop\Loop::get();
-        $client = new PhpCoap\Client\Client( $loop );
-        $client->get($url, function( $data ) {
-            mylog("coapCall return=".$data);
-            return $data;
-        });        
-    }
     return $msg;    
 }
 

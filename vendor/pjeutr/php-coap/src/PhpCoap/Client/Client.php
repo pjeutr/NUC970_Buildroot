@@ -2,6 +2,7 @@
 
 namespace PhpCoap\Client;
 
+use React\EventLoop\Loop;
 use PhpCoap\PacketStream;
 use PhpCoap\CoapRequest;
 use PhpCoap\CoapResponse;
@@ -12,10 +13,9 @@ class Client extends \Evenement\EventEmitter
 	private $gotAck = false;
 	private $complete = false;
 	
-	function __construct( \React\EventLoop\LoopInterface $loop )
+	function __construct()
 	{
-		$this->loop = $loop;
-		$this->connector = new Connector( $loop );
+		$this->connector = new Connector();
 	}
 
 	function request( $method, $uri )
@@ -42,16 +42,17 @@ class Client extends \Evenement\EventEmitter
 		$req = $this->request( CoapRequest::GET, $uri );
 
 		//prevent hanging/blocking request, with a timout of 3 seconds
-		$timeout = $this->loop->addTimer(3, function () use ($req, $uri, $callback){
+		$timeout = Loop::addTimer(3, function () use ($req, $uri, $callback){
 		    mylog("coapCall:TIMEOUT:".$uri);
-		    //$req->close(); //Uncaught Error: Call to a member function close() on null 
+		    mylog($callback);
+		    $req->close(); //Uncaught Error: Call to a member function close() on null 
 		    //return to caller null of -1?, NOT false can mean state of door was not changed
 		    call_user_func( $callback, -1);
 		});
 
 		$req->on( 'response', function ( $resp ) use ($callback, $timeout) {
 			call_user_func( $callback, $resp->getPayload() );
-			$this->loop->cancelTimer($timeout);
+			Loop::cancelTimer($timeout);
 		});
 		$req->send();
 	}

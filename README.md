@@ -25,6 +25,9 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v1.6.0 - callback fix which made flexess_cron hang + refactor to static loop
+v1.5.6 - quick fix
+v1.5.5 - fix slave bug (remove req->close) + signal beep an slave when master not found during tag scan
 v1.5.5 - apiCall refactor + flexess_cron lock
 v1.5.4 - vacuum db after delete + increase import upload + timezone bug in scheduled + door shortcuts on dashboard 
 v1.5.3 - Add remove timezone button
