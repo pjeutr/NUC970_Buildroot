@@ -16,23 +16,17 @@ sudo dd if=/dev/disk4 of=matchSDv1_4_1.img bs=1m status=progress
 -----
 Comments on making new sdcard for Match
 
-insert card
 - gvar.match4.php add SD to version number
 - cp *.ubi u-boot* uImage (5 files)
 
-make image met DiskUtility op "No Name" (File>New Image)
-scp matchSDv1_3_1.img do3.sloots.nu:/home/maasland/maaslandserver.com/public/firmware/matchSDv1_3_1.img
-https://maaslandserver.com/firmware/matchSDv1_3_1.img
-
-
-unzip matchSDminimal.zip
-insert SD card, but unmount the partion
-sudo dd of=/dev/disk3 if=matchSDminimal.img bs=1024 status=progress conv=sparse
-mount SD card
-
-
-
-cp uImage rootfs.ubi maasland_app.ubi /Volumes/NO\ NAME/
+-on linux, insert 64M card
+sudo mount /dev/sdb1 /mnt/sdcard
+cd output/images/
+sudo cp maasland_app.ubi /mnt/sdcard/
+sudo mv /mnt/sdcard/_matchSDv1_5_3 /mnt/sdcard/_matchSDv1_5_5
+sudo dd if=/dev/sdb of=matchSDv1_5_6.img bs=1024 status=progress conv=sparse
+scp matchSDv1_5_3.img do2.sloots.nu:/home/maasland/maaslandserver.com/public/firmware/
+https://maaslandserver.com/firmware/matchSDv1_5_6.img
 
 -------
 
