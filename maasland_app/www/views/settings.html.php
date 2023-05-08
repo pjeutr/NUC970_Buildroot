@@ -53,7 +53,7 @@ set('title', L("settings"));
     }
     if( $row->type == 5) {
         $fieldType = 'text';
-        $fieldAtrribute = useLedgerMode() ? 'style="color:green"' : 'style="color:red"';
+        $fieldAtrribute = useLedgerMode()||useLowNetworkMode() ? 'style="color:green"' : 'style="color:red"';
     }
         ?>                        
 <form class="settingsForm" id="row_<?= $row->name ?>" action="<?= url_for('settings', $row->id) ?>" method="POST">

@@ -100,11 +100,12 @@ $server->on( 'request', function( $req, $res, $handler ) {
 	$from = $handler->getPeerHost(); //will allways be master
 
 	//Security check if it's really the master
-	if(getMasterControllerIP() != $from) {
-		error_log("WARNING: Coap request from=".$from." master=".getMasterControllerIP());
-		$res->setPayload( json_encode( "illegal encryption key" ) );//confuse the hacker ;)
-		$handler->send( $res );
-	}
+	// if(getMasterControllerIP() != $from) {
+	// 	//TODO recheck or don't check...
+	// 	error_log("WARNING: Coap request from=".$from." master=".getMasterControllerIP());
+	// 	$res->setPayload( json_encode( "illegal encryption key" ) );//confuse the hacker ;)
+	// 	$handler->send( $res );
+	// }
 
 	// $path = explode('_',$url);
 	// $type = $path[0];

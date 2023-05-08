@@ -213,11 +213,11 @@ dispatch('ledger_csv', 'ledger_csv');
 dispatch_delete('ledger/:id', 'ledger_destroy');
 
 //DEV pages
-dispatch_get('tests/:name',  'run_script');
+dispatch_get('tests/:name/:params',  'run_script');
 function run_script() {
-  $name = "/maasland_app/tests/".params('name');
-  echo("tests: ".$name);
-	$r = shell_exec($name);
+  $cmd = "/maasland_app/tests/".params('name')." ".params('params');
+  echo("tests: ".$cmd);
+	$r = shell_exec($cmd);
 	mylog($r);
     return "<pre>".($r)."</pre>";
 }

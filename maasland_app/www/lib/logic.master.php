@@ -493,46 +493,69 @@ function operateDoor($door, $open) {
         $controller = find_controller_by_id($door->controller_id );
         mylog($controller);
 
-        $gid = getOutputGPIO($door->enum);
-        $url = "coap://".$controller->ip."/status_".$gid;
-        mylog("checkDoor:".$url);
 
-        //request coap-client -m get coap://$slave/status_1
-        $client = new PhpCoap\Client\Client();
-        $client->get($url, function( $data ) use ($gid, $open, $door, $controller, $deferred){
-            mylog("checkDoor return=".$data);
+        if(useLowNetworkMode()){
+            //alternative method without status check
+            //which can strain controllers too much on a bad network
+            //always send the output singal, no possibility to know if the door was already open or close
 
-            //check if request was successfull
-            if($data == -1) {
-                $action = $controller->name." Controller does not respond";
-                mylog($action);
-                saveReport("Scheduled", $action);
+            //change lock state
+            $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
+            mylog("openDoor:".$url);
+            //request coap-client -m get coap://$slave/output_1_1
+            $client = new PhpCoap\Client\Client();
+            $client->get($url, function( $data ) use ($open, $door, $deferred) {
+                mylog("openDoor return=".$data);
+                $action = $door->name." is ".(($open == 1)?"opened":"closed");
+                //saveReport("Scheduled", $action);
                 $deferred->resolve($action);
+            });   
+        } else {
+            //original method with status check.
+            //so we can add entries to reports if a door is opened or close
+            //only send the output signal if the state has changed 
+             
+            $gid = getOutputGPIO($door->enum);
+            $url = "coap://".$controller->ip."/status_".$gid;
+            mylog("checkDoor:".$url);
 
-                //Stop and return the promise
-                return $deferred->promise();
-            }
+            //request coap-client -m get coap://$slave/status_1
+            $client = new PhpCoap\Client\Client();
+            $client->get($url, function( $data ) use ($gid, $open, $door, $controller, $deferred){
+                mylog("checkDoor return=".$data);
 
-            //check if lock state has changed
-            $currentValue = json_decode($data)[0]->{"$gid"}; //[{"68":"0"}]
-            mylog("currentValue return=".$currentValue);
-            if($currentValue != $open) {
-
-                //change lock state
-                $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
-                mylog("openDoor:".$url);
-                //request coap-client -m get coap://$slave/output_1_1
-                $client = new PhpCoap\Client\Client();
-                $client->get($url, function( $data ) use ($open, $door, $deferred) {
-                    mylog("openDoor return=".$data);
-                    $action = $door->name." is ".(($open == 1)?"opened":"closed");
+                //check if request was successfull
+                if($data == -1) {
+                    $action = $controller->name." Controller does not respond";
+                    mylog($action);
                     saveReport("Scheduled", $action);
                     $deferred->resolve($action);
-                });                
-            } else {
-                $deferred->resolve("NO CHANGE on ".$door->name);
-            }
-        }); 
+
+                    //Stop and return the promise
+                    return $deferred->promise();
+                }
+
+                //check if lock state has changed
+                $currentValue = json_decode($data)[0]->{"$gid"}; //[{"68":"0"}]
+                mylog("currentValue return=".$currentValue);
+                if($currentValue != $open) {
+
+                    //change lock state
+                    $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
+                    mylog("openDoor:".$url);
+                    //request coap-client -m get coap://$slave/output_1_1
+                    $client = new PhpCoap\Client\Client();
+                    $client->get($url, function( $data ) use ($open, $door, $deferred) {
+                        mylog("openDoor return=".$data);
+                        $action = $door->name." is ".(($open == 1)?"opened":"closed");
+                        saveReport("Scheduled", $action);
+                        $deferred->resolve($action);
+                    });                
+                } else {
+                    $deferred->resolve("NO CHANGE on ".$door->name);
+                }
+            }); 
+        }
     }    
     // Return the promise
     return $deferred->promise();
@@ -573,6 +596,17 @@ function available_controllers() {
 function useLedgerMode() {
     $ledger=find_setting_by_name("ledger");
     if(!empty($ledger) && $ledger=="qwerty") {
+        return true;
+    }
+    return false;
+}
+
+/*
+*   Special mode, where slaves are not queeried, before the master commands 
+*/
+function useLowNetworkMode() {
+    $ledger=find_setting_by_name("ledger");
+    if(!empty($ledger) && $ledger=="low") {
         return true;
     }
     return false;
