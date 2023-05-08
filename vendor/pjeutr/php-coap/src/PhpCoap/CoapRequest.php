@@ -14,7 +14,7 @@ class CoapRequest extends CoapPdu
 
 		if ( $parts['scheme'] != 'coap' )
 		{
-			throw \Exception( 'Bad Uri: ' . $uri );
+			throw Exception( 'Bad Uri: ' . $uri );
 		}
 
 		$this->uriParts = $parts;
