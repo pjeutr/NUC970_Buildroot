@@ -115,6 +115,17 @@ function switchOutput() {
     $result = changeOutputState($outputEnum, $controller, $door, $state);
     return (json(array($result)));
 }
+function checkCleanupReports() {
+    //delete rows older than x days in reports
+    $days = 7;
+    $action = cleanupReports($days);
+    mylog($action);
+    if($action > 0) {
+        saveReport("WebAdmin", "Older than $days days. $action rows deleted in reports.");
+    }
+    $result = getOutputStatus($outputId);
+    return json($result);
+}
 function outputStatus() {
     $outputId = filter_var(params('door'), FILTER_VALIDATE_INT);
     $result = getOutputStatus($outputId);

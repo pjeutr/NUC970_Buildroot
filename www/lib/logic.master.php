@@ -453,7 +453,7 @@ function changeOutputState($outputEnum, $controller, $door, $state) {
             if($msg == -1) {
                 saveReport("WebAdmin", $controller->name." Controller does not respond");
             } else {
-                saveReport("WebAdmin", "Switch ".$door->name." ".($state?"open":"closed")." on ".$controller->name);
+                saveReport("WebAdmin", $door->name." ".($state?"open":"closed")." on ".$controller->name);
             }
         });
     }

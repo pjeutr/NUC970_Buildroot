@@ -276,6 +276,7 @@ function overview_page() {
     ]);
 }
 //webapi / coap alternatives
+dispatch_get   ('api/cleanup', 'checkCleanupReports');
 dispatch_get   ('api/status/:door', 'outputStatus');
 dispatch_get   ('api/output/:door/:state/', 'output');
 dispatch_get   ('api/activate/:door/:duration/:gpios/', 'activate');
