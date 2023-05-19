@@ -128,3 +128,52 @@ $server->on( 'request', function( $req, $res, $handler ) {
 });
 
 
+
+/*
+* Do cronlike stuff, previously done by crontab
+*/
+$interval = 60;
+$timer = React\EventLoop\Loop::addPeriodicTimer($interval, function () {
+	$now = new DateTime();
+	$actor = "Scheduled"; 
+	$action = "Systemcheck ";
+	
+	/*
+	* Check reports and delete old ones and vacuum. (previously done by crontab)
+	*/
+	if($now->format('H:i') == "04:00") { //every night at 2, needs timezone adjustment so 4
+	//if($now->format('i') == 45) { //every hour
+		//delete rows older than x days in reports
+		$days = 7;
+		$action = cleanupReports($days);
+		mylog($action);
+		if($action > 0) {
+			saveReport($actor, "Older than $days days. $action rows deleted in reports.");
+		}
+	}
+
+	/*
+	* Check if there are doors scheduled to open. (previously done by crontab)
+	*/
+	$doors = find_doors();
+	$promises = [];
+
+	foreach ($doors as $door) {
+		mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->enum.":".$door->id.":".$door->name." tz=".$door->timezone_id);
+
+		//has this door a timezone assigned?
+		if( $door->timezone_id ) {
+			//check if the door needs to be open or close
+			$open = checkDoorSchedule($door) ? 1 : 0;
+
+			//send required state to the door
+			$promises[] = operateDoor($door, $open)->then(
+		        function ($value) {
+					// Deferred resolved, do something with $value
+					mylog("Promise return=".$value);
+					return $value;
+		        }
+		    );
+		}
+	}
+});

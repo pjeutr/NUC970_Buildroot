@@ -162,7 +162,13 @@ class Request extends \Evenement\EventEmitter
     	$this->emit( 'complete' );
     	// TODO: clean up
 
-    	$this->sock->close();
+    	if($this->sock) { //Uncaught Error: Call to a member function close() on null, not sure when but occurs sometimes.
+    		$this->sock->close();
+    		//error_log("INFO PhpCoap:Socket was closed");
+    	} else {
+    		error_log("WARNING PhpCoap:Socket is already gone");
+    	}
+    	
     }
 
 }

@@ -157,7 +157,7 @@ function settings_upload() {
     // if everything is ok, try to upload file
     } else {
       if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        $messageArr[] = "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.";
+        $messageArr[] = "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.<p>Restart the master controller</p>";
         set('swalMessage', swal_message_success($messageArr));
 
       } else {
