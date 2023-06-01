@@ -11,6 +11,7 @@ echo $(uptime)
 mpstat | grep -v Linux
 echo
 free -m | grep -v Swap
+ifconfig eth0
 
 #$1 greater than 100, get statistical info that take time to gather 
 if [ $1 -gt 100 ]
