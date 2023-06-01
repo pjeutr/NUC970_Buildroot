@@ -439,6 +439,7 @@ function changeOutputState($outputEnum, $controller, $door, $state) {
     if( $controller->id == 1 ) {
         //call method on master, is quicker and more reliable
         //and nesting coap-client calls is not working currently
+        saveReport("WebAdmin", $door->name." ".($state?"open":"closed")." on ".$controller->name);
         $gid = getOutputGPIO($outputEnum);
         setGPIO($gid, $state);
         //TODO actual return state
@@ -528,7 +529,7 @@ function operateDoor($door, $open) {
                 if($data == -1) {
                     $action = $controller->name." Controller does not respond";
                     mylog($action);
-                    saveReport("Scheduled", $action);
+                    //saveReport("Scheduled", $action);
                     $deferred->resolve($action);
 
                     //Stop and return the promise
