@@ -24,9 +24,10 @@ sudo mount /dev/sdb1 /mnt/sdcard
 cd output/images/
 sudo cp maasland_app.ubi /mnt/sdcard/
 sudo mv /mnt/sdcard/_matchSDv1_5_3 /mnt/sdcard/_matchSDv1_5_5
+sudo umount /dev/sdb1
 sudo dd if=/dev/sdb of=matchSDv1_5_6.img bs=1024 status=progress conv=sparse
 scp matchSDv1_5_3.img do2.sloots.nu:/home/maasland/maaslandserver.com/public/firmware/
-https://maaslandserver.com/firmware/matchSDv1_5_6.img
+https://maaslandserver.com/firmware/matchSDv1_6_6.img
 
 -------
 

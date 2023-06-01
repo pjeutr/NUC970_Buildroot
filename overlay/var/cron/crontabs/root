@@ -1,1 +1,2 @@
-*/1 * * * * /maasland_app/scripts/flexess_cron.php
+*/3 * * * * /maasland_app/scripts/flexess_cron.sh
+0 4 * * * /maasland_app/scripts/maintenance.sh
