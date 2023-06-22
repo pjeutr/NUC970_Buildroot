@@ -9,7 +9,9 @@ function getTimezone() {
 function getDateTimeFormat() {
     return 'd/m/Y H:i';
 }
-
+function getTimeFormat() {
+    return 'H:i';
+}
 //Custom log
 function mylog($message) {
     //add milliseconds timestamp for 'permance' profiling
