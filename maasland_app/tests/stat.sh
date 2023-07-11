@@ -30,6 +30,8 @@ fi
 if [ $1 -gt 10 ] 
 then 
 
+tail -f /var/log/php_errors.log
+
 pidstat -ulrwh | sort -n -k12 | grep -v Linux
 
 fi

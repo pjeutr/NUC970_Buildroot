@@ -14,6 +14,8 @@ class CoapRequest extends CoapPdu
 
 		if ( $parts['scheme'] != 'coap' )
 		{
+			error_log('Bad Uri: ' . $uri);
+			//TODO Uncaught Error: Call to undefined function PhpCoap\Exception()
 			throw Exception( 'Bad Uri: ' . $uri );
 		}
 
