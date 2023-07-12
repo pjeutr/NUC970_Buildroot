@@ -157,9 +157,9 @@ function settings_upload() {
     // if everything is ok, try to upload file
     } else {
       if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        $messageArr[] = "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.<p>Restart the master controller</p>";
+        $messageArr[] = "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.<p>Wait 10 seconds, than restart the master controller</p>";
+        //mylog(shell_exec("ls -la $target_file"));
         set('swalMessage', swal_message_success($messageArr));
-
       } else {
         $messageArr[] = "Sorry, there was an error uploading your file.";
         set('swalMessage', swal_message_error($messageArr));
