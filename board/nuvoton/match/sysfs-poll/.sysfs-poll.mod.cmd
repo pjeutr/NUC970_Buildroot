@@ -1,0 +1,1 @@
+cmd_/home/pjeutr/nuvoton/matchOnNuc/board/nuvoton/match/sysfs-poll/sysfs-poll.mod := { echo  /home/pjeutr/nuvoton/matchOnNuc/board/nuvoton/match/sysfs-poll/sysfs-poll.o; echo; } > /home/pjeutr/nuvoton/matchOnNuc/board/nuvoton/match/sysfs-poll/sysfs-poll.mod

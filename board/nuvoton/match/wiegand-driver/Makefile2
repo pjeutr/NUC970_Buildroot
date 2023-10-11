@@ -1,0 +1,48 @@
+.SUFFIXES : .x .o .c .s
+
+#CC := arm-linux-gnueabi-gcc -I/usr/include/glib-2.0 -lglib-2.0 
+#CC := arm-linux-gnueabi-cpp -I/usr/include/glib-2.0 -lglib-2.0
+# gcc `pkg-config --cflags glib-2.0` foo.c `pkg-config --libs glib-2.0`
+CC := arm-linux-gcc
+#CC := arm-linux-gcc `pkg-config --cflags --libs glib-2.0` 
+STRIP := arm-linux-strip
+
+CC1PLUS=/home/pjeutr/NUC970_BuildTEST/output/build/host-gcc-final-4.8.5/build/gcc/cc1plus
+
+GLIB= -I/home/pjeutr/nuvoton/matchOnNuc/output/host/usr/include/glib-2.0 -I/home/pjeutr/nuvoton/matchOnNuc/output/host/usr/lib/glib-2.0/include
+
+# compiler flags:
+#  -g     - this flag adds debugging information to the executable file
+#  -Wall  - this flag is used to turn on most compiler warnings
+#  -Wextra  - extra warnings
+#CFLAGS  = -g -Wall -Wextra $$(pkg-config --cflags --libs glib-2.0)
+CFLAGS=-g -Wall -Wextra -lstdc++ `pkg-config --cflags glib-2.0`
+LDFLAGS=`pkg-config --libs glib-2.0`
+
+#ZLIBDIRS = zlibrary/core zlibrary/text zlibrary/ui 
+#APPDIRS = fbreader  
+#GCC = -I/usr/include/glib-2.0 -I/usr/lib/i386-linux-gnu/glib-2.0/include  -lglib-2.0
+
+
+
+
+#g++ -g -Wall -I/data[...]/lib testing.cpp fileparameters.cpp main.cpp -o test
+
+TARGET = gpio-notify 
+SRCS := gpio-notify.cpp
+
+all: 
+	#$(CC) $(CFLAGS) -static $(SRCS) -o $(TARGET) $(LDFLAGS)
+	#$(CC) $(CFLAGS) $(SRCS) -o $(TARGET) $(LDFLAGS) 
+	$(STRIP) $(TARGET) 
+
+clean:
+	rm -f *.o 
+	rm -f *.x 
+	rm -f *.flat
+	rm -f *.map
+	rm -f temp
+	rm -f *.img
+	rm -f $(TARGET)	
+	rm -f *.gdb
+	rm -f *.bak
