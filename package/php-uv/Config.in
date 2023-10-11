@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PHP_UV
+	bool "php-uv"
+	depends on BR2_PACKAGE_PHP
+	select BR2_PACKAGE_LIBUV
+	help
+	  PHP UV libuv wrapper
+
+	  http://pecl.php.net/package/uv

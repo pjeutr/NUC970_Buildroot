@@ -1,0 +1,8 @@
+config BR2_PACKAGE_PHP_EVENT
+	bool "php-event"
+	depends on BR2_PACKAGE_PHP
+	select BR2_PACKAGE_EVENT
+	help
+	  PHP interface to libevent library
+
+	  http://pecl.php.net/package/event
