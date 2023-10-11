@@ -1,0 +1,26 @@
+diff --git a/drivers/mtd/nand/nuc980_nand.c b/drivers/mtd/nand/nuc980_nand.c
+index 2621b9116452..73a130b65d97 100644
+--- a/drivers/mtd/nand/nuc980_nand.c
++++ b/drivers/mtd/nand/nuc980_nand.c
+@@ -703,7 +703,7 @@ static inline int _nuc980_nand_dma_transfer(struct mtd_info *mtd, const u_char *
+ 					writel ( 0x4, REG_SMISR );
+ 					writel ( 0x3, REG_NAND_DMACCSR);          // reset DMAC
+ 					writel ( readl(REG_SMCSR)|0x1, REG_SMCSR);    // reset SM controller
+-					stat = -EIO;
++                                       stat = -EUCLEAN;
+ 					break;
+ 				}
+ 				else if ( stat > 0 ) {
+@@ -765,9 +765,9 @@ static void nuc980_write_buf_dma(struct mtd_info *mtd, const u_char *buf, int le
+ {
+ 	ENTER();
+ 
+-	if ( len == mtd->writesize ) /* start transfer in DMA mode */
+-		_nuc980_nand_dma_transfer(mtd, (u_char *)buf, len, 0x1);
+-	else
++//     if ( len == mtd->writesize ) /* start transfer in DMA mode */
++//             _nuc980_nand_dma_transfer(mtd, (u_char *)buf, len, 0x1);
++//     else
+ 	{
+ #ifdef NUC980_NAND_DEBUG
+ 		int i;
