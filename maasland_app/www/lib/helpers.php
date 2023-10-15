@@ -12,6 +12,18 @@ function getDateTimeFormat() {
 function getTimeFormat() {
     return 'H:i';
 }
+
+/*
+* isBetweem check is a input time is between to from and till time, compensates if till is the next day
+* https://stackoverflow.com/questions/27131527/php-check-if-time-is-between-two-times-regardless-of-date/27134087#27134087
+*/
+function isBetween($from, $till, $input) {
+    $f = DateTime::createFromFormat('!H:i', $from);
+    $t = DateTime::createFromFormat('!H:i', $till);
+    $i = DateTime::createFromFormat('!H:i', $input);
+    if ($f > $t) $t->modify('+1 day');
+    return ($f <= $i && $i <= $t) || ($f <= $i->modify('+1 day') && $i <= $t);
+}
 //Custom log
 function mylog($message) {
     //add milliseconds timestamp for 'permance' profiling
