@@ -1,0 +1,26 @@
+{
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/pjeutr/php-coap"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/pjeutr/php-notify"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/pjeutr/dotenv-php"
+        }
+    ], 
+    "require": {
+        "pjeutr/php-coap": "dev-master",
+        "pjeutr/php-notify": "dev-master",
+        "pjeutr/dotenv-php": "dev-master",
+        "react/promise": "^2.8",
+        "react/http-client": "^0.5.11"
+    },
+    "require-dev": {
+        "brunty/cigar": "^1.12"
+    }
+}

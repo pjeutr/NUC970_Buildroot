@@ -22,7 +22,7 @@
 // }
 
 function find_doors() {
-    return find_objects_by_sql("SELECT * FROM `doors`");
+    return find_objects_by_sql("SELECT c.ip cip, c.name cname, d.* FROM doors d LEFT JOIN controllers c ON c.id = d.controller_id");
 }
 
 function find_door_by_id($id) {
@@ -56,7 +56,7 @@ function make_door_obj($params, $obj = null) {
 }
 
 function door_columns() {
-    return array('name','timezone_id');
+    return array('name','enum','controller_id','timezone_id');
 }
 
 

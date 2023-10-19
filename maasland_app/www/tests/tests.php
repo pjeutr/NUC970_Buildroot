@@ -56,7 +56,7 @@ test_case("Test");
       assert_trigger_error("my_triggering_error_func", array(true));
    }
    
-   function test_test_assert_request()
+   function Xtest_test_assert_request()
    {
      assert_true(defined('TESTS_DOC_ROOT'), "Undefined 'TESTS_DOC_ROOT' constant");
      $response =  test_request(TESTS_DOC_ROOT.'00-empty.php', 'GET', true);

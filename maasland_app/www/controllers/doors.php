@@ -2,7 +2,7 @@
 
 # GET /doors
 function doors_index() {
-    set('controllers', find_controllers());
+    set('controllers', find_all_controllers());
     //TODO put doors in controllers
     set('doors', find_doors());
     return html('doors/index.html.php');
@@ -29,6 +29,12 @@ function doors_update() {
     $door = get_door_or_404();
     $door = make_door_obj($door_data, $door);
 
+    //is remove_timezone button pressed?
+    if(isset($_POST['remove_timezone'])){
+        mylog("Remove timezone from door id=".$door->id);
+        $door->timezone_id = null;
+        operateDoor($door,0);
+    }
     update_door_obj($door);
     redirect('doors');
 }
