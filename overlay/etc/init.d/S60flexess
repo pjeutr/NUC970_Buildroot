@@ -4,6 +4,9 @@ case "$1" in
 start)
    printf "Starting flexess inputListener: "
    php -f /maasland_app/scripts/inputListener.php &
+   #make oom score high, soo the inputlistener will restart quicker
+   #otherwise all the child processes will be killed first en the controller will start te get slow
+   echo 1000 > /proc/$!/oom_score_adj
    echo $!>/var/run/flexess.pid
    echo "OK"
    ;;

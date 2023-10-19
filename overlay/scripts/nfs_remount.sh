@@ -11,7 +11,7 @@
 #sleep 1 #let things stop, so we dont' get a resource in use exception
 #read -n 1 -s -r -p "Press any key to umount"
 umount -f /maasland_app/
-mount -t nfs -o port=2049,nolock,proto=tcp,rw,suid nuck:/home/pjeutr/Work/DuoApp /maasland_ap
+mount -t nfs -o port=2049,nolock,proto=tcp,rw,suid nuck:/home/pjeutr/Work/DuoApp /maasland_app
 #mount -t nfs -o port=2049,nolock,proto=tcp,rw,suid ubu:/home/pjeutr/nuvoton/DuoApp /maasland_app
 #mount -o port=2049,nolock,proto=tcp ubu:/home/pjeutr/nuvoton/DuoApp /maasland_app
 /etc/init.d/S49php-fpm start
