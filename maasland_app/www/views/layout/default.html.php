@@ -17,10 +17,10 @@ if(! isset($id)) {
 
 //Calculate time for js clock
 $serverTime =  time() * 1000;
-$timezone = date('2'); //+0200
+$timezone = date('O'); //+0200
 
 //check error message
-$flashMessage = flash_now();
+$message = flash_now();
 
 ?>
 <!DOCTYPE html>
@@ -40,16 +40,15 @@ $flashMessage = flash_now();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.1a" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="/assets/css/app.css?1.1.4" rel="stylesheet" />
+    <link href="/assets/css/app.css?7" rel="stylesheet" />
     <script type="text/javascript">
         //calculate clock with php server time
         var serverTime = <?php echo $serverTime;?>,
             timezone = "<?php echo $timezone;?>",
             timeDiff = serverTime - Date.now();
 
-        //console.log(serverTime+"-"+timezone+"-"+timeDiff);
         setInterval(function () {
-          serverClock.innerHTML= moment().add(timeDiff).utcOffset(timezone).format('DD-MM-Y HH:mm:ss');
+          serverClock.innerHTML= moment().add(timeDiff).zone(timezone).format('DD-MM-Y H:mm:ss');
         }, 1000);
 
     </script>    
@@ -60,7 +59,7 @@ $flashMessage = flash_now();
         <div class="loaderImage" style="display: none;">
             <img src="/assets/img/spinner.gif">
         </div>  
-        <div class="sidebar" data-image="../assets/img/sidebar.jpg" data-color="black">
+        <div class="sidebar" data-image="../assets/img/sidebar-5.jpg" data-color="green">
             <div class="sidebar-wrapper">
                 <div class="logo">
                     <a href="./" class="simple-text logo-mini">
@@ -85,120 +84,57 @@ $flashMessage = flash_now();
                     </li>
                     <li <?php echo ($id == 2) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/groups">
-                            <i class="nc-icon nc-badge"></i>
+                            <i class="nc-icon nc-circle-09"></i>
                             <p><?php echo L::groups; ?></p>
                         </a>
                     </li>
                     <li <?php echo ($id == 3) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/doors">
-                            <i class="nc-icon nc-lock-circle-open"></i>
+                            <i class="nc-icon nc-bank"></i>
                             <p><?php echo L::doors; ?></p>
                         </a>
                     </li>
                     <li <?php echo ($id == 4) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/timezones">
                             <i class="nc-icon nc-watch-time"></i>
-                            <p><?php echo L::timezones; ?></p>
+                            <p>Timezones</p>
                         </a>
                     </li>
                     <li <?php echo ($id == 5) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/reports">
-                            <i class="nc-icon nc-notes"></i>
-                            <p><?php echo L::reports; ?></p>
+                            <i class="nc-icon nc-ruler-pencil"></i>
+                            <p>Reports</p>
                         </a>
                     </li>
-
-                    <?php if(useLedgerMode()) { ?>
-                        <li <?php echo ($id == 6) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                            <a class="nav-link" href="./?/ledger">
-                                <i class="nc-icon nc-bullet-list-67"></i>
-                                <p><?php echo L::ledger; ?></p>
-                            </a>
-                        </li>
-                    <?php } ?>
-
                     <li <?php echo ($id == 7) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/settings">
-                            <i class="nc-icon nc-settings-gear-64"></i>
-                            <p><?php echo L::settings; ?></p>
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Settings</p>
                         </a>
                     </li>
-
-                    <?php if( isset($_SESSION["dev"]) ) { ?>
                     <hr>
+                    <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/gpio">
+                            <i class="nc-icon nc-settings-gear-64"></i>
+                            <p>GPIO</p>
+                        </a>
+                    </li>
                     <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="/admin/phpliteadmin.php">
                             <i class="nc-icon nc-settings-tool-66"></i>
                             <p>DB</p>
                         </a>
                     </li>
-                    <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/manage/cleanup_db">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Prune reports</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 12) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="/examples/icons.html">
-                            <i class="nc-icon nc-html5"></i>
-                            <p>Icons</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/manage/opcache_reset">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Opcache reset</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="/opcache-gui/index.php">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Opcache management</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/tests/status.php">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Status test</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/tests/network.sh">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Network test</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/manage/update_firmware">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Update firmware (WARNING!)</p>
-                        </a>
-                    </li>
-                    <?php } ?>
-
                 </ul>
                 <div class="sidebar-footer">
                 	<?=  L::language ?><br/>
                 	<!--- https://github.com/tkrotoff/famfamfam_flags --->
-
-                    <?php
-                        $fr = "";
-                        $en = "";
-                        $nl = "";
-                        if($_SESSION["lang"]=="nl") { 
-                            $nl = "active";
-                        } elseif($_SESSION["lang"]=="fr") {
-                            $fr = "active";
-                        } else {
-                            $en = "active";
-                        }
-                    ?>
-                    <a class="btn btn-success btn-sm <?= $nl ?>" href="./?/lang/nl"><i class="icon-flag-nl"></i> NL</a>
-                    <a class="btn btn-success btn-sm <?= $fr ?>" href="./?/lang/fr"><i class="icon-flag-fr"></i> FR</a>
-                    <a class="btn btn-success btn-sm <?= $en ?>" href="./?/lang/en"><i class="icon-flag-gb"></i> EN</a>                
+                    <a class="btn btn-success btn-sm active" href="./?/lang/nl"><i class="icon-flag-nl"></i> NL</a>
+                    <a class="btn btn-success btn-sm" href="./?/lang/fr"><i class="icon-flag-fr"></i> FR</a>
+                    <a class="btn btn-success btn-sm" href="./?/lang/en"><i class="icon-flag-gb"></i> EN</a>                 
                 </div>
                 <div class="sidebar-footer">
-                    Flexess Duo v<?= GVAR::$DASHBOARD_VERSION ?>
+                    Flexess Duo v0.4.3
                 </div>
             </div>
         </div>
@@ -215,6 +151,10 @@ $flashMessage = flash_now();
                         </div>
                         <a class="navbar-brand" href="#wim"><?php echo $title ?></a>
                     </div>
+
+                    
+                    
+
                     <button href="" class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-bar burger-lines"></span>
                         <span class="navbar-toggler-bar burger-lines"></span>
@@ -222,9 +162,7 @@ $flashMessage = flash_now();
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navigation">
                         <ul class="nav navbar-nav ml-auto">
-                            <sub><div id="serverClock"><?= 
-                            (new DateTime("now", new DateTimeZone('Europe/Amsterdam')))
-                            ->format("d-m-Y H:i:s") ?></div></sub>
+                            <sub><div id="serverClock"><?= date("d-m-Y H:i:s");?> - <?= $timezone;?></div></sub>
                         </ul> 
                         <ul class="nav navbar-nav ml-auto">
                             <!--
@@ -244,7 +182,7 @@ $flashMessage = flash_now();
                         -->
                             <li class="nav-item">
                                 <a href="./?/logout" class="nav-link">
-                                    <i class="nc-icon nc-key-25"></i> <?=  L("button_logout"); ?>
+                                    <i class="nc-icon nc-key-25"></i> Log out
                                 </a>
                             </li>
                         </ul>
@@ -255,8 +193,7 @@ $flashMessage = flash_now();
 
             <!-- Display error message, if available -->
             <?= isset($message['message']) ? '<div class="alert alert-danger">'.$message['message'].'</div>' : "" ?>
-            <!-- flashMessage is used by controller and user during db constraint error -->
-            <?= isset($flashMessage['message']) ? '<div class="alert alert-danger">'.$flashMessage['message'].'</div>' : "" ?>
+
             <?php echo $content ?>
             
             <footer class="footer">
@@ -334,12 +271,10 @@ $flashMessage = flash_now();
 <script src="/assets/js/plugins/bootstrap-show-password.min.js"></script>
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
-<script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?1.1.4"></script>
-<script src="/assets/js/app.js?1.1.4"></script>
+<script src="/assets/js/app.js?2"></script>
 <script type="text/javascript">
-    // Content for SweetAlert
-    <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>
-    <?= isset($flashMessage['swalMessage']) ? 'swal( '.swal_message_success($flashMessage['swalMessage']).');' : '' ?>
+    // TODO PHP Notice:  Array to string conversion in /maasland_app/www/views/layout/default.html.php on line 276
+    <?= isset($message) ? 'swal( '.$message.');' : "" ?>
 </script>
 </html>
 

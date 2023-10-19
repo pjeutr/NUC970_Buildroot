@@ -18,17 +18,6 @@ function get_last_scanned_key() {
     return find_string_by_sql("SELECT keycode FROM reports ORDER BY id DESC LIMIT 1"); 
 }
 
-function cleanupReports($days) {
-    mylog("cleanupReports");
-    //cleanup reports, older than x days
-    $count = delete_objects_where("created_at < date('now', '-$days day')", 'reports'); 
-    mylog($count);
-    //Vacuum after cleanup
-    mylog("vacuum");
-    raw_sql("vacuum");
-    return $count;
-}
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 function update_report_obj($report_obj) {

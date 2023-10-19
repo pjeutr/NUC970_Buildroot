@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <title>Maasland</title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
-    <!-- 1 001 593 033 - sgr7v6 Fonts and icons     -->
+    <!--     Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <!-- CSS Files -->
@@ -24,7 +24,7 @@
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute">
             <div class="container">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="#">Maasland</a>
+                    <a class="navbar-brand" href="#pablo">Maasland</a>
                     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-bar burger-lines"></span>
                         <span class="navbar-toggler-bar burger-lines"></span>
@@ -58,7 +58,7 @@
             </div>
         </nav>
         <!-- End Navbar -->
-        <div class="full-page  section-image" data-color="black" data-image="../../assets/img/bg.jpg" ;>
+        <div class="full-page  section-image" data-color="green" data-image="../../assets/img/bg.jpg" ;>
             <div class="content">
                 <div class="container">
                     <div class="col-md-4 col-sm-6 ml-auto mr-auto">
@@ -91,7 +91,7 @@
                                     </div>
                                 </div>
                                 <div class="card-footer ml-auto mr-auto">
-                                    <button type="submit" class="btn btn-outline btn-success btn-wd">Login</button>
+                                    <button type="submit" class="btn btn-warning btn-wd">Login</button>
                                 </div>
                             </div>
                         </form>
@@ -141,8 +141,6 @@
 <script src="../../assets/js/core/jquery.3.2.1.min.js" type="text/javascript"></script>
 <script src="../../assets/js/core/popper.min.js" type="text/javascript"></script>
 <script src="../../assets/js/core/bootstrap.min.js" type="text/javascript"></script>
-<!--  jQueryValidate https://jqueryvalidation.org  -->
-<script src="/assets/js/plugins/jquery.validate.min.js" type="text/javascript"></script>
 <script src="../../assets/js/app.js"></script>
 <script>
     $(document).ready(function() {

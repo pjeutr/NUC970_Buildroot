@@ -1,77 +1,59 @@
 <?php
-/*
-*   GVAR (gpio variables)
-*   contains software to hardware tranlations
-*/
+class GVAR
+{
+    public static $GPIO_DOOR1 = 68; //NUC980_PC4
+    public static $GPIO_DOOR2 = 66; //NUC980_PC2
+    public static $GPIO_ALARM1 = 65; //NUC980_PC2
+    public static $GPIO_ALARM2 = 66; //fake same as door
+    public static $DOOR_TIMER = 2; //Door lock stays open for 2s
 
-//get $masterControllerIp global so we can cache it between requests
-$masterControllerIp = null;
+    public static $GPIO_BUTTON1 = 170; //NUC980_PF10
+    public static $GPIO_BUTTON2 = 169; //NUC980_PF9 - CAT_PIN //contact input
+    public static $GPIO_DOORSTATUS1 = 170;//168; //NUC980_PF8 - PSU_PIN //psu input
+    public static $GPIO_DOORSTATUS2 = 45; //NUC980_PB13 - TAMPER_PIN //tamp input
 
-function outputs() {
-    return [
-        GVAR::$GPIO_DOOR1,GVAR::$GPIO_DOOR2,GVAR::$GPIO_ALARM1,GVAR::$GPIO_ALARM2,
-        GVAR::$RD1_GLED_PIN,GVAR::$RD2_GLED_PIN,GVAR::$BUZZER_PIN,
-        GVAR::$RUNNING_LED,GVAR::$OUT12V_PIN
-    ];
-} 
+    public static $GPIO_S1 = 140; //NUC980_PE12 - Master Slave switch
 
-function inputs() {
-    return [
-        GVAR::$GPIO_BUTTON1,GVAR::$GPIO_BUTTON2,
-        GVAR::$GPIO_DOORSTATUS1,GVAR::$GPIO_DOORSTATUS2,
-        GVAR::$GPIO_DOORSTATUS1N,GVAR::$GPIO_DOORSTATUS2N,
-        GVAR::$GPIO_MASTER,GVAR::$GPIO_FIRMWARE
-    ];
+    //$RD1_RLED_PIN = 3; //NUC980_PA3   //reader1 rled output
+    public static $RD1_GLED_PIN = 2; //NUC980_PA2   //reader1 gled output
+    //$RD2_RLED_PIN = 11; //NUC980_PA11  //reader2 rled output
+    public static $RD2_GLED_PIN = 10;  //NUC980_PA10  //reader2 gled output
+
+    public static $BUZZER_PIN = 79;  //NUC980_PC15  //buzzer output
 }
 
-//1,2 are the enum for wiegand, gave problems when used
-function getInputArray() {
-    return [
-        //1 => "/sys/class/gpio/gpio".GVAR::$GPIO_MASTER."/value",
-        //2 => "/sys/class/gpio/gpio".GVAR::$GPIO_FIRMWARE."/value",
-        3 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON1."/value", 
-        4 => "/sys/class/gpio/gpio".GVAR::$GPIO_BUTTON2."/value",
-        5 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS1."/value", 
-        6 => "/sys/class/gpio/gpio".GVAR::$GPIO_DOORSTATUS2."/value"
-    ];
-}
 /*
 *   Slaveside methods, also used by the master.
 *   - has knowledge which GPIO's belong to what
-*   - has functions that call the local hardware
 *   - has NO knowledge about content in the database
-*
-*  inputReceived -> (coap) -> handleInput -> handleUserAccess -> openDoor -> (coap) -> activateOutput
-inputReceived 
-operateOutput
-activateOutput
-
-configureGPIO
-setGPIO
-getGPIO
-initGPIO
-
-resolveInput
-getInputValue
 */
+function setupGPIOInputs() {
+    //
+    initGPIO(GVAR::$GPIO_BUTTON1);
+    initGPIO(GVAR::$GPIO_BUTTON2);
+    initGPIO(GVAR::$GPIO_DOORSTATUS1);
+    initGPIO(GVAR::$GPIO_DOORSTATUS2);
+    initGPIO(GVAR::$BUZZER_PIN);
+    initGPIO(GVAR::$GPIO_S1);
+    initGPIO(GVAR::$RD1_GLED_PIN);
+    initGPIO(GVAR::$RD2_GLED_PIN);
+    return "GPIOInputs initialized: Controller configured as ".(checkIfMaster() ? "Master" : "Slave")."\n"  ;
+}
 
 /*
-*   Operate a door/alarm given a outputId 
-*   $outputId : id in the db
+*   Operate a door/alarm given a doorId 
+*   $doorId : id in the db
 *   $state : 0 or 1
 *   $gpios : array with extra gpios
 *   returns true if state was changed
 */
-function operateOutput($outputEnum, $state, $gpios = array()) {
-    mylog("operateOutput ".$outputEnum." state=".$state." gpios=".json_encode($gpios));
-
-    $gid = getOutputGPIO($outputEnum);
+function operateOutput($doorId, $state, $gpios = array()) {
+    mylog("operateOutput ".$doorId." state=".$state);
+    $gid = getDoorGPIO($doorId);
 
     //add gpio for the door to gpios
-    //$gpios[] = $gid;
-    array_push($gpios, $gid);
-
-    mylog("operateOutput output=".$outputEnum." state=".$state." gpios=".json_encode($gpios));
+    $gpios[] = $gid;
+    mylog("operateOutput door=".$doorId." open=".$state."s gpios=".json_encode($gpios));
 
     //check if the state has already been set / door is already open
     $currentValue = getGPIO($gid);
@@ -85,64 +67,27 @@ function operateOutput($outputEnum, $state, $gpios = array()) {
 }
 
 /*
-*   Activate a door/alarm given a outputEnum 
-*   $outputEnum : id in the db
-*   $duration : int in seconds
-*   $gpios : array with extra gpios
-*   returns true if state was changed
+* This function will become obsolete
+* The timer can be block a request move timer to coap/react server, with a promise?
 */
-function activateOutput($outputEnum, $duration, $gpios) {
-    mylog("activateOutput door=".$outputEnum." duration=".$duration." gpios=".json_encode($gpios));
+function activateOutput($doorId, $duration, $gpios) {
+    mylog("activateOutput door=".$doorId." duration=".$duration." gpios=".json_encode($gpios));
     //open door
-    $hasChanged = operateOutput($outputEnum, 1, $gpios);
+    $hasChanged = operateOutput($doorId, 1, $gpios);
     //if the state was not changed, the door was already open. Presumably by the scheduler, or another reader/button
     if($hasChanged) {
-        React\EventLoop\Loop::addTimer($duration, function () use ($outputEnum, $gpios) {
+        $loop = React\EventLoop\Factory::create();
+        $loop->addTimer($duration, function () use ($doorId, $gpios) {
             //close door
-            operateOutput($outputEnum, 0, $gpios);
+            operateOutput($doorId, 0, $gpios);
             mylog('Done'.PHP_EOL);
         });
+        $loop->run();
     }
     return $hasChanged;
 }
 
-function getOutputStatus($outputEnum) {
-    mylog("getOutputStatus output=".$outputEnum);
-    $gid = getOutputGPIO($outputEnum);
-    return getGPIO($gid);
-}
 
-
-
-/*
-*   Check if the factory reset switch is enabled
-*/
-function checkIfFactoryReset() {
-    return (getGPIO(GVAR::$GPIO_FIRMWARE) == 0);
-}
-function doFactoryReset() {
-    mylog("Factory reset invoked");
-    $master = '/maasland_app/www/db/master.db';
-    $file = '/maasland_app/www/db/prod.db';
-    //$file = '/maasland_app/www/db/dev.db';
-    $backup = '/maasland_app/www/db/prod_bak.db';
-
-    //this method can only be invoked from cli (inputListner), webserver has no permission to write files
-    if (!@copy($file, $backup)) {
-        $errors= error_get_last();
-        mylog("COPY ERROR: ".$errors['type']);
-        mylog("<br />".$errors['message']);
-        mylog(json_encode($errors));
-        mylog("failed to make backup $file...");
-    } elseif (!@copy($master, $file)) {
-        mylog(json_encode(error_get_last()));
-        mylog("failed to restore factory settings $file...");
-    } else {
-        //set proper file permissions after creation 
-        chmod($file,0775);
-        mylog("Factory settings were restored $file...");
-    }
-}
 
 /*
 *   Check if this controller is Master
@@ -150,157 +95,37 @@ function doFactoryReset() {
 *   if Master => S1 Value is 0
 */
 function checkIfMaster() {
-    //mylog("checkIfMaster: Switch=".getGPIO(GVAR::$GPIO_MASTER));
-    return (getGPIO(GVAR::$GPIO_MASTER) == 0);
-}
-function getMasterControllerIP() {
-    //return "192.168.178.137";
-    global $masterControllerIp;
-    if(checkIfMaster()) {
-        //Design decision not to put the network IP in the db for Master
-        //This means, the Master does not know it's own IP at start
-        //And will even work if it get's an other IP through DHCP 
-        //Announcement of this IP too the slave wil be through mDNS
-        //This makes the setup flexible. 
-        //But also means Master needs to call localhost, when doing an apiCall.        
-        return "127.0.0.1";
-    }
-    if( $masterControllerIp == null ) {
-        //TODO too errorprone fishing from an array? No other way... 
-        //["=","eth0","IPv4","FlexessDuo","_maasland._udp","local","FlexessDuo-2.local","192.168.178.179","5683","text"]
-        //3=hostname,7=ip
-        $result = mdnsBrowse("_master._sub._maasland._udp");
-        mylog(json_encode($result)."\n");
-        
-        if(isset($result[0][7])) {
-            $masterControllerIp = $result[0][7];
-        }
-        if(empty($masterControllerIp)) {            
-            error_log("ERROR: Master Controller not found :".json_encode($result)."\n");
-            blinkMessageLed(5);
-        } else {
-            //turn led on, too indicate everyting is ok, on = 0
-            exec("echo 0 >/sys/class/gpio/gpio".GVAR::$RUNNING_LED."/value");
-        }
-        return $masterControllerIp;
-    } else {
-        return $masterControllerIp;
-    }
-}
-function getMasterURL() {
-    return "http://".getMasterControllerIP()."/";
+    return (getGPIO(GVAR::$GPIO_S1) == 0);
 }
 
 /*
-*   Hardware translate functions 
+*   Get GPIO value for a door relais
+*   $doorId : doors.id in database in accordance with physical connection
 */
-
-/*
-*   Get GPIO value for a output relais
-*   $outputId : doors.id in database in accordance with physical connection
-*/
-function getOutputGPIO($outputEnum) { 
-    //mylog("getOutputGPIO=".$outputEnum);
-    if($outputEnum == "1") return GVAR::$GPIO_DOOR1;
-    if($outputEnum == "2") return GVAR::$GPIO_DOOR2;
-    if($outputEnum == "3") return GVAR::$GPIO_ALARM1;
-    if($outputEnum == "4") return GVAR::$GPIO_ALARM2;
+function getDoorGPIO($doorId) { 
+    mylog("getDoorGPIO=".$doorId);
+    if($doorId == "1") return GVAR::$GPIO_DOOR1;
+    if($doorId == "2") return GVAR::$GPIO_DOOR2;
     return 0;
 }
 
 /*
-*   Give an input number for a gpio path 
-*   1,2 wiegand reader
-*   3,4 button
-*   5,6 door sensor
+*   GPIO setter and getter
 */
-function resolveInput($gpioPath) {    
-    $inputArray = getInputArray();
-    return array_search($gpioPath,$inputArray);
-    //if($gpioPath == "/sys/class/gpio/gpio170/value") return 3;
-    //if($gpioPath == "/sys/class/gpio/gpio169/value") return 4;
-}
-
-function getInputValue($gpioPath) {
-    return file_get_contents($gpioPath);
-    //return exec("cat ".$gpioPath);
-}
-
-
-
-
-
-/*
-*   GPIO helper functions 
-*/
-function configureGPIO() {
-    //Read env file
-    Arrilot\DotEnv\DotEnv::load('/maasland_app/www/.env.php'); 
-    $debug = Arrilot\DotEnv\DotEnv::get('APP_DEBUG', false);
-    $logLevel = Arrilot\DotEnv\DotEnv::get('APP_LOG_LEVEL', false);
-    $hardwareVersion = Arrilot\DotEnv\DotEnv::get('HARDWARE_VERSION', false);
-    option('debug', $debug);
-    option('log_level', $logLevel);
-    option('hardware_version', $hardwareVersion);
-    option('session', 'Maasland_Match_App');  
-
-    //web loads dynamically scripts need to set this manualy
-    mylog("Hardware version=".$hardwareVersion);
-    if($hardwareVersion == 1) {
-        require_once '/maasland_app/www/db/gvar.match2.php';
-    } else {
-        require_once '/maasland_app/www/db/gvar.match4.php';
-    }
-
-    //init inputs and outputs
-    foreach (outputs() as $gpio) {
-        initGPIO($gpio);
-    }
-    foreach (inputs() as $gpio) {
-        initGPIO($gpio, false);
-    }
-    mylog("Activate wiegand readers");
-    setGPIO(GVAR::$OUT12V_PIN, 1);
-
-    //we need it, might as well get it already
-    getMasterControllerIP();
-
-    return "Board identified as :".GVAR::$BOARD_TYPE.
-        "GPIOInputs initialized: Controller configured as ".
-        (checkIfMaster() ? "Master" : "Slave")."\n";
-}
-
 function setGPIO($gpio, $state) {
-    if (! in_array($gpio, outputs())) {
-        mylog("setGPIO ".$gpio." not an output");
-        return 0;
-    }
-    mylog("setGPIO ".$gpio."=".$state);
+    mylog("setGPIO ".$gpio."=".$state."\t");
     initGPIO($gpio);
     exec("echo ".$state." >/sys/class/gpio/gpio".$gpio."/value");   
     return 1;    
 }
 function getGPIO($gpio) {
-    if (! in_array( $gpio, array_merge( inputs(), outputs() ))) {
-        mylog("getGPIO ".$gpio." not an input");
-        return 0;
-    }
-    $v = file_get_contents("/sys/class/gpio/gpio".$gpio."/value");
-    //$v = exec("cat /sys/class/gpio/gpio".$gpio."/value");
-    //mylog("getGPIO ".$gpio."=".$v);
-    return trim($v);
+    return exec("cat /sys/class/gpio/gpio".$gpio."/value");
 }
-function initGPIO($gpio, $out = true) {
+function initGPIO($gpio) {
     if(! file_exists("/sys/class/gpio/gpio".$gpio)) {
-        mylog("init gid=".$gpio);
+        mylog("init gid=".$gpio."\t");
         exec("echo ".$gpio." > /sys/class/gpio/export");
-        if($out) {
-            exec("echo out >/sys/class/gpio/gpio".$gpio."/direction"); 
-        } else {
-           exec("echo in >/sys/class/gpio/gpio".$gpio."/direction"); 
-           //input edge needs to be set to both, so inotify can be used
-           exec("echo both >/sys/class/gpio/gpio".$gpio."/edge"); 
-        }
+        exec("echo out >/sys/class/gpio/gpio".$gpio."/direction");    
     }
 }
 

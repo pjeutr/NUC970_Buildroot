@@ -31,65 +31,10 @@ $().ready(function() {
         }
     });
 
-    if ($("#controllerForm").length != 0) {
-        $("#controller_chooser").click(function () {
-            //Get text or inner html of the selected option
-            var item = $("#controller_chooser option:selected").val();
-            //console.log(item);
-            if(item){
-                var jsonData = JSON.parse(item);
-                //console.log(jsonData);
-                $("#controller_name").val(jsonData[6]);
-                $("#controller_ip").val(jsonData[7]);
-                //$("#controller_remarks").val(jsonData);
-            }
-        });
-
-        $("#scan_key").click(function () {
-            $button_text = resource.controllerSearchButton;
-            //$('.loaderImage').show();
-            app.addSpinnerToButton(this, true, $button_text);
-            var self = this;
-
-            $.ajax({
-                //url: endpoint + "?key=" + apiKey + " &q=" + $( this ).text(),
-                //contentType: "application/json",
-                //dataType: 'json',
-                url: "/?/available_controllers.json",
-                success: function(result){
-                    var jsonData = JSON.parse(result);
-                    //console.log(jsonData.length);
-                    if(jsonData.length > 0) {
-                        $("#controller_chooser").html($.map(jsonData, function(o) {
-                            //console.log(o);
-                            return $('<option>', {
-                                class: "list_item", 
-                                value: JSON.stringify(o),
-                                text: o[6]+ " (" +o[7] + ")"
-                            });
-                        }));
-                    } else {
-                        swal(resource.sorry, resource.noControllersFound);
-                    //     $("#controller_chooser").html('<option>...</option>');
-                    }
-                    //$("#controller_ip").val(result);
-                    //$('.loaderImage').hide();
-                    app.addSpinnerToButton(self, false, $button_text);
-                },
-                error: function (response) {
-                   //Handle error
-                   //$('.loaderImage').hide();
-                   app.addSpinnerToButton(self, false, $button_text);
-                }
-            });
-        });
-    };
-
     if ($("#userForm").length != 0) {
         $("#scan_key").click(function () {
-            $button_text = resource.useLastKeyButton;
             //$('.loaderImage').show();
-            app.addSpinnerToButton(this, true, $button_text);
+            app.addSpinnerToButton(this, true);
             var self = this;
 
             $.ajax({
@@ -100,12 +45,12 @@ $().ready(function() {
                 success: function(result){
                     $("#user_keycode").val(result);
                     //$('.loaderImage').hide();
-                    app.addSpinnerToButton(self, false, $button_text);
+                    app.addSpinnerToButton(self, false);
                 },
                 error: function (response) {
                    //Handle error
                    //$('.loaderImage').hide();
-                   app.addSpinnerToButton(self, false, $button_text);
+                   app.addSpinnerToButton(self, false);
                 }
             });
         });
@@ -114,12 +59,12 @@ $().ready(function() {
 
     if ($("#timezoneForm").length != 0) {
         //https://github.com/nikolasmagno/jquery-weekdays
-        //console.log("init timezoneForm");
+        console.log("init timezoneForm");
         timezoneFormInit();
     };
 
     if ($(".settingsForm").length != 0) {
-        //console.log("init settingsForm");
+        console.log("init settingsForm");
         //$("#settingsForm").validate();
         settingsFormValidation();
     };
@@ -127,11 +72,6 @@ $().ready(function() {
     // Init Datetimepicker
     if ($("#datetimepicker").length != 0) {
         $('.datetimepicker').datetimepicker({
-            format: 'DD/MM/YYYY HH:mm',
-            widgetPositioning: {
-                horizontal: 'auto',
-                vertical: 'auto'
-            },
             icons: {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
@@ -146,7 +86,7 @@ $().ready(function() {
         });
 
         $('.datepicker').datetimepicker({
-            format: 'DD/MM/YYYY',
+            format: 'MM/DD/YYYY',
             icons: {
                 time: "fa fa-clock-o",
                 date: "fa fa-calendar",
@@ -343,83 +283,17 @@ $().ready(function() {
 
     });
 
-    $('.statusIcon').each(function(index, value) {
-        //console.log(value);
-        //$statusIcon = $(this);
-        $url = $( value ).data("url")
-        //console.log("statusIcon:" +$url);
-        $.ajax({
-            url: $( value ).data("url")
-            ,timeout:6000 //3 second timeout
-            // ,async:true
-            // ,crossDomain:true
-        }).done(function(response){
-            result = JSON.parse(response);
-            //console.log(result);
-            $tooltip = "Version "+result['version']+"-"+result['1']+"-"+result['2'];
-            $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
-                '" class="fa fa-check text-success"></i>'); 
-        }).fail(function(jqXHR, textStatus){
-            //console.log(textStatus);
-            if(textStatus === 'timeout')
-            {     
-                $( value ).html('<i class="fa fa-times text-danger"></i>'); 
-            }
-        });
-    });
-
-
-    //used at reports and users
-    $('#datatables').DataTable({
-        "pagingType": "full_numbers",
-        "lengthMenu": [
-            [25, 50, -1],
-            [25, 50, "All"]
-        ],
-        order: [[0, "desc"]],
-        responsive: true,
-        language: {
-            //decimal:        "",
-            emptyTable:     resource.tableEmptyTable,
-            info:           resource.tableInfo,
-            infoEmpty:      resource.tableInfoEmpty,
-            infoFiltered:   resource.tableInfoFiltered,
-            infoPostFix:    "",
-            thousands:      ",",
-            lengthMenu:     resource.tableLengthMenu,
-            loadingRecords: "Loading...",
-            processing:     "",
-            search:         "_INPUT_",
-            searchPlaceholder: resource.tableSearchPlaceholder,
-            zeroRecords:    resource.tableZeroRecords,
-            paginate: {
-                first:      resource.tableButtonFirst,
-                last:       resource.tableButtonLast,
-                next:       resource.tableButtonNext,
-                previous:   resource.tableButtonPrev
-            }
-        }
-    });
-
 });
 
 app = {
     //Button spinner
-    addSpinnerToButton: function(button, showSpinner, $text) {
-        //console.log("buttonSpinner="+showSpinner);
+    addSpinnerToButton: function(button, showSpinner) {
+        console.log("buttonSpinner="+showSpinner);
         button.disabled=showSpinner; 
-        button.innerHTML=showSpinner ? '<i class="fa fa-spinner fa-spin"></i> '+resource.loading:$text;
-        //console.log(button);
-    }, 
-    // Background, Ajax call
-    ajaxCall: function(url) {
-        $.ajax({
-            url: url,
-            success: function(result){
-                //console.log(result);
-            }
-        });
-    }, 
+        button.innerHTML=showSpinner ? '<i class="fa fa-spinner fa-spin"></i> Loading…':'Use scanned key';
+        console.log(button);
+    },
+
     // Sweet Alerts
     timerAlert: function(message, time, url) {
         $.ajax({
@@ -428,26 +302,25 @@ app = {
             //dataType: 'json',
             url: url,
             success: function(result){
-                //console.log(result);
+                console.log(result);
             }
         })
         swal({
-            title: resource.timerAlertTitle,
+            title: "Auto close alert!",
             text: message,
             timer: time,
             showConfirmButton: true
         });
     },    
-    areYouSure: function(that, title, text) {
+    areYouSure: function(that) {
         swal({
-            title: title,
-            text: text,
+            title: "Are you sure?",
+            text: "This item will be deleted!",
             type: "warning",
             showCancelButton: true,
             confirmButtonClass: "btn btn-info btn-fill",
-            confirmButtonText: resource.confirmDeletion,
+            confirmButtonText: "Yes, delete it!",
             cancelButtonClass: "btn btn-danger btn-fill",
-            cancelButtonText: resource.cancel,
             closeOnConfirm: false,
         }, function() {
             var f = document.createElement('form'); 
@@ -461,7 +334,7 @@ app = {
             m.setAttribute('value', 'DELETE'); 
             f.appendChild(m); 
             f.submit();
-            swal(resource.confirmDeletion2, resource.confirmDeletionText2, "success");
+            swal("Deleted!", "The item has been deleted.", "success");
         });
     },
 

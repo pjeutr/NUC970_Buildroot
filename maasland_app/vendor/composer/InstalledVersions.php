@@ -27,33 +27,34 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => 'dev-main',
-    'version' => 'dev-main',
+    'pretty_version' => '1.0.0+no-version-set',
+    'version' => '1.0.0.0',
     'aliases' => 
     array (
     ),
-    'reference' => '40e689a99c9b8d9d7c6714f65eaee92e839728fd',
+    'reference' => NULL,
     'name' => '__root__',
   ),
   'versions' => 
   array (
     '__root__' => 
     array (
-      'pretty_version' => 'dev-main',
-      'version' => 'dev-main',
+      'pretty_version' => '1.0.0+no-version-set',
+      'version' => '1.0.0.0',
       'aliases' => 
       array (
       ),
-      'reference' => '40e689a99c9b8d9d7c6714f65eaee92e839728fd',
+      'reference' => NULL,
     ),
-    'brunty/cigar' => 
+    'ekongyun/php-coap' => 
     array (
-      'pretty_version' => '1.12.3',
-      'version' => '1.12.3.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
+        0 => '9999999-dev',
       ),
-      'reference' => 'dba36d74ef8303d4e1cf7deca8f2654a07e90083',
+      'reference' => '14ee4d9d07328bfa48074812e32443c5dfc6a449',
     ),
     'evenement/evenement' => 
     array (
@@ -64,132 +65,88 @@ private static $installed = array (
       ),
       'reference' => '6ba9a777870ab49f417e703229d53931ed40fd7a',
     ),
-    'pjeutr/dotenv-php' => 
+    'guzzle/parser' => 
     array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
-      'aliases' => 
-      array (
-        0 => '9999999-dev',
-      ),
-      'reference' => 'd18818073fd3abd1849ccd698fd3d6c00f5f1858',
-    ),
-    'pjeutr/php-coap' => 
-    array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
-      'aliases' => 
-      array (
-        0 => '9999999-dev',
-      ),
-      'reference' => '38d637cbe89caf35612d8174e551f8959b83c0d7',
-    ),
-    'pjeutr/php-notify' => 
-    array (
-      'pretty_version' => 'dev-master',
-      'version' => 'dev-master',
-      'aliases' => 
-      array (
-        0 => '9999999-dev',
-      ),
-      'reference' => 'ca1165240cc9217c496e5629b139646d0cdae7e4',
-    ),
-    'psr/http-message' => 
-    array (
-      'pretty_version' => '1.0.1',
-      'version' => '1.0.1.0',
+      'pretty_version' => 'v3.9.2',
+      'version' => '3.9.2.0',
       'aliases' => 
       array (
       ),
-      'reference' => 'f6561bf28d520154e4b0ec72be95418abe6d9363',
-    ),
-    'psr/http-message-implementation' => 
-    array (
-      'provided' => 
-      array (
-        0 => '1.0',
-      ),
+      'reference' => '6874d171318a8e93eb6d224cf85e4678490b625c',
     ),
     'react/cache' => 
     array (
-      'pretty_version' => 'v1.1.1',
-      'version' => '1.1.1.0',
-      'aliases' => 
+      'replaced' => 
       array (
+        0 => '0.4.x-dev',
       ),
-      'reference' => '4bf736a2cccec7298bdf745db77585966fc2ca7e',
     ),
     'react/dns' => 
     array (
-      'pretty_version' => 'v1.9.0',
-      'version' => '1.9.0.0',
-      'aliases' => 
+      'replaced' => 
       array (
+        0 => '0.4.x-dev',
       ),
-      'reference' => '6d38296756fa644e6cb1bfe95eff0f9a4ed6edcb',
     ),
     'react/event-loop' => 
     array (
-      'pretty_version' => 'v1.2.0',
-      'version' => '1.2.0.0',
-      'aliases' => 
+      'replaced' => 
       array (
+        0 => '0.4.x-dev',
       ),
-      'reference' => 'be6dee480fc4692cec0504e65eb486e3be1aa6f2',
+    ),
+    'react/http' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '0.4.x-dev',
+      ),
     ),
     'react/http-client' => 
     array (
-      'pretty_version' => 'v0.5.11',
-      'version' => '0.5.11.0',
-      'aliases' => 
+      'replaced' => 
       array (
+        0 => '0.4.x-dev',
       ),
-      'reference' => '23dddb415b9bd36c81d1c78df63143e65702aa4b',
     ),
     'react/promise' => 
     array (
-      'pretty_version' => 'v2.9.0',
-      'version' => '2.9.0.0',
+      'pretty_version' => '2.x-dev',
+      'version' => '2.9999999.9999999.9999999-dev',
       'aliases' => 
       array (
       ),
-      'reference' => '234f8fd1023c9158e2314fa9d7d0e6a83db42910',
+      'reference' => 'a9752a861e21c0fe0b380c9f9e55beddc0ed7d31',
     ),
-    'react/promise-timer' => 
+    'react/react' => 
     array (
-      'pretty_version' => 'v1.8.0',
-      'version' => '1.8.0.0',
+      'pretty_version' => '0.4.x-dev',
+      'version' => '0.4.9999999.9999999-dev',
       'aliases' => 
       array (
       ),
-      'reference' => '0bbbcc79589e5bfdddba68a287f1cb805581a479',
+      'reference' => 'd56acf1ad5046ec4c054e4074481d67fe4007c7b',
     ),
     'react/socket' => 
     array (
-      'pretty_version' => 'v1.11.0',
-      'version' => '1.11.0.0',
-      'aliases' => 
+      'replaced' => 
       array (
+        0 => '0.4.x-dev',
       ),
-      'reference' => 'f474156aaab4f09041144fa8b57c7d70aed32a1c',
+    ),
+    'react/socket-client' => 
+    array (
+      'replaced' => 
+      array (
+        0 => '0.4.x-dev',
+      ),
     ),
     'react/stream' => 
     array (
-      'pretty_version' => 'v1.2.0',
-      'version' => '1.2.0.0',
-      'aliases' => 
+      'replaced' => 
       array (
+        0 => '0.4.x-dev',
       ),
-      'reference' => '7a423506ee1903e89f1e08ec5f0ed430ff784ae9',
-    ),
-    'ringcentral/psr7' => 
-    array (
-      'pretty_version' => '1.3.0',
-      'version' => '1.3.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '360faaec4b563958b673fb52bbe94e37f14bc686',
     ),
   ),
 );
