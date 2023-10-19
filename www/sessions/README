@@ -1,0 +1,6 @@
+To persist session cookie must be place in a non temp location, this is it!
+
+    ini_set('session.cookie_lifetime', 2147483647);//2147483647 is absolute max
+    ini_set('session.gc_maxlifetime', 2147483647);
+    ini_set('session.save_path', '/maasland_app/www/sessions');
+    ini_set('session.cookie_path', '/maasland_app/www/sessions');

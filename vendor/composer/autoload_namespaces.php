@@ -6,7 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'PhpCoap' => array($vendorDir . '/ekongyun/php-coap/src'),
-    'Guzzle\\Parser' => array($vendorDir . '/guzzle/parser'),
+    'PhpCoap' => array($vendorDir . '/pjeutr/php-coap/src'),
     'Evenement' => array($vendorDir . '/evenement/evenement/src'),
 );
