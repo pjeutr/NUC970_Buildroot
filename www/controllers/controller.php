@@ -39,15 +39,15 @@ function input_update() {
 
     $sql = "UPDATE controllers SET reader_1 = ?, reader_2 = ?, button_1 = ?, button_2 = ?, sensor_1 = ?, sensor_2 = ? WHERE id = ?";
 
-    $swalMessage = swal_message_error("Something went wrong!");
+    $message = "{type: 'error' ,title: 'Oops', text: 'Something went wrong!'}";
     if(update_with_sql($sql, [$switch[1],$switch[2],$switch[3],$switch[4],$sensor[1],$sensor[2],$id])) {
-        $swalMessage = swal_message_success(L("message_changes_saved"));
+        $message = "{type: 'success' ,title: 'Great', text: 'The changes were save!'}";
     }
 
-    set('swalMessage', $swalMessage);
+    set('message', $message);
 
     //redirect('doors');
-    set('controllers', find_all_controllers());
+    set('controllers', find_controllers());
     set('doors', find_doors());
     return html('doors/index.html.php');
 }

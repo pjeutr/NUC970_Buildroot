@@ -29,18 +29,18 @@ function settings_update() {
     //name and id are both unique, we could use only one of those.
     $sql = "UPDATE settings SET value = ? WHERE id = ? AND name = ?";
     mylog("A setting was changed ".$id.":".$name."=".$value);
-
-    $swalMessage = swal_message("Something went wrong!");
+    
+    $message = "{type: 'error' ,title: 'Oops', text: 'Something went wrong!'}";
     if(update_with_sql($sql, [$value,$id,$name])) {
-        $swalMessage = swal_message("The Setting was changed!", "Great", "success");
+        $message = "{type: 'success' ,title: 'Great', text: 'The Setting was changed!'}";
     }
 
     if($type == 4) { //hostname 
         $name = updateHostname($value);
-        $swalMessage = swal_message("Hostname was changed to $name", "Great", "success");
+        $message = "{type: 'success' ,title: 'Great', text: 'Hostname was changed to ".$name."'}";
     } 
 
-    set('swalMessage', $swalMessage);
+    set('message', $message);
     set('settings', find_settings());
     return html('settings.html.php');
 }
@@ -89,84 +89,3 @@ function updateNetwork($hostname) {
     //exec('/etc/init.d/S40network restart');
 }
 
-function settings_download() {
-    $fileUrl = '/maasland_app/www/db/prod.db';
-    $fileName = "settings_".date("Y-m-d_H:i:s").".flexess";
-    header('Content-Type: application/octet-stream');
-    header("Content-Transfer-Encoding: Binary"); 
-    header("Content-disposition: attachment; filename=\"" . basename($fileName) . "\""); 
-    readfile($fileUrl); 
-}
-
-function settings_upload() {
-    $target_dir = "/maasland_app/www/db/";
-    //$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
-    $target_file = $target_dir . "prod.db";
-    $uploadOk = 1;
-    //$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-    $imageFileType = "";
-    $messageArr = array();
-    $uploadOk = 0;
-
-    // Check if file is present
-    if(!empty($_FILES["fileToUpload"]["tmp_name"])) {
-        // Check if image file is a actual image or fake image
-        if(isset($_POST["submit"])) {
-          mylog($_FILES["fileToUpload"]["tmp_name"]);
-          $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-          mylog("check=".json_encode($check));
-          if($check !== false) {
-            $messageArr[] = "File is an image - " . $check["mime"] . ".";
-            $uploadOk = 1;
-          } else {
-            //$messageArr[] = "File is not an image.";
-            $uploadOk = 1;
-          }
-        }
-
-        // Check if file already exists
-        // if (file_exists($target_file)) {
-        //   $messageArr[] = "File already exists.";
-        //   $uploadOk = 0;
-        // }
-
-        // Check file size
-        if ($_FILES["fileToUpload"]["size"] > 7*1024*1024) { //7M, max in php.ini is 8M
-          $messageArr[] = "The file is too large.";
-          $uploadOk = 0;
-        }
-
-        // Allow certain file formats
-        $imageFileType = strtolower(pathinfo($_FILES["fileToUpload"]["name"],PATHINFO_EXTENSION));
-        mylog("imageFileType=".$imageFileType);
-        if($imageFileType != "db" && $imageFileType != "flexess") {
-          $messageArr[]= "Only flexess files are allowed.";
-          $uploadOk = 0;
-        }
-    } else {
-        $messageArr[]= "You have to choose a file.";
-    }
-
-    // Check if $uploadOk is set to 0 by an error
-    if ($uploadOk == 0) {
-        $messageArr[]= "Your file was not uploaded.";
-
-    //TODO weg?
-    set('swalMessage', swal_message_error($messageArr));
-
-    // if everything is ok, try to upload file
-    } else {
-      if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        $messageArr[] = "The file ". htmlspecialchars( basename( $_FILES["fileToUpload"]["name"])). " has been uploaded.<p>Wait 10 seconds, than restart the master controller</p>";
-        //mylog(shell_exec("ls -la $target_file"));
-        set('swalMessage', swal_message_success($messageArr));
-      } else {
-        $messageArr[] = "Sorry, there was an error uploading your file.";
-        set('swalMessage', swal_message_error($messageArr));
-      }
-    }
-    mylog($messageArr);
-    
-    set('settings', find_settings());
-    return html('settings.html.php');
-}

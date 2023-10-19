@@ -24,16 +24,9 @@ function users_edit() {
 # PUT /users/:id
 function users_update() {
     $user_data = user_data_from_form();
-
     //error_log(json_encode($user_data));
     $user = get_user_or_404();
     $user = make_user_obj($user_data, $user);
-
-    if(isset($_POST['reset_visits'])){
-        reset_user_statistics($user);
-        flash('swalMessage', L("message_visitreset", $user->name));
-        redirect('users');
-    }
 
     try {
         update_user_obj($user);

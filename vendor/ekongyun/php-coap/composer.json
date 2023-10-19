@@ -1,0 +1,16 @@
+{
+    "name": "ekongyun/php-coap",
+    "type": "library",
+    "description": "coap framework",
+    "license": "Apache-2.0",
+    "version": "1.0.0",
+    "require": {
+        "react/react": "0.4.*"
+    },
+	"autoload": {
+		"psr-0": {
+			"PhpCoap": "src/"
+		},
+		"files": ["src/PhpCoap/functions.php"]
+	}
+}
