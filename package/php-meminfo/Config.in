@@ -1,0 +1,9 @@
+config BR2_PACKAGE_PHP_MEMINFO
+	bool "php-meminfo"
+	depends on BR2_PACKAGE_PHP
+	select BR2_PACKAGE_MEMINFO
+	help
+	  PHP Meminfo is a PHP extension that gives you insights 
+	  on the PHP memory content.
+
+          https://github.com/BitOne/php-meminfo
