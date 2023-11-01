@@ -38,6 +38,7 @@ set('title', L("settings"));
     // 3=number
     $fieldType = 'text';
     $fieldAtrribute = '';
+    $extraClass = '';
 
     if( $row->type == 1) {
         $fieldType = 'password';
@@ -55,6 +56,11 @@ set('title', L("settings"));
         $fieldType = 'text';
         $fieldAtrribute = useLedgerMode()||useLowNetworkMode() ? 'style="color:green"' : 'style="color:red"';
     }
+    if( $row->type == 9) {
+        $fieldType = 'text';
+        $fieldAtrribute = ' id="datetimepicker"';
+        $extraClass = ' datetimepicker';
+    }
         ?>                        
 <form class="settingsForm" id="row_<?= $row->name ?>" action="<?= url_for('settings', $row->id) ?>" method="POST">
     <input type="hidden" name="_method" id="_method" value="PUT">
@@ -65,7 +71,7 @@ set('title', L("settings"));
         <div class="flex-row-1 flex-cell first" role="cell"><?= $row->id ?></div>
         <div class="flex-row-3 flex-cell flex-cell" role="cell"><?= L('setting_'.$row->name) ?></div>
         <div class="flex-row-4 flex-cell" role="cell">
-            <input type="<?= $fieldType ?>" <?= $fieldAtrribute ?> class="form-control"
+            <input type="<?= $fieldType ?>" <?= $fieldAtrribute ?> class="form-control<?= $extraClass ?>"
                 name="<?= $row->name ?>" value="<?= $row->value ?>"> 
         </div>
         <div class="flex-row-2 flex-cell" role="cell">

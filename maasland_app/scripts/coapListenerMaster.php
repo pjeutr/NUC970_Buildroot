@@ -119,6 +119,10 @@ $server->on( 'request', function( $req, $res, $handler ) {
 	    case 'status':
 	        $result = $type.": is not available on the Master controller!";
 	        break;
+	    case 'dump':
+			meminfo_dump(fopen("/tmp/dump$input.json", 'w'));
+			$result = "dump$input";
+			break;
 	    default:
 	    	$result = "invalid request";
 	}

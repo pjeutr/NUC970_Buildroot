@@ -30,14 +30,41 @@ function settings_update() {
     $sql = "UPDATE settings SET value = ? WHERE id = ? AND name = ?";
     mylog("A setting was changed ".$id.":".$name."=".$value);
 
+    //default message if code breaks out
     $swalMessage = swal_message("Something went wrong!");
-    if(update_with_sql($sql, [$value,$id,$name])) {
-        $swalMessage = swal_message("The Setting was changed!", "Great", "success");
-    }
 
+    if($type < 9) { 
+        //save setting to db, but not for 9 = system time 
+        if(update_with_sql($sql, [$value,$id,$name])) {
+            $swalMessage = swal_message("The Setting was changed!", "Great", "success");
+        }
+    }
     if($type == 4) { //hostname 
         $name = updateHostname($value);
         $swalMessage = swal_message("Hostname was changed to $name", "Great", "success");
+    } 
+
+    if($type == 9) { //system date time 
+        //create DateTime from string
+        $dt = DateTime::createFromFormat(getDateTimeFormat(), $value, new DateTimeZone(getTimezone() ) );
+        //convert local time to utc
+        $dt->setTimezone(new DateTimeZone('UTC'));
+        //convert to compatible string for system 
+        $timesStamp = $dt->format('Y-m-d H:i');
+        //update hardware clock
+        exec('hwclock --set --date="'.$timesStamp.'"', $out, $status); 
+        mylog($status);
+        mylog('hwclock --set --date="'.$timesStamp.'"');
+        mylog(json_encode($out));
+        if($status) { //error s=63
+            $swalMessage = swal_message("Date Time has not changed", "Error", "error");
+        } else { //ok is 0
+            $swalMessage = swal_message("Date Time was changed", "Great", "success");
+            //update system clock
+            $r = shell_exec('hwclock -s'); 
+            mylog($r);
+            mylog("system clock updated");
+        }
     } 
 
     set('swalMessage', $swalMessage);

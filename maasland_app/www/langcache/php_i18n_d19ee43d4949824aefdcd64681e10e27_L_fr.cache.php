@@ -1,4 +1,5 @@
 <?php class L {
+const time = 'Temps';
 const language = 'Langue';
 const user = 'utilisateur';
 const group = 'groupe';
@@ -14,6 +15,7 @@ const setting_alarm = 'Alarm (en secondes)';
 const setting_upload = 'Télécharger la configuration';
 const setting_download = 'Télécharger la configuration';
 const setting_ledger = 'Custom mode';
+const setting_time = 'Date Time';
 const controller = 'contrôleur';
 const ledger = 'Attendancelist';
 const presence = 'Presence';
@@ -36,7 +38,6 @@ const name = 'nom';
 const online = 'online';
 const ip = 'ip';
 const key = 'code clé';
-const time = 'Temps';
 const key_sub = 'Entrer un code';
 const key_button = 'Utiliser une clé scannée';
 const key_button_remark = 'Scan a key and press this button';
