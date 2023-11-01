@@ -38,9 +38,9 @@ $flashMessage = flash_now();
     <link href="/assets/css/fontawesome.min.css" rel="stylesheet" />
     <!-- TODO hamburger, radio en checkbox werken niet bij de lokale fontawesome, daarom de online versie als backup -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
-    <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.1a" rel="stylesheet" />
+    <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.3" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="/assets/css/app.css?1.1.4" rel="stylesheet" />
+    <link href="/assets/css/app.css?2.0.3" rel="stylesheet" />
     <script type="text/javascript">
         //calculate clock with php server time
         var serverTime = <?php echo $serverTime;?>,

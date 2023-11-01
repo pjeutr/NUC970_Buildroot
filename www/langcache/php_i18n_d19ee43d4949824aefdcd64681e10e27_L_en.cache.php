@@ -14,6 +14,7 @@ const setting_alarm = 'Alarm (in seconds)';
 const setting_upload = 'Upload configuration';
 const setting_download = 'Download configuration';
 const setting_ledger = 'Custom mode';
+const setting_time = 'Date Time';
 const controller = 'controller';
 const ledger = 'Attendance list';
 const presence = 'Presence';
