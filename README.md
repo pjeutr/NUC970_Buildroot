@@ -25,6 +25,8 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v1.7.5 - fix group timezone for overnight, 
+v1.7.4 - add time to settings and hwclock, so time can work without internet, add meminfo for php for debugging   
 v1.7.3 - fix schedule so till can be the next day. Adjust oom score
 v1.7.1 - add keycode to csv export, fix slave failing after master was offline 
 v1.7.0 - fix start/end timezone bug for a group
