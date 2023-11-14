@@ -15,6 +15,7 @@ const setting_upload = 'Upload configuration';
 const setting_download = 'Download configuration';
 const setting_ledger = 'Custom mode';
 const setting_time = 'Date Time';
+const setting_replicate = 'Replicate';
 const controller = 'controller';
 const ledger = 'Attendance list';
 const presence = 'Presence';

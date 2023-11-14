@@ -338,11 +338,8 @@ function handleUserAccess($user, $readerId, $controller) {
     // mylog($begin);
     // mylog($end);
 
-    if ($nowLocal < $begin) {
-        return "Time of the day restriction: ".$nowLocal->format('H:i')." is before ".$tz->start;
-    }
-    if ($nowLocal > $end) {
-        return "Time of the day restriction: ".$nowLocal->format('H:i')." is after ".$tz->end;
+    if(! isBetween($begin, $end, $now)) {
+        return "Time of the day restriction: ".$nowLocal->format('H:i')." is not between ".$tz->start. "-" .$tz->end;
     }
 
     //update attendance list, keeping score of who is in or out.

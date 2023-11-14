@@ -19,6 +19,8 @@ set('title', L("settings"));
                             <i class="fa fa-upload"></i> <?=  L("setting_upload"); ?>
                         </button>
                         <?= iconLink_to(L("setting_download") , 'settings_download', 'btn-outline', 'fa fa-download') ?>
+
+<!--                         <?= iconLink_to(L("setting_replicate") , 'settings_replicate', 'btn-outline', 'fa fa-link') ?> -->
                     </form>
 
 

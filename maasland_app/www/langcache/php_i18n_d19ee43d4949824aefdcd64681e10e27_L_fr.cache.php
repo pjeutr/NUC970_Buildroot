@@ -16,6 +16,7 @@ const setting_upload = 'Télécharger la configuration';
 const setting_download = 'Télécharger la configuration';
 const setting_ledger = 'Custom mode';
 const setting_time = 'Date Time';
+const setting_replicate = 'Replicate';
 const controller = 'contrôleur';
 const ledger = 'Attendancelist';
 const presence = 'Presence';

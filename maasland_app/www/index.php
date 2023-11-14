@@ -255,6 +255,7 @@ dispatch_get   ('settings',   'settings_index');
 dispatch_put   ('settings/:id', 'settings_update');
 dispatch_get   ('settings_download',   'settings_download');
 dispatch_post  ('settings_upload',   'settings_upload');
+dispatch_get   ('settings_replicate',   'settings_replicate');
 
 //webapi
 dispatch('api/version', 'version_page');
