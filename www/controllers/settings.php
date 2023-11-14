@@ -116,6 +116,23 @@ function updateNetwork($hostname) {
     //exec('/etc/init.d/S40network restart');
 }
 
+function settings_replicate() {
+    $path = "/maasland_app/www/db";
+    //make subdatabase
+    $cmd = "sqlite3 $path/prod.db '.dump users groups doors controllers timezones settings' | sqlite3 $path/clone.db";
+    exec($cmd);
+    mylog($cmd);
+
+    //ssh -i /root/.ssh/id_rsa root@192.168.178.41
+    //scp doesn't work on busybox
+    //$cmd = "scp clone.db -f /root/.ssh/id_rsa root@192.168.178.41:/maasland_app/www/db/"; 
+    $cmd = "cat $path/clone.db | ssh -i /root/.ssh/id_rsa root@192.168.178.41 'cat > $path/remote.db'";
+    exec($cmd);
+    mylog($cmd);
+
+    return "replicate";
+}
+
 function settings_download() {
     $fileUrl = '/maasland_app/www/db/prod.db';
     $fileName = "settings_".date("Y-m-d_H:i:s").".flexess";
