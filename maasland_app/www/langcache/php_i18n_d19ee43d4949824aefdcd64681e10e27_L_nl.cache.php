@@ -15,6 +15,7 @@ const setting_upload = 'Configuratie uploaden';
 const setting_download = 'Configuratie downloaden';
 const setting_ledger = 'Custom mode';
 const setting_time = 'Datum en Tijd';
+const setting_replicate = 'Replicate';
 const controller = 'controller';
 const ledger = 'Aanwezigheidslijst';
 const presence = 'Aanwezig';
