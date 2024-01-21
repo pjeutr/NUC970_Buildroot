@@ -20,7 +20,7 @@ set('title', L("settings"));
                         </button>
                         <?= iconLink_to(L("setting_download") , 'settings_download', 'btn-outline', 'fa fa-download') ?>
 
-<!--                         <?= iconLink_to(L("setting_replicate") , 'settings_replicate', 'btn-outline', 'fa fa-link') ?> -->
+                        <?= iconLink_to(L("setting_replicate") , 'settings_replicate', 'btn-outline', 'fa fa-link') ?> 
                     </form>
 
 

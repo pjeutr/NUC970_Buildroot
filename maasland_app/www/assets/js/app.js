@@ -343,10 +343,32 @@ $().ready(function() {
 
     });
 
+    $('.statusButton').each(function(index, value) {
+        console.log(value);
+        //$statusIcon = $(this);
+        var url = $( value ).data("url");
+        var door = $( value ).data("key");
+        console.log("statusButton:" +door+ " url=" +url);
+        $.ajax({
+            url: $( value ).data("url")
+            ,timeout:6000 //3 second timeout
+            // ,async:true
+            // ,crossDomain:true
+        }).done(function(response){
+            result = JSON.parse(response);
+            console.log($(this));
+            console.log(result);
+            $tooltip = "Version "+result['version']+"-"+result['1']+"-"+result['2'];
+            if(result[door]==="1") {
+                console.log("Door:" +door+ "=" +result[door]);
+                $( value ).removeClass( "btn-info" ).addClass( "btn-success" );
+            }
+        });        
+    });
     $('.statusIcon').each(function(index, value) {
         //console.log(value);
         //$statusIcon = $(this);
-        $url = $( value ).data("url")
+        $url = $( value ).data("url");
         //console.log("statusIcon:" +$url);
         $.ajax({
             url: $( value ).data("url")

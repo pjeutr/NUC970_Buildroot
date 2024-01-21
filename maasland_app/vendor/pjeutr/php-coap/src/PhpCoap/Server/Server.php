@@ -12,9 +12,22 @@ class Server extends \Evenement\EventEmitter
 	{
 	}
 
-	function receive( $port, $host = '127.0.0.1' )
+	function receiveUDP( $port, $host = '127.0.0.1' )
 	{
 		$this->sock = stream_socket_server( sprintf( 'udp://%s:%s', $host, $port ), $errno, $errstr, STREAM_SERVER_BIND );
+
+		if ( $this->sock === false )
+		{
+			throw \Exception( sprintf( "Error( %s ) : %s", $errno, $errstr ) );
+		}
+
+		$this->packetStream = new PacketStream( $this->sock );
+		$this->packetStream->on( 'packet', array( $this, 'handlePacket' ) );
+	}
+
+	function receiveTCP( $port, $host = '127.0.0.1' )
+	{
+		$this->sock = stream_socket_server( sprintf( 'tcp://%s:%s', $host, $port ), $errno, $errstr );
 
 		if ( $this->sock === false )
 		{

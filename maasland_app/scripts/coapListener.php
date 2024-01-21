@@ -95,7 +95,7 @@ $wiegandObserver->watch('/dev/wiegand');
 * Run coapListener, listens for commands from the master, open door/sound alarm
 */
 $server = new PhpCoap\Server\Server();
-$server->receive( 5683, '0.0.0.0' );
+$server->receiveUDP( 5683, '0.0.0.0' );
 
 $server->on( 'request', function( $req, $res, $handler ) {
 	$o = $req->GetOptions();

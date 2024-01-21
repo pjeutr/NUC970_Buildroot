@@ -91,7 +91,7 @@ $wiegandObserver->watch('/dev/wiegand');
 */
 
 $server = new PhpCoap\Server\Server();
-$server->receive( 5683, '0.0.0.0' );
+$server->receiveUDP( 5683, '0.0.0.0' );
 
 $server->on( 'request', function( $req, $res, $handler ) {
 	$o = $req->GetOptions();
@@ -148,7 +148,7 @@ $timer = React\EventLoop\Loop::addPeriodicTimer($interval, function () {
 	if($now->format('H:i') == "04:00") { //every night at 2, needs timezone adjustment so 4
 	//if($now->format('i') == 45) { //every hour
 		//delete rows older than x days in reports
-		$days = 7;
+		$days = 30;
 		$action = cleanupReports($days);
 		mylog($action);
 		if($action > 0) {

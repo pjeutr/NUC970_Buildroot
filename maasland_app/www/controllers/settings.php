@@ -11,6 +11,33 @@ http://vlib.clausvb.de/docs/multihtml/vlibtemplate/tutorial_simple_example.html
 define('ISPC_CLASS_PATH', 'lib/vlibtemplate');
 require "lib/vlibtemplate/tpl.inc.php";
 
+function network_index() {
+    $arr = array(
+        array(
+            "type" => 1,
+            "value" => "valore1"
+        ),
+        array(
+            "type" => 1,
+            "value" => "valore2"
+        )
+    );
+
+    set('network', ($arr)); 
+    return html('network.html.php');
+}
+function network_update() {
+    $id = filter_var(params('id'), FILTER_VALIDATE_INT);
+    //$type = filter_var($_POST['setting_type'], FILTER_SANITIZE_STRING);
+    //$name = filter_var($_POST['setting_name'], FILTER_SANITIZE_STRING);
+
+    $swalMessage = swal_message("Under maintainance!");
+
+    set('swalMessage', $swalMessage);
+    set('network', array("a","b"));
+    return html('network.html.php');
+}
+
 function settings_index() {
     set('settings', find_settings());
     return html('settings.html.php');
