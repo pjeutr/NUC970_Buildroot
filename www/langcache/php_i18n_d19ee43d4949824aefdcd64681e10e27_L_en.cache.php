@@ -33,6 +33,7 @@ const timezones = 'Timezones';
 const reports = 'Reports';
 const settings = 'Settings';
 const controllers = 'Controllers';
+const network = 'Network';
 const id = 'id';
 const name = 'name';
 const online = 'online';

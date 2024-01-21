@@ -67,7 +67,15 @@ $presents = count_presents();
                 </div>
             </div>
             <?php } ?> 
-        <?php foreach ($doors as $door) {  ?> 
+        <?php foreach ($doors as $door) {  
+
+            //master ip results in 127.. which can not resolve
+            $ip = "";
+            if($door->cip != "127.0.0.1") {
+                $ip = "http://".$door->cip;
+            }
+            
+            ?> 
             <div class="col-lg-3 col-sm-6">
                 <div class="card card-stats">
                     <div class="card-body ">
@@ -90,9 +98,10 @@ $presents = count_presents();
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer ">
+                    <div class="card-footer">
                         <hr>
-                        <button class="btn btn-success btn-block" type="button" 
+                        <button class="btn btn-info btn-block statusButton"  type="button" data-key="<?= $door->enum ?>"
+                            data-url="<?= $ip ?>/?/api/overview"
                             onclick="app.timerAlert('<?= $door->name ?> is open', <?= $door_open ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')"><?= $door->name ?> </button>
 
                         <button class="btn btn-warning" type="button" 

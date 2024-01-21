@@ -33,6 +33,7 @@ const timezones = 'Tijdzones';
 const reports = 'Logboek';
 const settings = 'Instellingen';
 const controllers = 'Controllers';
+const network = 'Netwerk';
 const id = 'id';
 const name = 'naam';
 const online = 'online';

@@ -124,12 +124,36 @@ $flashMessage = flash_now();
                         </a>
                     </li>
 
-                    <?php if( isset($_SESSION["dev"]) ) { ?>
+                    <!-- Admin menu -->
+                    <?php if( isset($_SESSION["login"]) && ($_SESSION['login'] == "admin" || $_SESSION['login'] == "super") ) { ?>
+                    <hr>
+                    <li <?php echo ($id == 8) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/network">
+                            <i class="nc-icon nc-settings-tool-66"></i>
+                            <p><?php echo L::network; ?></p>
+                        </a>
+                    </li>
+                    <?php } ?>
+
+                    <!-- Super menu -->
+                    <?php if( isset($_SESSION["login"]) && $_SESSION['login'] == "super") { ?>
                     <hr>
                     <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="/admin/phpliteadmin.php">
                             <i class="nc-icon nc-settings-tool-66"></i>
                             <p>DB</p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/tests/status.php">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Status test</p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/tests/network.sh">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Network test</p>
                         </a>
                     </li>
                     <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
@@ -138,6 +162,29 @@ $flashMessage = flash_now();
                             <p>Prune reports</p>
                         </a>
                     </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/tests/stat.sh/20">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Logs for master</p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/tests/analysis.sh/2">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Logs for all (WARNING!)</p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/manage/update_firmware">
+                            <i class="nc-icon nc-settings-90"></i>
+                            <p>Update firmware (WARNING!)</p>
+                        </a>
+                    </li>
+                    <?php } ?>
+
+                    <!-- Super menu -->
+                    <?php if( isset($_SESSION["dev"]) ) { ?>
+                    <hr>
                     <li <?php echo ($id == 12) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="/examples/icons.html">
                             <i class="nc-icon nc-html5"></i>
@@ -154,24 +201,6 @@ $flashMessage = flash_now();
                         <a class="nav-link" href="/opcache-gui/index.php">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Opcache management</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/tests/status.php">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Status test</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/tests/network.sh">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Network test</p>
-                        </a>
-                    </li>
-                    <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/manage/update_firmware">
-                            <i class="nc-icon nc-settings-90"></i>
-                            <p>Update firmware (WARNING!)</p>
                         </a>
                     </li>
                     <?php } ?>
@@ -335,7 +364,7 @@ $flashMessage = flash_now();
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
 <script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
 <script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?1.1.4"></script>
-<script src="/assets/js/app.js?1.1.4"></script>
+<script src="/assets/js/app.js?1.1.5"></script>
 <script type="text/javascript">
     // Content for SweetAlert
     <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>

@@ -177,7 +177,8 @@ function messagePage($message) {
 function login_page_post() {
   //TODO geen sanitize check
   if(check_password($_POST['password'])) {
-    $_SESSION['login'] = 'my_value';
+    $_SESSION['login'] = $_POST['role'];
+    mylog($_SESSION);
     redirect_to('http://'.$_SERVER['HTTP_HOST'].'/');
   } else {
     flash("error", "The password was wrong");
@@ -256,6 +257,9 @@ dispatch_put   ('settings/:id', 'settings_update');
 dispatch_get   ('settings_download',   'settings_download');
 dispatch_post  ('settings_upload',   'settings_upload');
 dispatch_get   ('settings_replicate',   'settings_replicate');
+
+dispatch_get   ('network',   'network_index');
+dispatch_put   ('network/:id', 'network_update');
 
 //webapi
 dispatch('api/version', 'version_page');
