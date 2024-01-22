@@ -100,15 +100,19 @@ $presents = count_presents();
                     </div>
                     <div class="card-footer">
                         <hr>
-                        <button class="btn btn-info btn-block statusButton"  type="button" data-key="<?= $door->enum ?>"
-                            data-url="<?= $ip ?>/?/api/overview"
+                        <button class="btn btn-success btn-block"  type="button" 
                             onclick="app.timerAlert('<?= $door->name ?> is open', <?= $door_open ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')"><?= $door->name ?> </button>
 
                         <button class="btn btn-warning" type="button" 
                             onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum ?>/1')"><?=  L("open"); ?> </button>
                         <button class="btn btn-info" type="button" 
                             onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum ?>/0')"><?=  L("close"); ?> </button>
-                    
+                        Status: <span class="lockIcon" 
+                                data-key="<?= $door->enum ?>"
+                                data-url="<?= $ip ?>/?/api/overview"
+                                >
+                                <i class="fa fa-spinner fa-spin"></i>
+                            </span>
                         <!-- <hr>
                         <button class="btn btn-warning" type="button" 
                             onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum + 2 ?>/1')"> Alarm<?=  $door->enum; ?> on </button>
