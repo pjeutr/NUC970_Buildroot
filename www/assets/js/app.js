@@ -342,13 +342,12 @@ $().ready(function() {
         // }
 
     });
-
-    $('.statusButton').each(function(index, value) {
+    $('.lockIcon').each(function(index, value) {
         console.log(value);
         //$statusIcon = $(this);
         var url = $( value ).data("url");
         var door = $( value ).data("key");
-        console.log("statusButton:" +door+ " url=" +url);
+        console.log("lockIcon:" +door+ " url=" +url);
         $.ajax({
             url: $( value ).data("url")
             ,timeout:6000 //3 second timeout
@@ -356,15 +355,24 @@ $().ready(function() {
             // ,crossDomain:true
         }).done(function(response){
             result = JSON.parse(response);
-            console.log($(this));
             console.log(result);
             $tooltip = "Version "+result['version']+"-"+result['1']+"-"+result['2'];
+            console.log("Door:" +door+ "=" +result[door]);
             if(result[door]==="1") {
-                console.log("Door:" +door+ "=" +result[door]);
-                $( value ).removeClass( "btn-info" ).addClass( "btn-success" );
+                $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
+                '" class="fa fa-unlock-alt text-success"></i>'); 
+            } else {
+                $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
+                '" class="fa fa-lock text-warning"></i>'); 
             }
-        });        
-    });
+        }).fail(function(jqXHR, textStatus){
+            //console.log(textStatus);
+            if(textStatus === 'timeout')
+            {     
+                $( value ).html('<i class="fa fa-times text-danger"></i>'); 
+            }
+        });
+    });    
     $('.statusIcon').each(function(index, value) {
         //console.log(value);
         //$statusIcon = $(this);

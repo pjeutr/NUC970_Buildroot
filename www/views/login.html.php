@@ -75,14 +75,14 @@
                                             <label>Email address</label>
                                             <input type="email" placeholder="Enter email" class="form-control">
                                         </div> -->
-                                        <div class="form-group">
+<!--                                         <div class="form-group">
                                             <label>User</label>
                                             <select name="role" class="form-control">
                                                 <option>user</option>
                                                 <option>admin</option>
                                                 <option>super</option>
                                             </select>
-                                        </div>
+                                        </div> -->
                                         <div class="form-group">
                                             <label>Password</label>
                                             <input type="password" name="password" placeholder="Password" class="form-control">
