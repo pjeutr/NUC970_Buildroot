@@ -12,6 +12,11 @@ action=true
 if [ "$action" = true ]; then
 	logger "INFO do fresh up"
 	#/sbin/reboot
+	#log memory if it's to low
+	if [ $(awk '/^MemFree:/ { print $2; }' /proc/meminfo) -lt 1999 ]; then
+	    logger "WARNING:low memory restart application"
+	    /etc/init.d/S60flexess restart
+	fi
 fi
 
 
