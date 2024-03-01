@@ -47,7 +47,7 @@ function settings_update() {
     $type = filter_var($_POST['setting_type'], FILTER_SANITIZE_STRING);
     $name = filter_var($_POST['setting_name'], FILTER_SANITIZE_STRING);
 
-    if($type == 2) { //checkbox 
+    if($type == 6) { //checkbox 
         $value = isset($_POST[$name])?1:0;
     } else {
         $value = filter_var($_POST[$name], FILTER_SANITIZE_STRING);
@@ -61,7 +61,10 @@ function settings_update() {
     $swalMessage = swal_message("Something went wrong!");
 
     if($type < 9) { 
-        //save setting to db, but not for 9 = system time 
+        //save setting to db, but not for 
+        //9 = system time 
+        //10 = master ip
+        //11 = dhcp
         if(update_with_sql($sql, [$value,$id,$name])) {
             $swalMessage = swal_message("The Setting was changed!", "Great", "success");
         }
@@ -144,20 +147,12 @@ function updateNetwork($hostname) {
 }
 
 function settings_replicate() {
-    $path = "/maasland_app/www/db";
-    //make subdatabase
-    $cmd = "sqlite3 $path/prod.db '.dump users groups doors controllers timezones settings' | sqlite3 $path/clone.db";
-    exec($cmd);
-    mylog($cmd);
-
-    //ssh -i /root/.ssh/id_rsa root@192.168.178.41
-    //scp doesn't work on busybox
-    //$cmd = "scp clone.db -f /root/.ssh/id_rsa root@192.168.178.41:/maasland_app/www/db/"; 
-    $cmd = "cat $path/clone.db | ssh -i /root/.ssh/id_rsa root@192.168.178.41 'cat > $path/remote.db'";
-    exec($cmd);
-    mylog($cmd);
-
-    return "replicate";
+    $result = replicate_to_slaves();
+    saveReport("WebAdmin", "Configuration replicated to slave.");
+    set('id', 7);
+    set('title', "Replicate");
+    set('content', $result);
+    return html('page.html.php');
 }
 
 function settings_download() {

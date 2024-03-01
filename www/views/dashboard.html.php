@@ -2,7 +2,7 @@
 set('id', 0);
 set('title', L("dashboard_name"));
 
-$door_open = find_setting_by_id(1) * 1000;//2 * 1000;
+$door_open_time = find_setting_by_id(1) * 1000;//2 * 1000;
 $doors = find_doors();
 $controllers = find_controllers();
 $presents = count_presents();
@@ -66,15 +66,63 @@ $presents = count_presents();
                     </div>
                 </div>
             </div>
-            <?php } ?> 
-        <?php foreach ($doors as $door) {  
+            <!-- Master controller  -->
+            <?php } 
+                //Handle door names for Master manualy
+                $doorName1 = $doors[0]->name;
+                $doorName2 = $doors[1]->name;
+            ?> 
 
-            //master ip results in 127.. which can not resolve
-            $ip = "";
-            if($door->cip != "127.0.0.1") {
-                $ip = "http://".$door->cip;
-            }
-            
+            <div class="col-lg-3 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="icon-mid text-center icon-warning">
+                                    <i class="nc-icon nc-key-25 text-success"></i>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                Master<br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <hr>
+                        <span class="lockIcon"><i class="fa fa-lg
+                            fa-<?= (getOutputStatus(1) == 0) ? "lock" : "unlock-alt" ?> 
+                            text-<?= (getOutputStatus(1) == 0) ? "warning" : "success" ?>"></i>
+                        </span>
+                        <?= showTimezoneButton($doors[0]); ?>
+                        <label><?= $doorName1 ?></label><br>
+                        <button class="btn btn-success btn-block"  type="button" 
+                            onclick="app.timerAlert('<?= $doorName1 ?> is open', <?= $door_open_time ?>, '/?/door/1/1')">Open </button>
+                        <?= showOpenCloseButtons($doors[0]); ?> 
+                        <hr>
+                        <span class="lockIcon"><i class="fa fa-lg
+                            fa-<?= (getOutputStatus(2) == 0) ? "lock" : "unlock-alt" ?> 
+                            text-<?= (getOutputStatus(2) == 0) ? "warning" : "success" ?>"></i>
+                        </span>
+                        <?= showTimezoneButton($doors[1]); ?>
+                        <label><?= $doorName2 ?></label><br>
+                        <button class="btn btn-success btn-block"  type="button" 
+                            onclick="app.timerAlert('<?= $doorName2 ?> is open', <?= $door_open_time ?>, '/?/door/1/2')">Open </button>
+                        <?= showOpenCloseButtons($doors[1]); ?> 
+                    </div>
+                </div>
+            </div>
+            <!-- Slave controllers  -->   
+        <?php 
+        $obj = new ArrayObject($doors);
+        $iterator = $obj->getIterator();
+        //while($iterator->valid()) {
+        foreach ($iterator as &$door) {  
+            $door = $iterator->current();
+            //Skip Master, we did it already above, because getOutputStatus can be don locally
+            if($door->controller_id === "1") continue;  
+
+            //prepare url to be used
+            $ip = "http://".$door->cip;
             ?> 
             <div class="col-lg-3 col-sm-6">
                 <div class="card card-stats">
@@ -86,39 +134,44 @@ $presents = count_presents();
                                 </div>
                             </div>
                             <div class="col-7">
-                                <a href="/?/doors/<?= $door->id ?>/edit"><?= $door->cname ?></a><br>
-
-                                <?php if(!empty($door->timezone_id)) {  ?> 
-                                <a href="/?/timezones/<?= $door->timezone_id ?>/edit">
-                                    <i class="nc-icon nc-watch-time"></i>
-                                    <?= $door->timezone_id ?></a>
-                                <?php } ?> 
-
+                                <!-- <a href="/?/doors/<?= $door->id ?>/edit"><?= $door->cname ?></a><br> -->
+                                <?= $door->cname ?>
                                 <!-- <sub><?=  L("controller"); ?></sub> -->
                             </div>
                         </div>
                     </div>
                     <div class="card-footer">
-                        <hr>
+                        <hr><!-- Slave 1st door  -->
+                        <span class="lockIcon" 
+                            data-key="<?= $door->enum ?>"
+                            data-url="<?= $ip ?>/?/api/overview"
+                            >
+                            <i class="fa fa-spinner fa-spin"></i>
+                        </span> 
+                        <?= showTimezoneButton($door); ?>
+                        <label><?= $door->name ?></label><br>
                         <button class="btn btn-success btn-block"  type="button" 
-                            onclick="app.timerAlert('<?= $door->name ?> is open', <?= $door_open ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')"><?= $door->name ?> </button>
-
-                        <button class="btn btn-warning" type="button" 
-                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum ?>/1')"><?=  L("open"); ?> </button>
-                        <button class="btn btn-info" type="button" 
-                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum ?>/0')"><?=  L("close"); ?> </button>
-                        Status: <span class="lockIcon" 
-                                data-key="<?= $door->enum ?>"
-                                data-url="<?= $ip ?>/?/api/overview"
-                                >
-                                <i class="fa fa-spinner fa-spin"></i>
-                            </span>
-                        <!-- <hr>
-                        <button class="btn btn-warning" type="button" 
-                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum + 2 ?>/1')"> Alarm<?=  $door->enum; ?> on </button>
-                        <button class="btn btn-info" type="button" 
-                            onclick="app.ajaxCall('/?/output/<?= $door->controller_id ?>/<?= $door->enum + 2?>/0')">Alarm<?=  $door->enum; ?> off</button> -->
+                            onclick="app.timerAlert('<?= $door->name ?> is open', <?= $door_open_time ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')">Open </button>
+                        <?= showOpenCloseButtons($door); ?>   
                              
+                    <?php 
+                        //Next door on same slave
+                        //When a controller is created, also 2 doors are created, so this should be save!
+                        $iterator->next();
+                        $door = $iterator->current();
+                    ?>  
+                        <hr><!-- Slave 2nd door  -->
+                        <span class="lockIcon" 
+                            data-key="<?= $door->enum ?>"
+                            data-url="<?= $ip ?>/?/api/overview"
+                            >
+                            <i class="fa fa-spinner fa-spin"></i>
+                        </span> 
+                        <?= showTimezoneButton($door); ?>
+                        <label><?= $door->name ?></label><br>
+                        <button class="btn btn-success btn-block"  type="button" 
+                            onclick="app.timerAlert('<?= $door->name ?> is open', <?= $door_open_time ?>, '/?/door/<?= $door->controller_id ?>/<?= $door->id ?>')">Open </button>    
+                        <?= showOpenCloseButtons($door); ?>                       
                     </div>
                 </div>
             </div>

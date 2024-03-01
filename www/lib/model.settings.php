@@ -28,7 +28,13 @@ function check_password($v) {
     }
     return false;
 }
-
+function check_admin_password($v) {
+    $r = find_string_by_sql("SELECT value FROM `settings` WHERE name='admin_password'");
+    if($v == $r) {
+        return true;
+    }
+    return false;
+}
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 function update_setting_obj($setting_obj) {

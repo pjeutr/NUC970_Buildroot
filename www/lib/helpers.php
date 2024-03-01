@@ -27,15 +27,25 @@ function isBetween($from, $till, $input) {
     }    
     return false;
 }
-//Custom log
-function mylog($message) {
+//Custom log 
+//APP_LOG_LEVEL 1=info 2=debug 3=error
+function mylogInfo($message) {
+    mylog($message, 1);
+}
+function mylogDebug($message) {
+    mylog($message, 2);
+}
+function mylogError($message) {
+    mylog($message, 3);
+}
+function mylog($message, $level = 1) { //standard loglevel 1=info
     //add milliseconds timestamp for 'permance' profiling
-    $message = mdate('H:i:s-u')."_".(is_string($message) ? $message : json_encode($message));
+    $message = mdate('H:i:s-u')."_".$level."-".option('log_level')."_".(is_string($message) ? $message : json_encode($message));
 
     //$debug = option('debug');
     //error_log("debug=".option('debug')." log_level=".option('log_level'));
 
-    if( option('debug') ) {
+    if( option('debug') && option('log_level') <= $level) {
     //if(option('debug') && option('env') > ENV_PRODUCTION) {
         // if(php_sapi_name() === 'cli') {
         //     echo($message."\n");
@@ -124,7 +134,7 @@ function saveReport($user, $msg, $key = "empty") { //empty => null
 * Outgoing calls to slave
 */
 function apiCall($host, $uri) {
-    $msg = "dummy";
+    $msg = "empty";
 
     $url = "coap://".$host."/".str_replace('/','_',$uri);
     mylog("coapCall:".$url);
@@ -248,6 +258,43 @@ function option_tag($id, $title, $act_id) {
     return $s;
 }
 
+/* 
+*   User Role functions  
+*/
+function isAdmin() {
+    return isset($_SESSION["login"]) && ($_SESSION['login'] == "admin" || $_SESSION['login'] == "super");    
+}
+function isSuper(){
+    return isset($_SESSION["login"]) && $_SESSION['login'] == "super";
+}
+function showOpenCloseButtons($door){
+    //if user isAdmin show extra buttons
+    if (! isAdmin()) return ""; 
+
+    $open = L("open");
+    $close = L("close");
+    return <<<EOT
+<button class="btn btn-warning" type="button" 
+    onclick="app.ajaxCall('/?/output/$door->controller_id/$door->enum/1')">$open</button>
+<button class="btn btn-info" type="button" 
+    onclick="app.ajaxCall('/?/output/$door->controller_id/$door->enum/0')">$close</button>
+EOT;
+
+}
+function showTimezoneButton($door){
+    //if there is a timezone show, clock
+    if(!empty($door->timezone_id)) { 
+        if (! isAdmin()) return '<i class="fa fa-clock-o text-success"></i>'; 
+
+        return <<<EOT
+<a href="/?/timezones/$door->timezone_id/edit">
+    <i class="fa fa-clock-o text-success"></i> 
+    $door->timezone_id</a>
+EOT;
+    }
+
+}
+
 function mdate($format = 'u', $utimestamp = null) {
     if (is_null($utimestamp))
         $utimestamp = microtime(true);
@@ -272,7 +319,7 @@ function weekDaysPlus($stringArray) {
 function configDB() {
     $development = Arrilot\DotEnv\DotEnv::get('APP_DEVELOPMENT', false);
 
-    mylog("Env debug=".option('debug')." development=".$development);
+    mylogError("Env debug=".option('debug')." log_level=".option('log_level')." development=".$development);
 
     $env = $development ? ENV_DEVELOPMENT : ENV_PRODUCTION;
     $dsn = $env == ENV_PRODUCTION ? 'sqlite:/maasland_app/www/db/prod.db' : 'sqlite:/maasland_app/www/db/dev.db';
@@ -302,6 +349,19 @@ function configDB() {
     */
 
     option('env', $env);
+    option('dsn', $dsn);
+    option('db_conn', $db);   
+}
+function configLocalDB() {
+    $development = Arrilot\DotEnv\DotEnv::get('APP_DEVELOPMENT', false);
+
+    mylogError("Local DBinit");
+    $dsn = 'sqlite:/maasland_app/www/db/remote.db';
+    mylog(json_encode($dsn));
+
+    $db = new PDO($dsn);
+    $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
     option('dsn', $dsn);
     option('db_conn', $db);   
 }

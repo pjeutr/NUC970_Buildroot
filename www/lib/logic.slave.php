@@ -79,7 +79,7 @@ function operateOutput($outputEnum, $state, $gpios = array()) {
         return false;
     }
     foreach ($gpios as $gpio) {
-        setGPIO($gpio, $state);
+        changeDoorState($outputEnum, $state);
     }
     return true;
 }
@@ -112,7 +112,97 @@ function getOutputStatus($outputEnum) {
     return getGPIO($gid);
 }
 
+/*
+*   Handle incomming input during network problems
+*   This makes the slave work even if the network is gone
+*   resolve user information
+*
+*   $input : object 
+*   $keycode : id in the db
+*
+*   return json
+*
+*   Used by inputListener 
+*/
+function handleInputLocally($input, $keycode) {
+    //$controller = find_controller_by_ip($ip);
+    $controller = find_controller_by_remarks('this_is_me');
+    $duration=find_setting_by_name("door_open");
+    mylog(json_encode($controller));
+    if(empty($controller)) {
+        return "unkown controller";
+    }
+    mylog("handleInput Controller=".$controller->name." input=".$input." keycode=".$keycode);
 
+    $actor = "somebody";
+    $result = "nothing";
+    switch ($input) {
+        case 1:
+        case 2:
+            $action = "Reader ".$input;
+            //get User for the key
+            $user = find_user_by_keycode($keycode);
+            if($user) {
+                $actor = $user->name;
+                $result = handleUserAccessLocally($user, $input, $controller);
+                $action = $result;//." ".$action;
+            } else {
+                $door = find_door_for_input_device("reader_".$input, $controller->id);
+                $action = $door->name. ": Access refused";
+            }
+            break;
+        case 3:
+        case 4:
+            $inputName = ($input == 3) ? "button_1":"button_2";
+            $door = find_door_for_input_device($inputName, $controller->id);
+            $action = $inputName.":".$door->name;
+            $result = activateOutput($door->enum, $duration, []);
+            //$result = openDoor($door, $controller);
+            break;
+        default:
+            error_log("illegal Controller=".$controller->name." input=".$input." keycode=".$keycode);
+            $action = "illegal";
+            break;
+    }    
+    //save report
+    //saveReport($actor, $action, keyToHex($keycode));
+    mylog("handleInput result:".$result);
+    return array(
+        "actor" =>$actor, 
+        "controller" => $controller->name, 
+        //"controller" => $controller, 
+        "result" => $result
+    );
+}
+function handleUserAccessLocally($user, $readerId, $controller) {
+    mylog("handleUserAccessLocally user".$user->name." readerId=".$readerId);
+    //Check if user is active
+    if(! is_user_active($user) ) {
+        return "User is inactive";
+    }
+
+    //Determine what door to open
+    $door = find_door_for_input_device("reader_".$readerId, $controller->id);
+    mylog($door);
+    mylog("find_timezone_by_group_id group_id=".$user->group_id);
+    mylog("find_timezone_by_group_id door_id=".$door->id);
+
+    //check if the group/user has access for this door
+    $tz = find_timezone_by_group_id($user->group_id, $door->id);
+    mylog("tz=".json_encode($tz));
+    if(empty($tz)) {
+        return "Door can not be used. No timezone assigned to this door for this group.";
+    }
+    mylog("group=".$user->group_id." door=".$door->id."=".$door->name);
+    mylog("name=".$tz->name." start=".$tz->start." end=".$tz->end);
+
+    //open the door 
+    //$msg = openDoor($door, $controller);
+    $duration=find_setting_by_name("door_open");
+    $msg = activateOutput($door->enum, $duration, []);
+    $msg = $door->name;//."@".$controller->name;
+    return $msg;    
+}
 
 /*
 *   Check if the factory reset switch is enabled
@@ -196,8 +286,27 @@ function getMasterURL() {
 */
 
 /*
+*   Open or close a door
+*   $outputEnum : doors.enum in database in accordance with physical connection
+*   $state : 0 = close, 1 = open
+*/
+function changeDoorState($outputEnum, $state) { 
+    //switch lock
+    $gid = getOutputGPIO($outputEnum);         
+    setGPIO($gid, $state);
+
+    //change led on the reader
+    if($outputEnum == 1) {
+        setGPIO(GVAR::$RD1_GLED_PIN, $state);
+    } else {
+        setGPIO(GVAR::$RD2_GLED_PIN, $state);
+    }
+    return $state;
+}
+
+/*
 *   Get GPIO value for a output relais
-*   $outputId : doors.id in database in accordance with physical connection
+*   $outputEnum : doors.enum in database in accordance with physical connection
 */
 function getOutputGPIO($outputEnum) { 
     //mylog("getOutputGPIO=".$outputEnum);

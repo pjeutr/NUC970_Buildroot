@@ -46,7 +46,7 @@ $().ready(function() {
         });
 
         $("#scan_key").click(function () {
-            $button_text = resource.controllerSearchButton;
+            $button_text = '<i class="fa fa fa-search"></i>'+resource.controllerSearchButton;
             //$('.loaderImage').show();
             app.addSpinnerToButton(this, true, $button_text);
             var self = this;
@@ -360,16 +360,16 @@ $().ready(function() {
             console.log("Door:" +door+ "=" +result[door]);
             if(result[door]==="1") {
                 $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
-                '" class="fa fa-unlock-alt text-success"></i>'); 
+                '" class="fa fa-lg fa-unlock-alt text-success"></i>'); 
             } else {
                 $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
-                '" class="fa fa-lock text-warning"></i>'); 
+                '" class="fa fa-lg fa-lock text-warning"></i>'); 
             }
         }).fail(function(jqXHR, textStatus){
             //console.log(textStatus);
             if(textStatus === 'timeout')
             {     
-                $( value ).html('<i class="fa fa-times text-danger"></i>'); 
+                $( value ).html('<i class="fa fa-lg fa-times text-danger"></i>'); 
             }
         });
     });    
@@ -430,7 +430,6 @@ $().ready(function() {
             }
         }
     });
-
 });
 
 app = {
@@ -440,6 +439,14 @@ app = {
         button.disabled=showSpinner; 
         button.innerHTML=showSpinner ? '<i class="fa fa-spinner fa-spin"></i> '+resource.loading:$text;
         //console.log(button);
+    }, 
+    //Button spinner
+    addSpinnerWithLinkToButton: function(button, showSpinner, buttonText, buttonLink) {
+        //console.log("buttonSpinner="+showSpinner);
+        button.disabled=showSpinner; 
+        button.innerHTML=showSpinner ? '<i class="fa fa-spinner fa-spin"></i>'+resource.loading : buttonText;
+        //console.log(button);
+        window.location.href = buttonLink;
     }, 
     // Background, Ajax call
     ajaxCall: function(url) {

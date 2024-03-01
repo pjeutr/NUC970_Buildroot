@@ -33,9 +33,9 @@ function resolveController($ip) {
 *   Handle incomming input 
 *   resolve user information
 *
-*   $user : object 
-*   $readerId : id in the db
-*   $controller : controller object
+*   $from : ip adress of the controller
+*   $input : 1 or 2 = wiegand, 3 or 4 = button, 5 or 6 = sensor
+*   $keycode : keycode send by wiegand reader
 *
 *   return json
 *
@@ -390,32 +390,54 @@ function checkDoorSchedule($door) {
 }
 
 /*
-* Open a door 
-* aggregate hardware information and translate to gpio numbers
+* Open a door  
 *   $door : Door object
 *   $controller : Controller object
-*   returns  
+*   opens door locally on master or bij apiCall on slave
 *
 * Used by match_listener and webinterface
 */
 function openDoor($door, $controller) {
+    $data = getDoorData($door, $controller);
+
+    if( $controller->id == 1 ) {
+        //call method on master, is quicker and more reliable
+        $result = activateOutput($data->enum, $data->duration, $data->gpios);
+        mylog("master activateOutput return=".json_encode($data));
+    } else {
+        //call api on slave
+        $uri = "activate/".$data->enum."/".$data->duration."/".implode("-",$data->gpios);
+        $result = apiCall($controller->ip, $uri);
+        mylog("slave apiCall return=".json_encode($data));
+    }
+}
+
+/*
+* Get data to open a door 
+* aggregate hardware information and translate to gpio numbers
+*   $door : Door object
+*   $controllerId : controller id in database
+*   returns object with
+*
+* Used by inputListener, coapServer and webinterface
+*/
+function getDoorData($door, $controller) {
+    $controllerId = $controller->id;
     $duration=find_setting_by_name("door_open");
-    $soundBuzzer=find_setting_by_name("sound_buzzer");
+    
     mylog("Door=".json_encode($door));
-    mylog("Cont=".json_encode($controller));
-    mylog("Open Door ".$door->id." cid=".$controller->id." duration=".$duration." sound_buzzer=".$soundBuzzer);
+    mylog("Open Door ".$door->id." cid=".$controllerId." duration=".$duration);
 
     $gpios = array();
     //aggegrate gpios to switch on/off
-    if($soundBuzzer) $gpios[] = GVAR::$BUZZER_PIN;
 
     //add the right wiegand reader leds for a door
-    $door1 = find_door_for_reader_id(1,$controller->id);
+    $door1 = find_door_for_reader_id(1,$controllerId);
     mylog("Reader1 does door=".$door1->id." Now doing door=".$door->enum);
     if($door1->id === $door->enum){
         $gpios[] = GVAR::$RD1_GLED_PIN;
     }
-    $door2 = find_door_for_reader_id(2,$controller->id);
+    $door2 = find_door_for_reader_id(2,$controllerId);
     mylog("Reader2 does door=".$door2->id." Now doing door=".$door->enum);
     if($door2->id ===  $door->enum){
         $gpios[] = GVAR::$RD2_GLED_PIN;
@@ -423,15 +445,12 @@ function openDoor($door, $controller) {
     //mylog("extra gpios=".json_encode($gpios));
     mylog("extra gpios=".json_encode($gpios));
 
-    if( $controller->id == 1 ) {
-        //call method on master, is quicker and more reliable
-        //and nesting coap-client calls is not working currently
-        $msg = activateOutput($door->id, $duration, $gpios);
-    } else {
-        $uri = "activate/".$door->enum."/".$duration."/".implode("-",$gpios);
-        $msg = apiCall($controller->ip, $uri);
-    }
-    return $msg;
+    return (object) array(
+        "enum" =>$door->enum, 
+        "duration" => $duration, 
+        "gpios" => $gpios, 
+        "name" => $door->name
+    );
 }
 
 /*
@@ -440,7 +459,7 @@ function openDoor($door, $controller) {
 *   $door : Door object
 *   $controller : Controller object
 *   $state : 0 or 1 
-*   returns  
+*   returns state or -1 in case of an error
 *
 * Used by webinterface
 */
@@ -449,10 +468,7 @@ function changeOutputState($outputEnum, $controller, $door, $state) {
         //call method on master, is quicker and more reliable
         //and nesting coap-client calls is not working currently
         saveReport("WebAdmin", $door->name." ".($state?"open":"closed")." on ".$controller->name);
-        $gid = getOutputGPIO($outputEnum);
-        setGPIO($gid, $state);
-        //TODO actual return state
-        return true;
+        return changeDoorState($door->enum, $state);
     } else {
         $url = "coap://".$controller->ip."/output_".$outputEnum."_".$state;
         mylog("coapCall:".$url);
@@ -462,8 +478,10 @@ function changeOutputState($outputEnum, $controller, $door, $state) {
             mylog("changeOutputState apiCall return=".$msg);
             if($msg == -1) {
                 saveReport("WebAdmin", $controller->name." Controller does not respond");
+                return -1;
             } else {
                 saveReport("WebAdmin", $door->name." ".($state?"open":"closed")." on ".$controller->name);
+                return $state;
             }
         });
     }
@@ -484,14 +502,14 @@ function operateDoor($door, $open) {
 
     if( $door->controller_id == 1) { //Master = 1
         $gid = getOutputGPIO($door->id);
-
         $currentValue = getGPIO($gid);
         mylog("openLock ".$currentValue."=".$open);
 
         //check if lock state has changed
         if($currentValue != $open) {
             $action = $door->name." is ".(($open == 1)?"opened":"closed");
-            setGPIO($gid, $open);
+            changeDoorState($door->enum, $open);
+
             mylog("CHANGED:".$action);
             saveReport("Scheduled", $action);
             $deferred->resolve($action);
@@ -502,75 +520,98 @@ function operateDoor($door, $open) {
         //get slave data, to get ip address
         $controller = find_controller_by_id($door->controller_id );
         mylog($controller);
+             
+        $gid = getOutputGPIO($door->enum);
+        $url = "coap://".$controller->ip."/status_".$gid;
+        mylog("checkDoor:".$url);
 
+        //request coap-client -m get coap://$slave/status_1
+        $client = new PhpCoap\Client\Client();
+        $client->get($url, function( $data ) use ($gid, $open, $door, $controller, $deferred){
+            mylog("checkDoor return=".$data);
 
-        if(useLowNetworkMode()){
-            //alternative method without status check
-            //which can strain controllers too much on a bad network
-            //always send the output singal, no possibility to know if the door was already open or close
-
-            //change lock state
-            $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
-            mylog("openDoor:".$url);
-            //request coap-client -m get coap://$slave/output_1_1
-            $client = new PhpCoap\Client\Client();
-            $client->get($url, function( $data ) use ($open, $door, $deferred) {
-                mylog("openDoor return=".$data);
-                $action = $door->name." is ".(($open == 1)?"opened":"closed");
+            //check if request was successfull
+            if($data == -1) {
+                $action = $controller->name." Controller does not respond";
+                mylog($action);
                 //saveReport("Scheduled", $action);
                 $deferred->resolve($action);
-            });   
-        } else {
-            //original method with status check.
-            //so we can add entries to reports if a door is opened or close
-            //only send the output signal if the state has changed 
-             
-            $gid = getOutputGPIO($door->enum);
-            $url = "coap://".$controller->ip."/status_".$gid;
-            mylog("checkDoor:".$url);
 
-            //request coap-client -m get coap://$slave/status_1
-            $client = new PhpCoap\Client\Client();
-            $client->get($url, function( $data ) use ($gid, $open, $door, $controller, $deferred){
-                mylog("checkDoor return=".$data);
+                //Stop and return the promise
+                return $deferred->promise();
+            }
 
-                //check if request was successfull
-                if($data == -1) {
-                    $action = $controller->name." Controller does not respond";
-                    mylog($action);
-                    //saveReport("Scheduled", $action);
+            //check if lock state has changed
+            $currentValue = json_decode($data)[0]->{"$gid"}; //[{"68":"0"}]
+            mylog("currentValue return=".$currentValue);
+            if($currentValue != $open) {
+
+                //change lock state
+                $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
+                mylog("openDoor:".$url);
+                //request coap-client -m get coap://$slave/output_1_1
+                $client = new PhpCoap\Client\Client();
+                $client->get($url, function( $data ) use ($open, $door, $deferred) {
+                    mylog("openDoor return=".$data);
+                    $action = $door->name." is ".(($open == 1)?"opened":"closed");
+                    saveReport("Scheduled", $action);
                     $deferred->resolve($action);
-
-                    //Stop and return the promise
-                    return $deferred->promise();
-                }
-
-                //check if lock state has changed
-                $currentValue = json_decode($data)[0]->{"$gid"}; //[{"68":"0"}]
-                mylog("currentValue return=".$currentValue);
-                if($currentValue != $open) {
-
-                    //change lock state
-                    $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
-                    mylog("openDoor:".$url);
-                    //request coap-client -m get coap://$slave/output_1_1
-                    $client = new PhpCoap\Client\Client();
-                    $client->get($url, function( $data ) use ($open, $door, $deferred) {
-                        mylog("openDoor return=".$data);
-                        $action = $door->name." is ".(($open == 1)?"opened":"closed");
-                        saveReport("Scheduled", $action);
-                        $deferred->resolve($action);
-                    });                
-                } else {
-                    $deferred->resolve("NO CHANGE on ".$door->name);
-                }
-            }); 
-        }
+                });                
+            } else {
+                $deferred->resolve("NO CHANGE on ".$door->name);
+            }
+        }); 
     }    
     // Return the promise
     return $deferred->promise();
 }
 
+/*
+*   Replicate config to the slaves
+*   -
+*/
+function replicate_to_slaves() {
+    $result = "";
+    $path = "/maasland_app/www/db";
+    //Remove old clone 
+    $result .=  doExec("rm $path/clone.db", 
+        "Remove old config");
+    //Create new clone
+    $result .=  doExec("sqlite3 $path/prod.db '.dump users groups doors rules controllers timezones settings' | sqlite3 $path/clone.db", 
+        "Create new config");
+
+    $controllers = find_controllers();
+    //if(false){
+    foreach ($controllers as $controller) {
+        $result .= "<hr>SLAVE ip=" . $controller->ip."<br>";
+        //Clean previous remarks
+        $result .=  doExec("sqlite3 $path/clone.db 'UPDATE controllers SET remarks = null;'", 
+            "Prepare config");
+        //Mark current slave 
+        $sql = "UPDATE controllers SET remarks = \"this_is_me\" WHERE ip = \"$controller->ip\"";
+        $result .=  doExec("sqlite3 $path/clone.db '$sql';", 
+            "Mark current slave");
+        
+        //REMARK regarding keys
+        // /root/.ssh/id_rsa is used for communication between controllers
+        // /etc/dropbear/dropbear_ecdsa_host_key is used for communication to github
+        //ssh -i /root/.ssh/id_rsa root@192.168.178.41
+        //scp doesn't work on busybox
+        //$cmd = "scp clone.db -f /root/.ssh/id_rsa root@192.168.178.41:/maasland_app/www/db/"; 
+        //StrictHostKeychecking doesn't work with dropbear, so we use dbclient
+
+        //Copy db to slave
+        $result .=  doExec("cat $path/clone.db | dbclient -y -i /root/.ssh/id_rsa root@$controller->ip 'cat > $path/remote.db'", 
+            "Copy config to slave");
+    }
+    return $result;
+}
+function doExec($cmd, $name){
+    mylogDebug($cmd);
+    exec($cmd.' 2>&1',$output, $retval);
+    mylogDebug($output);
+    return ($retval == 0 ? '<i class="fa fa-lg fa-check text-success"></i>':'<i class="fa fa-lg fa-times text-danger"></i>')." $name<br>";
+}
 
 /*
 *   Get available controllers to command for the master

@@ -25,6 +25,11 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v1.8.3 - memory fix
+v1.8.2 - Activate readerled with a schedule and dashboard door open, fix for big reports exports
+v1.8.1 - New menu structure and inlog for user/admin/super + Adjustable clean reports interval 
+v1.8.0 - Autonomous slaves, through replicate button 
+v1.7.6 - Autorestart at night if low memory 
 v1.7.5 - fix group timezone for overnight, 
 v1.7.4 - add time to settings and hwclock, so time can work without internet, add meminfo for php for debugging   
 v1.7.3 - fix schedule so till can be the next day. Adjust oom score

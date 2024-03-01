@@ -64,7 +64,7 @@ function report_csv() {
 
     $dbh = option('db_conn');
     $sth = $dbh->prepare(
-        "SELECT keycode,user,door,created_at FROM reports LIMIT 5000"
+        "SELECT keycode,user,door,created_at FROM reports ORDER BY created_at DESC LIMIT 4999"
     );
     //because we don't want to duplicate the data for each row
     // PDO::FETCH_NUM could also have been used

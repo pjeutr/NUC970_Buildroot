@@ -40,9 +40,14 @@ $wiegandObserver->onModify(function($file_name) {
 	$keycode = $parts[1];
 	$reader = $parts[2];
 	mylog("Wiegand:". $reader.":".$keycode);
-	//$result =  callApi($reader, $keycode);
+
 	$result = handleInput("127.0.0.1", $reader, $keycode);
-    mylog(json_encode($result));
+
+	//TODO shortcut: open door directly
+	//$data = getDoorData($door, "1");
+	//$result = activateOutput($data->enum, $data->duration, $data->gpios);
+
+	mylog(json_encode($result));
 });	
 
 $lastMicrotime = 0;
@@ -112,6 +117,11 @@ $server->on( 'request', function( $req, $res, $handler ) {
 	        $from = $handler->getPeerHost();
 			mylog("coapServer: input=".$input." data=".$keycode);
 			$result = handleInput($from, $input, $keycode);
+
+			//TODO shortcut: do not make separe coap call to open door, 
+			//but handleInput/getDoorData and return data
+			//$data = getDoorData($door, "1");
+
 			mylog("coapServer result=".json($result));
 	        break;
 	    case 'output':
@@ -120,7 +130,8 @@ $server->on( 'request', function( $req, $res, $handler ) {
 	        $result = $type.": is not available on the Master controller!";
 	        break;
 	    case 'dump':
-			meminfo_dump(fopen("/tmp/dump$input.json", 'w'));
+			//meminfo_dump(fopen("/tmp/dump$input.json", 'w'));
+	    	meminfo_dump(fopen("/maasland_app/www/dump$input.json", 'w'));
 			$result = "dump$input";
 			break;
 	    default:
@@ -141,19 +152,26 @@ $timer = React\EventLoop\Loop::addPeriodicTimer($interval, function () {
 	$now = new DateTime();
 	$actor = "Scheduled"; 
 	$action = "Systemcheck ";
-	
+	$days = 30;
+	if(!empty( find_setting_by_name("clean_reports")) ) {
+		$days = find_setting_by_name("clean_reports");
+	}
 	/*
 	* Check reports and delete old ones and vacuum. (previously done by crontab)
 	*/
 	if($now->format('H:i') == "04:00") { //every night at 2, needs timezone adjustment so 4
 	//if($now->format('i') == 45) { //every hour
 		//delete rows older than x days in reports
-		$days = 30;
 		$action = cleanupReports($days);
 		mylog($action);
 		if($action > 0) {
 			saveReport($actor, "Older than $days days. $action rows deleted in reports.");
 		}
+		//replicate settings to slave
+		$action = replicate_to_slaves();
+		$action = "Configuration replicated to slave.";
+		mylog($action);
+		saveReport($actor, $action);
 	}
 
 	/*
@@ -162,22 +180,45 @@ $timer = React\EventLoop\Loop::addPeriodicTimer($interval, function () {
 	$doors = find_doors();
 	$promises = [];
 
+	//if(false) { //disable schedule
 	foreach ($doors as $door) {
 		mylog("Cron: Contoller=".$door->controller_id.":".$door->cname."  Door=".$door->enum.":".$door->id.":".$door->name." tz=".$door->timezone_id);
 
 		//has this door a timezone assigned?
-		if( $door->timezone_id ) {
-			//check if the door needs to be open or close
-			$open = checkDoorSchedule($door) ? 1 : 0;
+		if($door->timezone_id) {
+			//if(useLowNetworkMode()) {
+			if(false) {
+				//NOT WORKING NEEDS MORE TESTING
+				//do oneshot open/close door
+				$tz = find_timezone_by_id($door->timezone_id);
+				mylog("ONESHOT tz=".$door->timezone_id." start=".$tz->start);
 
-			//send required state to the door
-			$promises[] = operateDoor($door, $open)->then(
-		        function ($value) {
-					// Deferred resolved, do something with $value
-					mylog("Promise return=".$value);
-					return $value;
-		        }
-		    );
+				$begin = new DateTime($tz->start, new DateTimeZone(getTimezone()));
+				$end = new DateTime($tz->end, new DateTimeZone(getTimezone()));
+				$now = new DateTime('now', new DateTimeZone(getTimezone()));
+				mylog("begin=".json_encode($begin));
+				if ($begin >= $now && $now >= $begin->modify('+5 minute')) {
+					mylog("ONESHOT begin=".$begin)->modify('+5 minute');
+					operateDoor($door, 1);
+				}
+				if ($end <= $now && $end >= $begin->modify('+2 minute')) {
+					mylog("ONESHOT end=".$end)->modify('+2 minute');
+					operateDoor($door, 0);
+				}
+			} else {
+				//check if the door needs to be open or close
+				$open = checkDoorSchedule($door) ? 1 : 0;
+
+				//send required state to the door
+				$promises[] = operateDoor($door, $open)->then(
+			        function ($value) {
+						// Deferred resolved, do something with $value
+						mylog("Promise return=".$value);
+						return $value;
+			        }
+			    );
+
+			}
 		}
 	}
 });
