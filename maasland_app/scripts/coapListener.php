@@ -8,29 +8,59 @@
 * - Listen for commands from the master (activate/output/status)
 */
 
+//these imports are only for handleInputLocally 
+require_once '/maasland_app/www/lib/db.php';
+//load models for used db methods handleInputLocally
+require_once '/maasland_app/www/lib/model.user.php';
+//require_once '/maasland_app/www/lib/model.ledger.php';
+require_once '/maasland_app/www/lib/model.settings.php';
+require_once '/maasland_app/www/lib/model.door.php';
+require_once '/maasland_app/www/lib/model.controller.php';
+require_once '/maasland_app/www/lib/model.timezone.php';
+require_once '/maasland_app/www/lib/model.rule.php';
+
+//initialize database connection
+configLocalDB();
+
 /* 
 * Outgoing calls to master
 */
-function callApi($input, $data) {
+function callApi($input, $key) {
 	//coap-client -m get coap://192.168.178.179/x/3
 	$master = getMasterControllerIP();
 	if($master) {
-	    $url = "coap://".$master."/x_".$input."_".$data;
+	    $url = "coap://".$master."/x_".$input."_".$key;
 	    mylog("coapCall:".$url);
 	    //request
 		$client = new PhpCoap\Client\Client();
-		$client->get($url, function( $data ) {
-			if($data == -1) {
-	            error_log("coapCall, Master controller could not be reached.");
-	            //Sound 4 beeps on the slave controller to warn the user.
-	            beepMessageBuzzer(2);
-	        } else {
-	            mylog("coapCall, return=".json_encode($data));
-	        }
-	        return $data;
+		$client->get($url, function( $result ) use ($input, $key) {
+			if($result == -1) {
+				error_log("coapCall, Master controller could not be reached.");
+				//Sound 4 beeps on the slave controller to warn the user.
+				beepMessageBuzzer(2);
+				//Finish the action with Local data
+				//This emergency handling, local data must have been replicated from the master
+				handleInputLocally($input, $key);
+			} else {
+				mylog("coapCall, return=".json_encode($result));
+
+				//TODO shortcut: if msg is an object, extract data to open the door
+				$msg = json_decode($result)->result;
+				if(is_object($msg)) {
+					mylog(json_encode($msg));
+					mylog("Open doorEnum=".$msg->door." duration=".$msg->duration." gpios=".implode("-",$msg->gpios));
+					$msg = activateOutput($msg->door, $msg->duration, $msg->gpios);
+				}
+				mylog($msg);
+				//end
+			}
+			return $result;
 		});
 	} else {
 		error_log("coapCall, Master controller unkown.");
+		//Finish the action with Local data
+		//This emergency handling, local data must have been replicated from the master
+		handleInputLocally($input, $key);
 	}
 }
 

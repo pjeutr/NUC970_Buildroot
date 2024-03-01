@@ -28,6 +28,14 @@ function find_controller_by_ip($ip) {
     return find_object_by_sql($sql, array(':ip' => $ip));
 }
 
+function find_controller_by_remarks($remarks) {
+    $sql =
+        "SELECT * " .
+        "FROM controllers " .
+        "WHERE remarks=:remarks";
+    return find_object_by_sql($sql, array(':remarks' => $remarks));
+}
+
 function find_door_for_input_device($id, $cid) {
     $sql = "SELECT d.id, d.name, d.enum, d.timezone_id FROM controllers c, doors d WHERE d.controller_id = ".$cid." AND c.id = d.controller_id AND d.enum = c.".$id;
     return find_object_by_sql($sql);
@@ -39,7 +47,7 @@ function find_door_for_reader_id($id, $cid) {
 }
 
 function find_door_for_enum($enum, $cid) {
-    $sql = "SELECT id, name, timezone_id FROM doors d WHERE controller_id = ".$cid." AND enum = ".$enum;
+    $sql = "SELECT id, enum, name, timezone_id FROM doors d WHERE controller_id = ".$cid." AND enum = ".$enum;
     return find_object_by_sql($sql);
 }
 

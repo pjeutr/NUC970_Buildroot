@@ -50,8 +50,8 @@ class RequestHandler extends \Evenement\EventEmitter
 
 	function handlePacket( $pkt )
 	{
-
 		$this->request = CoapRequest::fromBinString( $pkt );
+		mylogDebug("RequestHandler: handlePacket state=$this->state type=".$this->request->getType());
 
 		if ( $this->state == self::STATE_INIT )
 		{
@@ -59,13 +59,15 @@ class RequestHandler extends \Evenement\EventEmitter
 			$this->state = self::STATE_RESP_PENDING;
 			$resp = new CoapResponse();
 			$resp->setMessageId( $this->request->getMessageId() );
-			if ( $this->request->getType() == CoapRequest::NON )
+			if ( $this->request->getType() == CoapRequest::NON ) //1
 			{
 				$resp->setType( CoapResponse::NON );
 			}
-			elseif( $this->request->getType() == CoapRequest::CON )
+			elseif( $this->request->getType() == CoapRequest::CON ) //0
 			{
 				$resp->setType( CoapResponse::ACK );
+				//HACK, connections where hanging, forcing close here
+				$this->close();
 			}
 			else
 			{
@@ -100,6 +102,7 @@ class RequestHandler extends \Evenement\EventEmitter
 
 		public function close()
 		{
+			mylogDebug("RequestHandler: close called!");
 			$this->state = self::STATE_END;
 			$this->emit( 'complete' );
 		}
