@@ -217,7 +217,7 @@ function doFactoryReset() {
     //$file = '/maasland_app/www/db/dev.db';
     $backup = '/maasland_app/www/db/prod_bak.db';
 
-    //this method can only be invoked from cli (inputListner), webserver has no permission to write files
+    //this method can only be invoked from cli (inputListener), webserver has no permission to write files
     if (!@copy($file, $backup)) {
         $errors= error_get_last();
         mylog("COPY ERROR: ".$errors['type']);
@@ -232,6 +232,15 @@ function doFactoryReset() {
         chmod($file,0775);
         mylog("Factory settings were restored $file...");
     }
+
+    //put network setting back to default/dhcp
+    updateNetworkMakeDHCP();
+    //put master IP back to automatic / remove .extensions.php
+    updateMasterIP(false);
+
+    //turn on led to signal ready, on = 0
+    exec("echo 0 >/sys/class/gpio/gpio".GVAR::$RUNNING_LED."/value");
+    mylog("Finished doFactoryReset. Turned on running led.");
 }
 
 /*
@@ -243,9 +252,13 @@ function checkIfMaster() {
     //mylog("checkIfMaster: Switch=".getGPIO(GVAR::$GPIO_MASTER));
     return (getGPIO(GVAR::$GPIO_MASTER) == 0);
 }
-function getMasterControllerIP() {
+function getMasterControllerIP($masterIpOverwrite = false) {
     //return "192.168.178.137";
     global $masterControllerIp;
+    if($masterIpOverwrite) {
+        mylog("masterIp Overwrite=".$masterIpOverwrite);
+        $masterControllerIp = $masterIpOverwrite;
+    }
     if(checkIfMaster()) {
         //Design decision not to put the network IP in the db for Master
         //This means, the Master does not know it's own IP at start
@@ -259,14 +272,10 @@ function getMasterControllerIP() {
         //TODO too errorprone fishing from an array? No other way... 
         //["=","eth0","IPv4","FlexessDuo","_maasland._udp","local","FlexessDuo-2.local","192.168.178.179","5683","text"]
         //3=hostname,7=ip
-        $result = mdnsBrowse("_master._sub._maasland._udp");
-        mylog(json_encode($result)."\n");
-        
-        if(isset($result[0][7])) {
-            $masterControllerIp = $result[0][7];
-        }
+        $masterControllerIp = searchMasterControllerIP();    
+
         if(empty($masterControllerIp)) {            
-            error_log("ERROR: Master Controller not found :".json_encode($result)."\n");
+            error_log("ERROR: Master Controller not found :\n");
             blinkMessageLed(5);
         } else {
             //turn led on, too indicate everyting is ok, on = 0
@@ -276,6 +285,14 @@ function getMasterControllerIP() {
     } else {
         return $masterControllerIp;
     }
+}
+function searchMasterControllerIP(){
+    $result = mdnsBrowse("_master._sub._maasland._udp");
+    mylogError(json_encode($result)."\n");
+    if(isset($result[0][7])) {
+        return $result[0][7];
+    }
+    return null;
 }
 function getMasterURL() {
     return "http://".getMasterControllerIP()."/";
@@ -353,6 +370,9 @@ function configureGPIO() {
     option('hardware_version', $hardwareVersion);
     option('session', 'Maasland_Match_App');  
 
+    Arrilot\DotEnv\DotEnv::load('/maasland_app/www/.extensions.php');
+    $masterIpOverwrite = Arrilot\DotEnv\DotEnv::get('MASTER_IP', false);
+
     //web loads dynamically scripts need to set this manualy
     mylog("Hardware version=".$hardwareVersion);
     if($hardwareVersion == 1) {
@@ -372,7 +392,7 @@ function configureGPIO() {
     setGPIO(GVAR::$OUT12V_PIN, 1);
 
     //we need it, might as well get it already
-    getMasterControllerIP();
+    getMasterControllerIP($masterIpOverwrite);
 
     return "Board identified as :".GVAR::$BOARD_TYPE.
         "GPIOInputs initialized: Controller configured as ".

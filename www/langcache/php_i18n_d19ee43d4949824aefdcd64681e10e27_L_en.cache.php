@@ -1,7 +1,7 @@
 <?php class L {
 const language = 'Language';
 const user = 'user';
-const group = 'group';
+const group = 'Access group';
 const door = 'door';
 const timezone = 'timezone';
 const report = 'report';
@@ -28,7 +28,7 @@ const edit = 'Edit';
 const add = 'Add';
 const new = 'New';
 const users = 'Users';
-const groups = 'Groups';
+const groups = 'Access groups';
 const doors = 'Doors';
 const timezones = 'Timezones';
 const reports = 'Reports';
@@ -101,6 +101,7 @@ const message_visitreset = 'The number of visits of user %s has been set to 0';
 const message_no_master_found = 'No master controller found! <br> You can change jumpers and make this controller the master.';
 const message_ledger_in = 'User is present in the building';
 const message_ledger_out = 'User is not in the building';
+const warning_change_unreachable = '<b> Warning! - </b>  Changes on this page, can make the system unreachable!';
 const dashboard_name = 'Dashboard';
 const dashboard_buttons = 'Open Door';
 const dashboard_title = 'This controller has %s';

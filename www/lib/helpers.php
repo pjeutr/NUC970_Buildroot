@@ -182,11 +182,19 @@ function mdnsBrowse($type) {
 /* 
 *   HTML View functions 
 */
+function collapseButton($params = null) {
+    $params = func_get_args();
+    $name = array_shift($params);
+    $id = array_shift($params);
+    $class = array_shift($params);
+
+    return "<button class='btn btn-success $class' type='button' data-toggle='collapse' data-target='#$id' aria-expanded='false' aria-controls='$id'><i class='fa fa-chevron-right'></i>$name</button>";
+}
 function buttonLink_to($params = null) {
     $params = func_get_args();
     $name = array_shift($params);
     $url = call_user_func_array('url_for', $params);
-    return "<a class=\"btn btn-secondary\" href=\"$url\">$name</a>";
+    return "<a class='btn btn-secondary' href='$url'>$name</a>";
 }
 
 function link_to($params = null) {
@@ -194,7 +202,7 @@ function link_to($params = null) {
     $name = array_shift($params);
     $url = call_user_func_array('url_for', $params);
 
-    return "<a href=\"$url\">$name</a>";
+    return "<a href='$url'>$name</a>";
 }
 
 function iconLink_to($name, $link, $style, $icon = null) {
@@ -223,8 +231,18 @@ function deleteLink_to($params = null) {
     // ><i class=\"fa fa-times\"></i>$name</a>";    
 }
 
+function alert_message($message, $title="Oops", $type="alert-danger") {
+return <<<EOT
+<div class="alert $type">
+    <button type="button" aria-hidden="true" class="close" data-dismiss="alert">
+        <i class="nc-icon nc-simple-remove"></i>
+    </button>
+    <span>$message</span>
+</div>
+EOT;
+}
+
 //format message for swal
-//TODO reorganise in app.js
 function swal_message($message, $title="Oops", $type="error") {
     if(is_array($message)) {
         $message = implode("<br>", $message);
@@ -238,6 +256,7 @@ function swal_message_success($message) {
     return swal_message($message, L("message_success_title"), "success");
 }
 
+//Format DateTime and adjust to reflect the local timezone 
 function print_date($timestamp) {
     //$tz = "Europe/Amsterdam";
     //https://stackoverflow.com/questions/20288789/php-date-with-timezone
@@ -319,7 +338,7 @@ function weekDaysPlus($stringArray) {
 function configDB() {
     $development = Arrilot\DotEnv\DotEnv::get('APP_DEVELOPMENT', false);
 
-    mylogError("Env debug=".option('debug')." log_level=".option('log_level')." development=".$development);
+    mylogInfo("Env debug=".option('debug')." log_level=".option('log_level')." development=".$development);
 
     $env = $development ? ENV_DEVELOPMENT : ENV_PRODUCTION;
     $dsn = $env == ENV_PRODUCTION ? 'sqlite:/maasland_app/www/db/prod.db' : 'sqlite:/maasland_app/www/db/dev.db';

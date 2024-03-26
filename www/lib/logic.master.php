@@ -304,7 +304,7 @@ function handleUserAccess($user, $readerId, $controller) {
 
     //Determine what door to open
     $door = find_door_for_input_device("reader_".$readerId, $controller->id);
-
+//TODO add door name in return message 
     //Don't open the door if it is scheduled to be open
     if(checkDoorSchedule($door)) {
         return "Door is already scheduled to be open: ".$door->name;

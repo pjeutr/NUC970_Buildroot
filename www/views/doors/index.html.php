@@ -24,10 +24,10 @@ set('title', L("doors"));
                                 <div class="col-sm-4 custom-header-head border-left-0">
                                    <div class="float-left">
                                         <div class="tabsub"><?php echo L::controller; ?></div>
-                                        <?= $controller->name ?> 
+                                        <?= collapseButton($controller->name, 'multiCollapse'.$controller->id, 'btn-link text-white', null) ?>
                                     </div>
                                     <div class="float-right">
-                                        <?= iconLink_to(L::button_change, 'controllers/'.$controller->id.'/edit', 'btn-link text-success', null) ?>
+                                        <?= iconLink_to(L::button_change, 'controllers/'.$controller->id.'/edit', 'btn-link text-white', null) ?>
                                     </div>                           
                                 </div>
                                 <?php 
@@ -41,18 +41,19 @@ set('title', L("doors"));
                                         <?= $row->name ?> 
                                     </div>
                                     <div class="float-right">
-                                        <?= iconLink_to(L::button_change, 'doors/'.$row->id.'/edit', 'btn-link text-success', null) ?>
-
                                         <?php if(!empty($row->timezone_id)) {  ?> 
                                         <a href="/?/timezones/<?= $row->timezone_id ?>/edit">
                                             <i class="nc-icon nc-watch-time"></i>
                                             <?= $row->timezone_id ?></a>
                                         <?php } ?> 
+                                        <?= iconLink_to(L::button_change, 'doors/'.$row->id.'/edit', 'btn-link text-success', null) ?>
                                     </div>
                                 </div>
                                 <?php }
                                 } ?>
                             </div>
+
+                            <div class="collapse multi-collapse" id="multiCollapse<?= $controller->id ?>">
                             <form class="doorForm" id="row" action="<?= url_for('controller', $controller->id) ?>" method="POST">
                             <input type="hidden" name="_method" id="_method" value="PUT">
 
@@ -69,7 +70,7 @@ set('title', L("doors"));
                                     $nr = $key + 1; ?>
 
                                 <div class="row border border-top-0">
-                                    <div class="col-sm-4 p-3 bg-custom">
+                                    <div class="col-sm-4 p-3">
                                         <?= $value ?>
                                     </div>
                                     <div class="col-sm-4 custom-cell">
@@ -87,7 +88,7 @@ set('title', L("doors"));
                             <?php } ?>
 
                             <div class="row border">
-                                <div class="col-sm-4 custom-header border-left-0">
+                                <div class="col-sm-4 border-left-0">
                                                                  
                                 </div>
                                 <div class="col-sm-4 custom-header">
@@ -102,7 +103,7 @@ set('title', L("doors"));
                                 $nr = $key + 1; ?>
 
                                 <div class="row border border-top-0">
-                                    <div class="col-sm-4 p-3 bg-custom">
+                                    <div class="col-sm-4 p-3">
                                         <?= $value ?> 
                                     </div>
                                     <div class="col-sm-4 custom-cell">
@@ -120,8 +121,8 @@ set('title', L("doors"));
                             <?php } ?>
 
                             <div class="row border border-top-0">
-                                <div class="col-sm-4 p-3 custom-header"></div>
-                                <div class="col-sm-8 p-3 d-flex justify-content-center">
+                                <div class="col-sm-4 p-3"></div>
+                                <div class="col-sm-8 p-3 d-flex justify-content-center custom-header">
                                     <button type="submit" class="btn btn-success btn-outline">
                                       <i class="fa fa-edit"></i> <?php echo L::button_save; ?>
                                     </button>
@@ -130,6 +131,7 @@ set('title', L("doors"));
                             </form>
                         </div>
                     </div>
+                </div>
                 <?php } ?>
                 </div>
             </div>               

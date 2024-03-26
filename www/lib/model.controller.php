@@ -64,11 +64,11 @@ function update_controller_obj($controller_obj) {
 function create_controller_obj($controller_obj) {
     $columns = controller_columns();
     $controller_obj->reader_1 = 1;
-    $controller_obj->reader_2 = 1;
+    $controller_obj->reader_2 = 2;
     $controller_obj->button_1 = 1;
-    $controller_obj->button_2 = 1;
+    $controller_obj->button_2 = 2;
     $controller_obj->sensor_1 = 1;
-    $controller_obj->sensor_2 = 1;
+    $controller_obj->sensor_2 = 2;
     mylog(json_encode($controller_obj));
     return create_object($controller_obj, 'controllers', $columns);
 }

@@ -80,10 +80,11 @@ a.text-success:focus, a.text-success:hover {
     font-size: 50%;
 }
 .bg-custom {
-    background-color:rgba(203,203,210,.15);
+    border: 1px solid rgba(0,0,0,.125);
+    background-color:rgba(0,0,0,.05) !important;
+    width: 100%;
 }
 .bg-custom .card-header {
-    background-color: transparent;
 }
 .custom-cell {
     border-left: 1px solid #E3E3E3;
@@ -94,9 +95,10 @@ a.text-success:focus, a.text-success:hover {
     padding-top: 1rem;
 }
 .custom-header {
+    padding-left: 1rem !important;
     border-left: 1px solid #E3E3E3;
-    display: -ms-flexbox!important;
-    display: flex!important;
+    /*display: -ms-flexbox!important;*/
+    /*display: flex!important;*/
     -ms-flex-pack: center !important;
     justify-content:center !important;
     background-color:rgba(203,203,210,.30);
@@ -105,9 +107,9 @@ a.text-success:focus, a.text-success:hover {
 .custom-header-head {
     border: 0;
     display: -ms-flexbox!important;
-    display: flex!important;
-    -ms-flex-pack: center !important;
-    justify-content:center !important;
+    /*display: flex!important;*/
+    /*-ms-flex-pack: center !important;*/
+    /*justify-content:center !important;*/
     background-color: #7fbdb4;
     color:white;
     line-height: 3rem;
