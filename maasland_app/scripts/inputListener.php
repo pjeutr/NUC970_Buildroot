@@ -26,6 +26,9 @@ require_once '/maasland_app/vendor/autoload.php';
 require_once '/maasland_app/www/lib/limonade.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
 require_once '/maasland_app/vendor/pjeutr/dotenv-php/src/DotEnv.php';
+//needed for firmware reset
+require_once '/maasland_app/www/controllers/settings.php';
+
 
 //configure and initialize gpio 
 echo configureGPIO();
@@ -34,7 +37,7 @@ echo configureGPIO();
 if(checkIfFactoryReset()){
 	echo "Factory reset is invoked\n";
 	doFactoryReset();
-	echo "Factory has finished\n";
+	echo "Factory reset has finished\n";
 }
 
 //check if network is availabel

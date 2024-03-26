@@ -7,13 +7,12 @@ iface lo inet loopback
 auto eth0
 
 # Configure eth0 with dhcp IP
-iface eth0 inet dhcp
+#iface eth0 inet dhcp
 #hostname maasland
 
 # Configure eth0 with static IP
-#iface eth0 inet static
-#address <tmpl_var name="ip_address">
-#netmask <tmpl_var name="netmask">
-#network <tmpl_var name="network">
-#broadcast <tmpl_var name="broadcast">
-#gateway <tmpl_var name="gateway">
+iface eth0 inet static
+address <tmpl_var name="ip_address">
+netmask <tmpl_var name="netmask">
+gateway <tmpl_var name="gateway">
+#dns-nameservers 8.8.8.8

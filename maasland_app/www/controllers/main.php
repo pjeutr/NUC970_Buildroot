@@ -53,26 +53,35 @@ function report_index() {
     return html('reports.html.php');
 }
 function report_csv() {
-    //t
+
+    //adjust date to the local timeZone
+    $convertDate = function ($row) {
+        if(isset($row['created_at'])){
+            $row['created_at'] = print_date($row['created_at']);
+        }
+        return $row;
+    };
+
     $csv = \League\Csv\Writer::createFromFileObject(new \SplTempFileObject());
     //https://csv.thephpleague.com/9.0/interoperability/encoding/
-    //let's set the output BOM
+    //Set byte-order mark, for compatibility with Microsoft eco system
     $csv->setOutputBOM(Reader::BOM_UTF8);
-    //let's convert the incoming data from iso-88959-15 to utf-8
-    //$csv->addStreamFilter('convert.iconv.ISO-8859-15/UTF-8');
-    $results = find_reports();
 
+    //get data for DB
     $dbh = option('db_conn');
     $sth = $dbh->prepare(
         "SELECT keycode,user,door,created_at FROM reports ORDER BY created_at DESC LIMIT 4999"
     );
-    //because we don't want to duplicate the data for each row
+
+    // because we don't want to duplicate the data for each row
     // PDO::FETCH_NUM could also have been used
     $sth->setFetchMode(PDO::FETCH_ASSOC);
     $sth->execute();
 
     $filename = "reports_".date("Y-m-d_H:i:s");
-    $columns = ["keycode","user","door","created_at"];
+    $columns = ["keycode","user","door","time"];
+    $csv->insertOne($columns);
+    $csv->addFormatter($convertDate);
     $csv->insertAll($sth);
     $csv->output(
         //to get output in browser escape the next line/filename

@@ -36,7 +36,7 @@ set('title', L("users"));
                                     <td><?= $row->keycode ?></td>
                                     <td><?= $row->group_name ?></td>
                                     <td><?= $row->visit_count ?></td>
-                                    <td><?= $row->last_seen ?></td>
+                                    <td><?= print_date($row->last_seen) ?></td>
                                     <td><?= iconLink_to(L("button_edit"), 'users/'.$row->id.'/edit', 'btn-link', null) ?>
                                     	&nbsp;
                                     	<?= deleteLink_to(L("button_delete"), 'users', $row->id) ?>

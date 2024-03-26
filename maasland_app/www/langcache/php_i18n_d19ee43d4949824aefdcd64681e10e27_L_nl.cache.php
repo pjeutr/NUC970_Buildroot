@@ -1,7 +1,7 @@
 <?php class L {
 const language = 'Taal';
 const user = 'gebruiker';
-const group = 'groep';
+const group = 'toegangsgroep';
 const door = 'deur';
 const timezone = 'tijdzone';
 const report = 'rapport';
@@ -28,7 +28,7 @@ const edit = 'Wijzigen';
 const add = 'Toevoegen';
 const new = 'Nieuwe';
 const users = 'Gebruikers';
-const groups = 'Groepen';
+const groups = 'Toegangsgroepen';
 const doors = 'Deuren';
 const timezones = 'Tijdzones';
 const reports = 'Logboek';
@@ -101,6 +101,7 @@ const message_visitreset = 'Het aantal bezoeken van gebruiker %s zijn terug geze
 const message_no_master_found = 'No master controller found! <br> You can change jumpers and make this controller the master.';
 const message_ledger_in = 'Gebruiker bevindt zich in het gebouw ';
 const message_ledger_out = 'Gebruiker is niet in het gebouw';
+const warning_change_unreachable = '<b> Let op! - </b>  Wijzingen op deze pagina kun het systeem onbereikbaar maken!';
 const dashboard_name = 'Dashboard';
 const dashboard_buttons = 'Deur open sturen';
 const dashboard_title = 'Deze controller heeft %s';

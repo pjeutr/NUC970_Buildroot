@@ -26,7 +26,7 @@ $().ready(function() {
             // console.log(this);
             // console.log(form);
             // console.log(event);
-            form.submit();
+            //form.submit();
             //return false; 
         }
     });
@@ -122,6 +122,12 @@ $().ready(function() {
         //console.log("init settingsForm");
         //$("#settingsForm").validate();
         settingsFormValidation();
+    };
+
+    if ($(".networkForm").length != 0) {
+        //console.log("init networkForm");
+        //$("#settingsForm").validate();
+        networkFormValidation();
     };
 
     // Init Datetimepicker

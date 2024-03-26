@@ -2,11 +2,15 @@
 
 # GET /groups
 function groups_index() {
+    getData();
+    return html('groups/index.html.php');
+}
+
+function getData() {
     set('groups', find_groups());
     set('doors', find_doors());
     set('timezones', find_timezones());
     set('rules', find_rules());
-    return html('groups/index.html.php');
 }
 
 # GET /groups/:id
@@ -64,7 +68,10 @@ function grules_update() {
     $rule = make_rule_obj($rule_data, $rule);
 
     update_rule_obj($rule);
-    redirect('groups');
+    
+    set('group_focus', $rule->group_id);
+    getData();
+    return html('groups/index.html.php');
 }
 
 # POST /grules
@@ -78,7 +85,9 @@ function grules_create() {
         mylog($e);
         flash('message', 'That door was already assigned to this group!');
     }
-    redirect('groups');
+    set('group_focus', $rule->group_id);
+    getData();
+    return html('groups/index.html.php');
 }
 
 # DELETE /grules/:id

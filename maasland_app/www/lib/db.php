@@ -53,6 +53,10 @@ function find_object_by_sql($sql = '', $params = array()) {
     $db = option('db_conn');
 
     $stmt = $db->prepare($sql);
+    // mylog($params);
+    // mylog($stmt);
+    // if string is longer than 256, log wil be truncated, put a next line with the rest
+    // mylog(substr(json_encode($stmt), 250, 250));
     if ($stmt->execute($params) && $obj = $stmt->fetch(PDO::FETCH_OBJ)) {
         return $obj;
     }

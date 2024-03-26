@@ -5,6 +5,9 @@ require_once 'lib/i18n.class.php';
 require_once 'lib/helpers.php';
 require_once '/maasland_app/vendor/autoload.php';
 require_once '/maasland_app/www/lib/logic.slave.php';
+//needed for firmware reset
+define('ISPC_CLASS_PATH', 'lib/vlibtemplate');
+require "lib/vlibtemplate/tpl.inc.php";
 
 function configure() {
     //configure and initialize gpio 
@@ -275,7 +278,12 @@ dispatch_post  ('settings_upload',   'settings_upload');
 dispatch_get   ('settings_replicate',   'settings_replicate');
 
 dispatch_get   ('network',   'network_index');
+dispatch_get   ('network/:id', 'network_index'); //user refresh can create a get after the v put
 dispatch_put   ('network/:id', 'network_update');
+dispatch_get   ('manage/network',   'network_slave');
+dispatch_get   ('manage/network/:id', 'network_slave'); //user refresh can create a get after the v put
+dispatch_put   ('manage/network/:id', 'network_update');
+
 
 //webapi
 dispatch('api/version', 'version_page');

@@ -35,7 +35,6 @@ function find_user_by_id($id) {
 }
 
 function find_user_by_keycode($key) {
-    //translate key TODO right place?
     $keycode = keyToHex($key);
     mylog("find_user_by_keycode ".$key);
     $sql =

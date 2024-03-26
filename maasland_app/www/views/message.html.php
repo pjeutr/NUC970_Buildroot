@@ -58,7 +58,12 @@
             </div>
         </nav>
         <!-- End Navbar -->
+
+        
+
         <div class="full-page  section-image" data-color="black" data-image="../../assets/img/bg.jpg" ;>
+        <!-- header part -->
+
             <div class="content">
                 <div class="container">
                     <div class="col-md-4 col-sm-6 ml-auto mr-auto">
@@ -86,6 +91,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- footer part -->
         <footer class="footer">
             <div class="container-fluid">
                 <nav>

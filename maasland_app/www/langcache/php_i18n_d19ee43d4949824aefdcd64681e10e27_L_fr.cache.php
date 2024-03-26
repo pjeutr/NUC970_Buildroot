@@ -101,6 +101,7 @@ const message_visitreset = 'The number of visits of user %s has been set to 0';
 const message_no_master_found = 'No master controller found! <br> You can change jumpers and make this controller the master.';
 const message_ledger_in = 'User is present in the building';
 const message_ledger_out = 'User is not in the building';
+const warning_change_unreachable = '<b> Warning! - </b>  Changes on this page, can make the system unreachable!';
 const dashboard_name = 'Tableau de bord';
 const dashboard_buttons = 'Envoyer la porte ouverte';
 const dashboard_title = 'Ce contrôleur a %s';

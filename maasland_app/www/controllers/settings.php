@@ -8,34 +8,112 @@ template used:
 http://vlib.clausvb.de/docs/multihtml/vlibtemplate/tutorial_simple_example.html
 
 */
-define('ISPC_CLASS_PATH', 'lib/vlibtemplate');
-require "lib/vlibtemplate/tpl.inc.php";
 
 function network_index() {
-    $arr = array(
-        array(
-            "type" => 1,
-            "value" => "valore1"
-        ),
-        array(
-            "type" => 1,
-            "value" => "valore2"
-        )
-    );
-
-    set('network', ($arr)); 
+    set('network', getNetworkData());
     return html('network.html.php');
 }
+function network_slave() {
+    set('network', getNetworkData());
+    return html('network_slave.html.php');
+}
+
+//helper method for functions below
+function jsonMessage($status = 0, $message="Someting went wrong") {
+    return json_encode(array ('status'=>$status, 'message'=>$message));
+}
+/*
+*   function can be called from network.html.php and network_slave.html.php
+*   id 1 => change network on master => network.html.php
+*   id 2 => change network slave => network_slave.html.php
+*   id 3 => master ip => network_slave.html.php
+*/
 function network_update() {
     $id = filter_var(params('id'), FILTER_VALIDATE_INT);
-    //$type = filter_var($_POST['setting_type'], FILTER_SANITIZE_STRING);
-    //$name = filter_var($_POST['setting_name'], FILTER_SANITIZE_STRING);
+    //standard message is failure, update to success if something has changed
+    $swalMessage = swal_message("Something went wrong!");
+    //$restartMessage = "<p>Wait for the system to restart and redirect to the new page</p>";
+    $restartMessage = "<p>Restart the system to load new settings</p>";
 
-    $swalMessage = swal_message("Under maintainance!");
+    if($id == 3) { 
+        if(isset($_POST['master'])) {
+            updateMasterIP(false);
 
+            if(update_with_sql("UPDATE settings SET value = 1 WHERE id = 10 AND name = 'master_ip'", [])) {
+                //$swalMessage = swal_message("Automatic Master IP discovery enabled", "Great", "success");
+                return jsonMessage(1, "Automatic Master IP discovery enabled".$restartMessage);
+            }
+            return jsonMessage();
+        } else {
+            $ip = filter_var($_POST['master_ip'], FILTER_SANITIZE_STRING);
+            $reloadService = "To load changes, the controller needs to be restarted";
+            updateMasterIP($ip);
+
+            if(update_with_sql("UPDATE settings SET value = '$ip' WHERE id = 10 AND name = 'master_ip'", [])) {
+                //$swalMessage = swal_message("Automatic Master IP discovery disabled, <br>Master IP has changed to :".$ip, "Great", "success");
+                return jsonMessage(1, "Automatic Master IP discovery disabled, <br>Master IP has changed to :".$ip.$restartMessage);
+            }
+            return jsonMessage();
+        }
+    } else {
+        //change network
+        if(isset($_POST['dhcp'])) {
+            mylog("DHCP");
+
+            updateNetworkMakeDHCP();
+
+            if(update_with_sql("UPDATE settings SET value = 1 WHERE id = 11 AND name = 'dhcp'", [])) {
+                $swalMessage = swal_message("Network settings have changed to DHCP!".$restartMessage, "Great", "success");
+            }
+        } else {
+            $ip = filter_var($_POST['ip'], FILTER_SANITIZE_STRING);
+            $subnet = filter_var($_POST['subnet'], FILTER_SANITIZE_STRING);
+            $router = filter_var($_POST['router'], FILTER_SANITIZE_STRING);
+
+            updateNetwork($ip, $subnet, $router);
+
+            $result = "Network settings have changed to static<br> IP : ".$ip."<br> Subnet Mask : ".$subnet."<br> Router : ".$router.$restartMessage;
+            mylog($result);
+
+            if(update_with_sql("UPDATE settings SET value = 0 WHERE id = 11 AND name = 'dhcp'", [])) {
+                $swalMessage = swal_message($result, "Great", "success");
+            }
+        }
+    }
     set('swalMessage', $swalMessage);
-    set('network', array("a","b"));
-    return html('network.html.php');
+    set('network', getNetworkData());
+    if($id == 1) { 
+        return html('network.html.php');
+    } 
+    return html('network_slave.html.php');
+}
+
+/*
+* get Data for the network page in settings on the master controller
+* and the manage/network page for the slave controller, master data is only use for the slave controller
+*/
+function getNetworkData() {
+    $master = find_setting_by_id(10); //id 10 is dhcp in db
+    $master_ip = getMasterControllerIP();
+    $dhcp = find_setting_by_id(11); //id 11 is dhcp in db
+
+    $ip = $_SERVER['SERVER_ADDR'];
+    //ifconfig eth0 | awk -F: '/Mask:/{print $4}'
+    //ifconfig eth0 | sed -rn '2s/ .*:(.*)$/\1/p'
+    $subnet = exec("ifconfig eth0 | awk -F: '/Mask:/{print $4}'");
+    //ip route show | sed 's/\(\S\+\s\+\)\?default via \(\S\+\).*/\2/p; d'
+    //route -n | grep "^0\.0\.0\.0" | awk '{print $2}'
+    $router = exec("route -n | grep '^0\.0\.0\.0' | awk '{print $2}'");
+    mylog($router);
+
+    return array(
+        "dhcp" => empty($dhcp) ? false : $dhcp,
+        "master" => is_numeric($master) ? true : false, //ip in db, is only used as indicator, ip in file is leading
+        "master_ip" => $master_ip,
+        "ip" => $ip,
+        "subnet" => $subnet,
+        "router" => $router,
+    );
 }
 
 function settings_index() {
@@ -118,14 +196,54 @@ function updateHostname($hostname) {
     $hostname = $output[0];
 
     //restart network to load changes
-    exec('/etc/init.d/S40network restart');
+    //exec('/etc/init.d/S40network restart');
 
     //return $retval. "-" . json_encode($output);
     return $hostname;
 }
 
+/*
+*   updateMasterIP - if master IP is set, a slave will use this adress, 
+*   instead of automatically searching for one by mDNS, this is only needed when a network doesn't allow multicast
+*   $ip : if 0 remove the IP overwrite
+*/
+function updateMasterIP($ip) {
+    //create template with changes
+    $file = '/maasland_app/www/.extensions.php';
+    //create extensions file
+    if($ip) {
+        mylog("set MasterIP overwrite to:".$ip);
+        $extensions_tpl = new tpl();
+        $extensions_tpl->newTemplate('/maasland_app/www/views/layout/extensions.tpl');
+        $extensions_tpl->setVar('master_ip', $ip);
 
-function updateNetwork($hostname) {
+        // Adding opening php tag in the template gives an error
+        // So we add it here in front of the result, 
+        file_put_contents($file, "<?php \n".$extensions_tpl->grab());
+        unset($extensions_tpl);
+    } else {
+        mylog("remove MasterIP overwrite");
+        //remove file
+        unlink($file);
+    }
+    //empty opcache, cli and webserver have seperate opcache, so do a restart to be sure
+    //opcache_reset();
+    //TODO restart needs to be delayed, to allow writing changes to db/filesystem
+    //exec('/scripts/restart_services.sh');
+
+    //header('refresh:5;url=http://'.$_SERVER['HTTP_HOST'].'/?/manage/network' ); 
+    //header('Location: http://'.$_SERVER['HTTP_HOST'].'/?/manage/network');
+    //redirect_to('http://'.$_SERVER['HTTP_HOST'].'/?/manage/network');
+}
+
+function updateNetworkMakeDHCP() {
+    //copy orignal file with DHCP settings to interfaces
+    $srcfile='/etc/network/interfaces.org';
+    $dstfile='/etc/network/interfaces';
+    copy($srcfile, $dstfile);
+}
+
+function updateNetwork($ip, $netmask, $gateway) {
     //make backup
     copy('/etc/network/interfaces', '/etc/network/interfaces~');
 
@@ -133,9 +251,9 @@ function updateNetwork($hostname) {
     $network_tpl = new tpl();
     $network_tpl->newTemplate('/maasland_app/www/views/layout/network_interfaces.tpl');
 
-    $network_tpl->setVar('ip_address', "666");
-    $network_tpl->setVar('netmask', "666");
-    $network_tpl->setVar('gateway', "666");
+    $network_tpl->setVar('ip_address', $ip);
+    $network_tpl->setVar('netmask', $netmask);
+    $network_tpl->setVar('gateway', $gateway);
     //$network_tpl->setVar('broadcast', $this->broadcast($server_config['ip_address'], $server_config['netmask']));
     //$network_tpl->setVar('network', $this->network($server_config['ip_address'], $server_config['netmask']));
 
@@ -144,6 +262,8 @@ function updateNetwork($hostname) {
 
     //restart network to load changes
     //exec('/etc/init.d/S40network restart');
+
+    //header('Location: http://'.$_SERVER['HTTP_HOST'].'/?/manage/network');
 }
 
 function settings_replicate() {
