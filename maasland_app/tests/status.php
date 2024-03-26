@@ -39,5 +39,5 @@ if(checkIfFactoryReset()) {
 	echo "do nothing";
 }
 echo "\nSoftware=v". GVAR::$DASHBOARD_VERSION."  ";
-echo "\nFirmware=". exec('uname -r')."rev2";
+echo "\nFirmware=". exec('uname -r')."rev3";
 echo "\n";
