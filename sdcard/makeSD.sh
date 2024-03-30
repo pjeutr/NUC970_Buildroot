@@ -14,4 +14,4 @@ sudo ls sdcard/mount/_matchSDv*
 
 #curl -k --upload-file matchSDvx_x_x.img https://free.keep.sh
 
-
+echo "cd /home/maasland/plik/server/ \n ./plikd"
