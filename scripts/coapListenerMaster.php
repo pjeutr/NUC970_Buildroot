@@ -18,6 +18,7 @@ require_once '/maasland_app/www/lib/model.settings.php';
 require_once '/maasland_app/www/lib/model.door.php';
 require_once '/maasland_app/www/lib/model.controller.php';
 require_once '/maasland_app/www/lib/model.timezone.php';
+require_once '/maasland_app/www/lib/model.holiday.php';
 require_once '/maasland_app/www/lib/model.rule.php';
 
 //initialize database connection
@@ -159,7 +160,7 @@ $timer = React\EventLoop\Loop::addPeriodicTimer($interval, function () {
 	/*
 	* Check reports and delete old ones and vacuum. (previously done by crontab)
 	*/
-	if($now->format('H:i') == "04:00") { //every night at 2, needs timezone adjustment so 4
+	if($now->format('H:i') == "02:00") { //every night at 2, needs timezone adjustment so 4
 	//if($now->format('i') == 45) { //every hour
 		//delete rows older than x days in reports
 		$action = cleanupReports($days);
@@ -206,8 +207,14 @@ $timer = React\EventLoop\Loop::addPeriodicTimer($interval, function () {
 					operateDoor($door, 0);
 				}
 			} else {
-				//check if the door needs to be open or close
-				$open = checkDoorSchedule($door) ? 1 : 0;
+				if($holiday = checkHoliday()) {
+					mylog("Scheduled: Holiday restriction: ".$holiday->name." between ".$holiday->start_date. " and " .$holiday->end_date);
+					//if holiday always close
+					$open = 0;
+				} else {
+					//check if the door needs to be open or close
+					$open = checkDoorSchedule($door) ? 1 : 0;
+				}
 
 				//send required state to the door
 				$promises[] = operateDoor($door, $open)->then(

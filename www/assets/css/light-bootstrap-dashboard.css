@@ -8799,6 +8799,93 @@ Copyright (c) 2015 Daniel Eden
     transform: rotate(-45deg);
 }
 
+/* adding countdown */
+
+.sweet-alert .icon.countdown {
+    border-color: #a5dc86;
+}
+
+.sweet-alert .icon.countdown::before,
+.sweet-alert .icon.countdown::after {
+    content: '';
+    border-radius: 50%;
+    position: absolute;
+    width: 60px;
+    height: 120px;
+    background: #fff;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.sweet-alert .icon.countdown::before {
+    border-radius: 120px 0 0 120px;
+    top: -7px;
+    left: -33px;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    -webkit-transform-origin: 60px 60px;
+    transform-origin: 60px 60px;
+}
+
+.sweet-alert .icon.countdown::after {
+    border-radius: 0 120px 120px 0;
+    top: -11px;
+    left: 30px;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    -webkit-transform-origin: 0 60px;
+    transform-origin: 0 60px;
+}
+
+.sweet-alert .icon.countdown .placeholder {
+    width: 80px;
+    height: 80px;
+    border: 4px solid rgba(165, 220, 134, 0.2);
+    border-radius: 50%;
+    box-sizing: content-box;
+    position: absolute;
+    left: -4px;
+    top: -4px;
+    z-index: 2;
+}
+
+.sweet-alert .icon.countdown .fix {
+    width: 5px;
+    height: 90px;
+    background-color: #fff;
+    position: absolute;
+    left: 28px;
+    top: 8px;
+    z-index: 1;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.sweet-alert .icon.countdown .line {
+    height: 5px;
+    background-color: #87CB16;
+    display: block;
+    border-radius: 2px;
+    position: absolute;
+    z-index: 2;
+}
+
+.sweet-alert .icon.countdown .line.tip {
+    width: 25px;
+    left: 14px;
+    top: 46px;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.sweet-alert .icon.countdown .line.long {
+    width: 47px;
+    right: 8px;
+    top: 38px;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
 .sweet-alert .sweet-image {
     margin: 20px auto;
 }
@@ -8985,6 +9072,28 @@ Copyright (c) 2015 Daniel Eden
     }
 }
 
+@-webkit-keyframes countdownPlaceholder {
+    0% {
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+    100% {
+        -webkit-transform: rotate(-405deg);
+        transform: rotate(-405deg);
+    }
+}
+
+@keyframes countdownPlaceholder {
+    0% {
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+    100% {
+        -webkit-transform: rotate(-405deg);
+        transform: rotate(-405deg);
+    }
+}
+
 @-webkit-keyframes rotatePlaceholder {
     0% {
         -webkit-transform: rotate(-45deg);
@@ -9036,6 +9145,21 @@ Copyright (c) 2015 Daniel Eden
 .icon.success.animate::after {
     -webkit-animation: rotatePlaceholder 4.25s ease-in;
     animation: rotatePlaceholder 4.25s ease-in;
+}
+
+.animate-success-tip-countdown {
+    -webkit-animation: animate-success-tip 10s;
+    animation: animate-success-tip 10s;
+}
+
+.animate-success-long-countdown {
+    -webkit-animation: animate-success-long 10s;
+    animation: animate-success-long 10s;
+}
+
+.icon.countdown.animate-countdown::after {
+    -webkit-animation: countdownPlaceholder 10s ease-in;
+    animation: countdownPlaceholder 10s ease-in;
 }
 
 @-webkit-keyframes animate-error-icon {

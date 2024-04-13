@@ -106,7 +106,7 @@ function gpio_state() {
 	$r = setGPIO($id, $state);
     return (json(array($r)));
 }
-function door_open() {
+function door_open() { //<- dash pulse button
 	$doorId = filter_var(params('door'), FILTER_VALIDATE_INT);
     $controllerId = filter_var(params('controller'), FILTER_VALIDATE_INT);
     $door = find_door_by_id($doorId);
@@ -115,7 +115,7 @@ function door_open() {
     saveReport("WebAdmin", $door->name);//."@".$controller->name);
     return (json(array($result)));
 }
-function switchOutput() {
+function switchOutput() { //<- dash open/close
     $outputEnum = filter_var(params('output'), FILTER_VALIDATE_INT);
     $controllerId = filter_var(params('controller'), FILTER_VALIDATE_INT);
     $state = filter_var(params('state'), FILTER_VALIDATE_INT);

@@ -1,9 +1,10 @@
 <?php class L {
 const language = 'Language';
 const user = 'user';
-const group = 'Access group';
+const group = 'access group';
 const door = 'door';
 const timezone = 'timezone';
+const holiday = 'holiday';
 const report = 'report';
 const setting_door_open = 'Door open duration (in seconds)';
 const setting_clean_reports = 'Reports entries removed after (in days)';
@@ -19,6 +20,7 @@ const setting_time = 'Date Time';
 const setting_replicate = 'Replicate';
 const controller = 'controller';
 const ledger = 'Attendance list';
+const holidays = 'Holidays';
 const presence = 'Presence';
 const time_in = 'Time in';
 const time_out = 'Time out';
@@ -102,6 +104,7 @@ const message_no_master_found = 'No master controller found! <br> You can change
 const message_ledger_in = 'User is present in the building';
 const message_ledger_out = 'User is not in the building';
 const warning_change_unreachable = '<b> Warning! - </b>  Changes on this page, can make the system unreachable!';
+const warning_change_network = '<b>Before changing network settings on Master.<br>First manage network settings on slaves:</b>';
 const dashboard_name = 'Dashboard';
 const dashboard_buttons = 'Open Door';
 const dashboard_title = 'This controller has %s';

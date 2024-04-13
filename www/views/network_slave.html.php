@@ -79,16 +79,6 @@
             Only use this in special Network situations, where multicast doesn't work.
             <!-- <?= json_encode($network) ?> -->
 
-<!-- var data = $("#masterForm").serialize();
-$.post('url', data); -->
-<!-- 
-<button class="btn btn-warning" type="button" onclick="app.postCall('/?/manage/network/3',$('#masterForm').serialize())">Post</button>
- -->
-<!--  
-<button class="btn btn-warning" type="button" onclick="app.postCall('/?/manage/network/3',
-{_method: 'PUT', master: 'on', master_ip: '127.1.2.3'})">Open</button>
- -->
-
         </sub>
         </div>
         <div class="flex-row-4 flex-cell" role="cell">
@@ -266,7 +256,9 @@ $.post('url', data); -->
         console.log("networkFormValidation");
         //$("#networkForm").validate();
 
-        $( "#masterForm" ).on( "submit", function( event ) {
+        //TODO trying to restart automatically, keep this for future tries
+        //Tried with ajax, but websocket will be broken off, and page is broken off
+        $( "#masterFormXXX" ).on( "submit", function( event ) {
             event.preventDefault();
 
             var data = $("#masterForm").serialize();

@@ -18,10 +18,6 @@ function network_slave() {
     return html('network_slave.html.php');
 }
 
-//helper method for functions below
-function jsonMessage($status = 0, $message="Someting went wrong") {
-    return json_encode(array ('status'=>$status, 'message'=>$message));
-}
 /*
 *   function can be called from network.html.php and network_slave.html.php
 *   id 1 => change network on master => network.html.php
@@ -32,28 +28,26 @@ function network_update() {
     $id = filter_var(params('id'), FILTER_VALIDATE_INT);
     //standard message is failure, update to success if something has changed
     $swalMessage = swal_message("Something went wrong!");
-    //$restartMessage = "<p>Wait for the system to restart and redirect to the new page</p>";
-    $restartMessage = "<p>Restart the system to load new settings</p>";
+    //$restartMessage = L::message_change_needs_reset;
+    $restartMessage = "<p>Wait 10s, and restart the system to load new settings</p>";
 
     if($id == 3) { 
         if(isset($_POST['master'])) {
             updateMasterIP(false);
 
             if(update_with_sql("UPDATE settings SET value = 1 WHERE id = 10 AND name = 'master_ip'", [])) {
-                //$swalMessage = swal_message("Automatic Master IP discovery enabled", "Great", "success");
-                return jsonMessage(1, "Automatic Master IP discovery enabled".$restartMessage);
+                $swalMessage = swal_message("Automatic Master IP discovery enabled".
+                    $restartMessage, "Great", "countdown");
             }
-            return jsonMessage();
         } else {
             $ip = filter_var($_POST['master_ip'], FILTER_SANITIZE_STRING);
             $reloadService = "To load changes, the controller needs to be restarted";
             updateMasterIP($ip);
 
             if(update_with_sql("UPDATE settings SET value = '$ip' WHERE id = 10 AND name = 'master_ip'", [])) {
-                //$swalMessage = swal_message("Automatic Master IP discovery disabled, <br>Master IP has changed to :".$ip, "Great", "success");
-                return jsonMessage(1, "Automatic Master IP discovery disabled, <br>Master IP has changed to :".$ip.$restartMessage);
+                $swalMessage = swal_message("Automatic Master IP discovery disabled, <br>Master IP has changed to :".$ip.
+                    $restartMessage, "Great", "countdown");
             }
-            return jsonMessage();
         }
     } else {
         //change network
@@ -63,7 +57,8 @@ function network_update() {
             updateNetworkMakeDHCP();
 
             if(update_with_sql("UPDATE settings SET value = 1 WHERE id = 11 AND name = 'dhcp'", [])) {
-                $swalMessage = swal_message("Network settings have changed to DHCP!".$restartMessage, "Great", "success");
+                $swalMessage = swal_message("Network settings have changed to DHCP!".
+                    $restartMessage, "Great", "countdown");
             }
         } else {
             $ip = filter_var($_POST['ip'], FILTER_SANITIZE_STRING);
@@ -72,11 +67,12 @@ function network_update() {
 
             updateNetwork($ip, $subnet, $router);
 
-            $result = "Network settings have changed to static<br> IP : ".$ip."<br> Subnet Mask : ".$subnet."<br> Router : ".$router.$restartMessage;
+            $result = "Network settings have changed to static<br> IP : ".$ip."<br> Subnet Mask : ".$subnet."<br> Router : ".$router;
             mylog($result);
 
             if(update_with_sql("UPDATE settings SET value = 0 WHERE id = 11 AND name = 'dhcp'", [])) {
-                $swalMessage = swal_message($result, "Great", "success");
+                $swalMessage = swal_message($result.
+                    $restartMessage, "Great", "countdown");
             }
         }
     }
@@ -154,24 +150,28 @@ function settings_update() {
 
     if($type == 9) { //system date time 
         //create DateTime from string
-        $dt = DateTime::createFromFormat(getDateTimeFormat(), $value, new DateTimeZone(getTimezone() ) );
-        //convert local time to utc
-        $dt->setTimezone(new DateTimeZone('UTC'));
-        //convert to compatible string for system 
-        $timesStamp = $dt->format('Y-m-d H:i');
-        //update hardware clock
-        exec('hwclock --set --date="'.$timesStamp.'"', $out, $status); 
-        mylog($status);
-        mylog('hwclock --set --date="'.$timesStamp.'"');
-        mylog(json_encode($out));
-        if($status) { //error s=63
-            $swalMessage = swal_message("Date Time has not changed", "Error", "error");
-        } else { //ok is 0
-            $swalMessage = swal_message("Date Time was changed", "Great", "success");
-            //update system clock
-            $r = shell_exec('hwclock -s'); 
-            mylog($r);
-            mylog("system clock updated");
+        if($dt = DateTime::createFromFormat(getDateTimeFormat(), $value, new DateTimeZone(getTimezone() ) )) {
+            //convert local time to utc
+            $dt->setTimezone(new DateTimeZone('UTC'));
+            //convert to compatible string for system 
+            $timesStamp = $dt->format('Y-m-d H:i');
+
+            //update hardware clock
+            exec('hwclock --set --date="'.$timesStamp.'"', $out, $status); 
+            mylog($status);
+            mylog('hwclock --set --date="'.$timesStamp.'"');
+            mylog(json_encode($out));
+            if($status) { //error s=63
+                $swalMessage = swal_message("Date Time has not changed", "Error", "error");
+            } else { //ok is 0
+                $swalMessage = swal_message("Date Time was changed", "Great", "success");
+                //update system clock
+                $r = shell_exec('hwclock -s'); 
+                mylog($r);
+                mylog("system clock updated");
+            }
+        } else {
+            $swalMessage = swal_message("Not a valid time format!");
         }
     } 
 
