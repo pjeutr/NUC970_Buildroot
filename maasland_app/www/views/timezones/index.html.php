@@ -30,11 +30,11 @@ set('title', L("timezones"));
     <td><?= $row->end //date("H:i", $row->end) ?></td>
     <td><?= weekDaysPlus($row->weekdays) ?></td>
     <!-- <td><?= link_to($row->name, 'timezones', $row->id) ?></td> -->
-    <td><?= iconLink_to(L::button_edit, 'timezones/'.$row->id.'/edit', 'btn-link', null) ?>
-        &nbsp;
-        <?php if(isset($row->id) && $row->id != 1) { ?>
+    <td><?php if(isset($row->id) && $row->id != 1) { ?>
+            <?= iconLink_to(L::button_edit, 'timezones/'.$row->id.'/edit', 'btn-link', null) ?>
+            &nbsp;
             <?= deleteLink_to(L::button_delete, 'timezones', $row->id) ?>
-        <?php } ?>
+        <?php } ?></td>
 </tr>
 <?php } ?>
                             </tbody>

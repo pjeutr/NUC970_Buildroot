@@ -13,7 +13,7 @@ function find_rules() {
 
 function find_timezone_by_group_id($group_id, $door_id) {
     $sql = "SELECT " .
-        "t.end end, t.start start, t.weekdays weekdays , t.name name " .
+        "t.id, t.end end, t.start start, t.weekdays weekdays , t.name name " .
         "FROM rules r, timezones t " .
         "WHERE r.group_id=:group_id ".
         "AND r.door_id=:door_id ".

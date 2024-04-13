@@ -321,6 +321,13 @@ function handleUserAccess($user, $readerId, $controller) {
     mylog("group=".$user->group_id." door=".$door->id."=".$door->name);
     mylog("name=".$tz->name." start=".$tz->start." end=".$tz->end);
 
+    //Deny access on holiday
+    if($tz->id != 1) { //access groups with timezone 1 (24/7). Have always access 
+        if($holiday = checkHoliday()) {
+            return "Holiday restriction: ".$holiday->name." between ".$holiday->start_date. " and " .$holiday->end_date;
+        }
+    }
+
     //check if it is the right day of the week
     $weekday = $now->format('w');//0 (for Sunday) through 6 (for Saturday) 
     $weekdays = explode(",",$tz->weekdays);
@@ -390,6 +397,27 @@ function checkDoorSchedule($door) {
 }
 
 /*
+*   Check if it's a holiday
+*       returns true if it is
+*   $doorId : id in the db
+*   Used by match_listener and schedule
+*/
+function checkHoliday() {
+    $now = new DateTime(); //now in UTC
+    $holidays = find_holidays();
+    foreach ($holidays as $holiday) {
+        $begin = DateTime::createFromFormat(getDateTimeFormat(), $holiday->start_date, new DateTimeZone(getTimezone() ) );
+        $end = DateTime::createFromFormat(getDateTimeFormat(), $holiday->end_date, new DateTimeZone(getTimezone() ) );
+        mylog("check holiday=".$holiday->name." begin=".$begin->format(getDateTimeFormat())." end=".$end->format(getDateTimeFormat())." now=".$now->format(getDateTimeFormat()));
+
+        if($begin <= $now && $now <= $end) {
+            return $holiday;
+        }
+    }
+    return false;
+}
+
+/*
 * Open a door  
 *   $door : Door object
 *   $controller : Controller object
@@ -398,7 +426,7 @@ function checkDoorSchedule($door) {
 * Used by match_listener and webinterface
 */
 function openDoor($door, $controller) {
-    $data = getDoorData($door, $controller);
+    $data = getDoorData($door, $controller->id);
 
     if( $controller->id == 1 ) {
         //call method on master, is quicker and more reliable
@@ -421,8 +449,7 @@ function openDoor($door, $controller) {
 *
 * Used by inputListener, coapServer and webinterface
 */
-function getDoorData($door, $controller) {
-    $controllerId = $controller->id;
+function getDoorData($door, $controllerId) {
     $duration=find_setting_by_name("door_open");
     
     mylog("Door=".json_encode($door));
@@ -432,14 +459,14 @@ function getDoorData($door, $controller) {
     //aggegrate gpios to switch on/off
 
     //add the right wiegand reader leds for a door
-    $door1 = find_door_for_reader_id(1,$controllerId);
-    mylog("Reader1 does door=".$door1->id." Now doing door=".$door->enum);
-    if($door1->id === $door->enum){
+    $doorForReader1 = find_door_for_reader_id(1,$controllerId);
+    mylog("Reader1 does door=".$doorForReader1->enum." with enum=".$door->enum);
+    if($doorForReader1->enum === $door->enum){
         $gpios[] = GVAR::$RD1_GLED_PIN;
     }
-    $door2 = find_door_for_reader_id(2,$controllerId);
-    mylog("Reader2 does door=".$door2->id." Now doing door=".$door->enum);
-    if($door2->id ===  $door->enum){
+    $doorForReader2 = find_door_for_reader_id(2,$controllerId);
+    mylog("Reader2 does door=".$doorForReader2->enum." with enum=".$door->enum);
+    if($doorForReader2->enum ===  $door->enum){
         $gpios[] = GVAR::$RD2_GLED_PIN;
     }
     //mylog("extra gpios=".json_encode($gpios));
@@ -464,13 +491,15 @@ function getDoorData($door, $controller) {
 * Used by webinterface
 */
 function changeOutputState($outputEnum, $controller, $door, $state) {
+    $data = getDoorData($door, $controller->id);
+    //TODO data is redundant, door of outputEnum kan weg
     if( $controller->id == 1 ) {
         //call method on master, is quicker and more reliable
         //and nesting coap-client calls is not working currently
         saveReport("WebAdmin", $door->name." ".($state?"open":"closed")." on ".$controller->name);
-        return changeDoorState($door->enum, $state);
+        return operateOutput($door->enum, $state);
     } else {
-        $url = "coap://".$controller->ip."/output_".$outputEnum."_".$state;
+        $url = "coap://".$controller->ip."/output_".$outputEnum."_".$state."_".implode("-",$data->gpios);
         mylog("coapCall:".$url);
         //request
         $client = new PhpCoap\Client\Client();
@@ -508,7 +537,9 @@ function operateDoor($door, $open) {
         //check if lock state has changed
         if($currentValue != $open) {
             $action = $door->name." is ".(($open == 1)?"opened":"closed");
-            changeDoorState($door->enum, $open);
+
+            $data = getDoorData($door, $door->controller_id);
+            operateOutput($door->enum, $open, $data->gpios);
 
             mylog("CHANGED:".$action);
             saveReport("Scheduled", $action);
@@ -547,7 +578,8 @@ function operateDoor($door, $open) {
             if($currentValue != $open) {
 
                 //change lock state
-                $url = "coap://".$controller->ip."/output_".$door->enum."_".$open;
+                $data = getDoorData($door, $controller->id);
+                $url = "coap://".$controller->ip."/output_".$door->enum."_".$open."_".implode("-",$data->gpios);
                 mylog("openDoor:".$url);
                 //request coap-client -m get coap://$slave/output_1_1
                 $client = new PhpCoap\Client\Client();

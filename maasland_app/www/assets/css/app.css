@@ -996,12 +996,6 @@ a.text-success:focus, a.text-success:hover {
     text-align: center;
 }
 
-.animate {
-    transition: 1.5s ease-in-out;
-    -moz-transition: 1.5s ease-in-out;
-    -webkit-transition: 1.5s ease-in-out;
-}
-
 .navbar-default.navbar-small .logo-container .brand {
     color: #333333;
 }

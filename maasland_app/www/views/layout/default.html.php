@@ -38,9 +38,9 @@ $flashMessage = flash_now();
     <link href="/assets/css/fontawesome.min.css" rel="stylesheet" />
     <!-- TODO hamburger, radio en checkbox werken niet bij de lokale fontawesome, daarom de online versie als backup -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
-    <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.3" rel="stylesheet" />
+    <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.4" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="/assets/css/app.css?1.2" rel="stylesheet" />
+    <link href="/assets/css/app.css?1.8.6" rel="stylesheet" />
     <script type="text/javascript">
         //calculate clock with php server time
         var serverTime = <?php echo $serverTime;?>,
@@ -87,6 +87,12 @@ $flashMessage = flash_now();
                         <a class="nav-link" href="./?/groups">
                             <i class="nc-icon nc-badge"></i>
                             <p><?php echo L::groups; ?></p>
+                        </a>
+                    </li>
+                    <li <?php echo ($id == 21) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                        <a class="nav-link" href="./?/holidays">
+                            <i class="nc-icon nc-bullet-list-67"></i>
+                            <p><?php echo L::holidays; ?></p>
                         </a>
                     </li>
                     <li <?php echo ($id == 5) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
@@ -313,10 +319,7 @@ $flashMessage = flash_now();
                             </li>
                         </ul>
                         <p class="copyright text-center">
-                            ©
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script>
+                            ©<?php echo date("Y"); ?>
                             <a href="https://maaslandgroup.com/">Maasland Group</a>, Your Access To Safety. All Rights Reserved.
                         </p>
                     </nav>
@@ -339,7 +342,7 @@ $flashMessage = flash_now();
 <!--  DatetimePicker   -->
 <script src="/assets/js/plugins/bootstrap-datetimepicker.js"></script>
 <!--  Sweet Alert  -->
-<script src="/assets/js/plugins/sweetalert2.min.js" type="text/javascript"></script>
+<script src="/assets/js/plugins/sweetalert2.min.js?v=2" type="text/javascript"></script>
 <!--  Tags Input  -->
 <script src="/assets/js/plugins/bootstrap-tagsinput.js" type="text/javascript"></script>
 <!--  Sliders  -->
@@ -361,9 +364,9 @@ $flashMessage = flash_now();
 <!--  Hide Password  -->
 <script src="/assets/js/plugins/bootstrap-show-password.min.js"></script>
 <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
-<script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.1" type="text/javascript"></script>
+<script src="/assets/js/light-bootstrap-dashboard.js?v=2.0.4" type="text/javascript"></script>
 <script src="/assets/js/resource.<?= $_SESSION["lang"] ?>.js?1.5"></script>
-<script src="/assets/js/app.js?1.8"></script>
+<script src="/assets/js/app.js?1.8.6"></script>
 <script type="text/javascript">
     // Content for SweetAlert
     <?= empty($swalMessage) ? '' : 'swal( '.$swalMessage.');' ?>

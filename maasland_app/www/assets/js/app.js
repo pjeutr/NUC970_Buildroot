@@ -26,7 +26,7 @@ $().ready(function() {
             // console.log(this);
             // console.log(form);
             // console.log(event);
-            //form.submit();
+            form.submit();
             //return false; 
         }
     });
@@ -128,6 +128,11 @@ $().ready(function() {
         //console.log("init networkForm");
         //$("#settingsForm").validate();
         networkFormValidation();
+    };
+
+    if ($("#initMyForm").length != 0) {
+        console.log("init myForm");
+        initMyForm();
     };
 
     // Init Datetimepicker
@@ -360,17 +365,20 @@ $().ready(function() {
             // ,async:true
             // ,crossDomain:true
         }).done(function(response){
-            result = JSON.parse(response);
-            console.log(result);
-            $tooltip = "Version "+result['version']+"-"+result['1']+"-"+result['2'];
-            console.log("Door:" +door+ "=" +result[door]);
-            if(result[door]==="1") {
-                $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
-                '" class="fa fa-lg fa-unlock-alt text-success"></i>'); 
-            } else {
-                $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
-                '" class="fa fa-lg fa-lock text-warning"></i>'); 
-            }
+            result = safelyParseJSON(response);
+            if (result) {
+                console.log(result);
+                $tooltip = "Version "+result['version']+"-"+result['1']+"-"+result['2'];
+                console.log("Door:" +door+ "=" +result[door]);
+
+                if(result[door]==="1") {
+                    $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
+                    '" class="fa fa-lg fa-unlock-alt text-success"></i>'); 
+                } else {
+                    $( value ).html('<i alt="'+$tooltip+'" title="'+$tooltip+
+                    '" class="fa fa-lg fa-lock text-warning"></i>'); 
+                }
+            } 
         }).fail(function(jqXHR, textStatus){
             //console.log(textStatus);
             if(textStatus === 'timeout')
@@ -480,7 +488,7 @@ app = {
             timer: time,
             showConfirmButton: true
         });
-    },    
+    },
     areYouSure: function(that, title, text) {
         swal({
             title: title,
@@ -608,7 +616,21 @@ app = {
 
 }
 
+// JSON.parse(json) returns error when parsing html (error page, etc)
+// https://stackoverflow.com/questions/29797946/handling-bad-json-parse-in-node-safely
+function safelyParseJSON (json) {
+  // This function cannot be optimised, it's best to
+  // keep it small!
+  var parsed
 
+  try {
+    parsed = JSON.parse(json)
+  } catch (e) {
+    // return nothing
+  }
+
+  return parsed // Could be undefined!
+}
 
 
 

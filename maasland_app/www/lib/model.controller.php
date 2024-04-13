@@ -42,7 +42,7 @@ function find_door_for_input_device($id, $cid) {
 }
 
 function find_door_for_reader_id($id, $cid) {
-    $sql = "SELECT d.id, d.name, d.timezone_id FROM controllers c, doors d WHERE c.id = ".$cid." AND d.id = c.reader_".$id;
+    $sql = "SELECT d.id, d.enum, d.name, d.timezone_id FROM controllers c, doors d WHERE c.id = ".$cid." AND d.controller_id = c.id AND d.enum = c.reader_".$id;
     return find_object_by_sql($sql);
 }
 

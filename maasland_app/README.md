@@ -25,6 +25,8 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v1.8.7 - Remove changeDoorState,fix led signal on reader
+v1.8.6 - Holidays + countdown icon
 v1.8.5 - Groups and Doors collapsable, factory reset fix, network DHCP/MasterIP settings
 v1.8.3 - memory fix
 v1.8.2 - Activate readerled with a schedule and dashboard door open, fix for big reports exports

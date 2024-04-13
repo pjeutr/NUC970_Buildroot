@@ -65,7 +65,7 @@ set('title', L("settings"));
     }
         ?>                        
 <form class="settingsForm" id="row_<?= $row->name ?>" action="<?= url_for('settings', $row->id) ?>" method="POST">
-    <input type="hidden" name="_method" id="_method" value="PUT">
+    <input type="hidden" name="_method" value="PUT">
     <input type="hidden" name="setting_name" value="<?= $row->name ?>">
     <input type="hidden" name="setting_type" value="<?= $row->type ?>">
 

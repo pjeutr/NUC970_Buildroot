@@ -79,7 +79,8 @@ function operateOutput($outputEnum, $state, $gpios = array()) {
         return false;
     }
     foreach ($gpios as $gpio) {
-        changeDoorState($outputEnum, $state);
+        mylog("operateOutput gpio=".$gpio." state=".$state);
+        setGPIO($gpio, $state);
     }
     return true;
 }
@@ -132,7 +133,7 @@ function handleInputLocally($input, $keycode) {
     if(empty($controller)) {
         return "unkown controller";
     }
-    mylog("handleInput Controller=".$controller->name." input=".$input." keycode=".$keycode);
+    mylog("handleInputLocally Controller=".$controller->name." input=".$input." keycode=".$keycode);
 
     $actor = "somebody";
     $result = "nothing";
@@ -166,7 +167,7 @@ function handleInputLocally($input, $keycode) {
     }    
     //save report
     //saveReport($actor, $action, keyToHex($keycode));
-    mylog("handleInput result:".$result);
+    mylog("handleInputLocally result:".$result);
     return array(
         "actor" =>$actor, 
         "controller" => $controller->name, 
@@ -301,25 +302,6 @@ function getMasterURL() {
 /*
 *   Hardware translate functions 
 */
-
-/*
-*   Open or close a door
-*   $outputEnum : doors.enum in database in accordance with physical connection
-*   $state : 0 = close, 1 = open
-*/
-function changeDoorState($outputEnum, $state) { 
-    //switch lock
-    $gid = getOutputGPIO($outputEnum);         
-    setGPIO($gid, $state);
-
-    //change led on the reader
-    if($outputEnum == 1) {
-        setGPIO(GVAR::$RD1_GLED_PIN, $state);
-    } else {
-        setGPIO(GVAR::$RD2_GLED_PIN, $state);
-    }
-    return $state;
-}
 
 /*
 *   Get GPIO value for a output relais

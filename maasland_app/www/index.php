@@ -284,7 +284,6 @@ dispatch_get   ('manage/network',   'network_slave');
 dispatch_get   ('manage/network/:id', 'network_slave'); //user refresh can create a get after the v put
 dispatch_put   ('manage/network/:id', 'network_update');
 
-
 //webapi
 dispatch('api/version', 'version_page');
 function version_page() {
@@ -307,14 +306,14 @@ function overview_page() {
 //webapi / coap alternatives
 dispatch_get   ('api/cleanup', 'checkCleanupReports');
 dispatch_get   ('api/status/:door', 'outputStatus');
-dispatch_get   ('api/output/:door/:state/', 'output');
-dispatch_get   ('api/activate/:door/:duration/:gpios/', 'activate');
+dispatch_get   ('api/output/:door/:state/', 'output');//<- open/close form master
+dispatch_get   ('api/activate/:door/:duration/', 'activate');//<- pulse from master
 dispatch_get   ('api/input/:input/:keycode/', 'input');
 dispatch_get   ('api/function/:name/:value/', 'callFunction');
 
 //ajax
-dispatch_get   ('door/:controller/:door',  'door_open'); //->coap
-dispatch_get   ('output/:controller/:output/:state',  'switchOutput'); //->coap
+dispatch_get   ('door/:controller/:door',  'door_open'); //<- dash pulse button
+dispatch_get   ('output/:controller/:output/:state',  'switchOutput'); //<- dash open/close
 dispatch_get   ('last_reports',   'last_reports');
 dispatch_get   ('last_scanned_key.json',   'last_scanned_key');
 dispatch_get   ('available_controllers.json',   'available_controllers');
@@ -369,6 +368,21 @@ dispatch_get   ('timezones/:id/edit', 'timezones_edit');
 dispatch_get   ('timezones/:id',      'timezones_show');
 dispatch_put   ('timezones/:id',      'timezones_update');
 dispatch_delete('timezones/:id',      'timezones_destroy');
+
+// holidays controller
+dispatch_get   ('holidays',          'holidays_index');
+dispatch_post  ('holidays',          'holidays_create');
+dispatch_get   ('holidays/new',      'holidays_new');
+dispatch_get   ('holidays/:id/edit', 'holidays_edit');
+dispatch_get   ('holidays/:id',      'holidays_show');
+dispatch_put   ('holidays/:id',      'holidays_update');
+dispatch_delete('holidays/:id',      'holidays_destroy');
+
+dispatch('newtime', 'holidays_page');
+function holidays_page() {
+  set('holidays', find_holidays());
+  return html('holidays.html.php');
+}
 
 try {
   //run application

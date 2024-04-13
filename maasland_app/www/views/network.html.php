@@ -16,10 +16,9 @@ set('title', L("network"));
 <!-- Show extra warning message alert  -->
 <?= alert_message(L("warning_change_unreachable"), $title="Oops", $type="alert-danger") ?>
 
-<hr><b>
-Before changing network settings on Master.
-First manage network settings on slaves:
-</b><p>
+<hr>
+<?= L("warning_change_network") ?>
+<p>
 <?php foreach (find_controllers() as $controller) {  ?>
     <a href="http://<?= $controller->ip ?>/?/manage/network" target="<?= $controller->ip ?>"><?= $controller->name ?>-<?= $controller->name ?></a><br>
 <?php } ?>
