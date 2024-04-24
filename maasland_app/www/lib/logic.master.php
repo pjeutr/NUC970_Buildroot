@@ -497,7 +497,8 @@ function changeOutputState($outputEnum, $controller, $door, $state) {
         //call method on master, is quicker and more reliable
         //and nesting coap-client calls is not working currently
         saveReport("WebAdmin", $door->name." ".($state?"open":"closed")." on ".$controller->name);
-        return operateOutput($door->enum, $state);
+        $data = getDoorData($door, $controller->id);
+        return operateOutput($door->enum, $state, $data->gpios);
     } else {
         $url = "coap://".$controller->ip."/output_".$outputEnum."_".$state."_".implode("-",$data->gpios);
         mylog("coapCall:".$url);

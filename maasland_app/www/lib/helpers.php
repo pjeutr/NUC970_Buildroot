@@ -255,6 +255,9 @@ function swal_message_error($message) {
 function swal_message_success($message) {
     return swal_message($message, L("message_success_title"), "success");
 }
+function swal_message_countdown($message, $time) {
+    return "{type: 'countdown' ,title: 'Great', html: '$message', allowEscapeKey: false, allowOutsideClick: false, showConfirmButton: false, timer: $time, timerProgressBar: true}";
+}
 
 //Format DateTime and adjust to reflect the local timezone 
 function print_date($timestamp) {
@@ -371,18 +374,25 @@ function configDB() {
     option('dsn', $dsn);
     option('db_conn', $db);   
 }
-function configLocalDB() {
-    $development = Arrilot\DotEnv\DotEnv::get('APP_DEVELOPMENT', false);
 
-    mylogError("Local DBinit");
+/*
+* Used in slave, to provide offline functionality when master can not be found
+* The db is replaced daily, to reflect changes db connection needs to be reset to see these changes.
+*/  
+function openLocalDB() {
+    mylogError("open Local DB");
     $dsn = 'sqlite:/maasland_app/www/db/remote.db';
-    mylog(json_encode($dsn));
 
     $db = new PDO($dsn);
     $db->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
     option('dsn', $dsn);
-    option('db_conn', $db);   
+    option('db_conn', $db);
+}
+function closeLocalDB() {
+    mylogError("close Local DB");
+    option('dsn', null);
+    option('db_conn', null);
 }
 
 /*
