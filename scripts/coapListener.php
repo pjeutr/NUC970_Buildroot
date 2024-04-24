@@ -19,9 +19,6 @@ require_once '/maasland_app/www/lib/model.controller.php';
 require_once '/maasland_app/www/lib/model.timezone.php';
 require_once '/maasland_app/www/lib/model.rule.php';
 
-//initialize database connection
-configLocalDB();
-
 /* 
 * Outgoing calls to master
 */
@@ -38,9 +35,7 @@ function callApi($input, $key) {
 				error_log("coapCall, Master controller could not be reached.");
 				//Sound 4 beeps on the slave controller to warn the user.
 				beepMessageBuzzer(2);
-				//Finish the action with Local data
-				//This emergency handling, local data must have been replicated from the master
-				handleInputLocally($input, $key);
+				emergencyHandling($input, $key);
 			} else {
 				mylog("coapCall, return=".json_encode($result));
 
@@ -58,9 +53,20 @@ function callApi($input, $key) {
 		});
 	} else {
 		error_log("coapCall, Master controller unkown.");
-		//Finish the action with Local data
-		//This emergency handling, local data must have been replicated from the master
+		emergencyHandling($input, $key);
+	}
+}
+
+function emergencyHandling($input, $key) {
+	//Finish the action with Local data
+	//For his emergency handling, local data must have been replicated from the master
+	$file = "/maasland_app/www/db/remote.db";
+	if(file_exists($file)){
+		openLocalDB();
 		handleInputLocally($input, $key);
+		closeLocalDB();
+	} else {
+		mylog("no local db");
 	}
 }
 

@@ -36,8 +36,8 @@ function network_update() {
             updateMasterIP(false);
 
             if(update_with_sql("UPDATE settings SET value = 1 WHERE id = 10 AND name = 'master_ip'", [])) {
-                $swalMessage = swal_message("Automatic Master IP discovery enabled".
-                    $restartMessage, "Great", "countdown");
+                //$swalMessage = swal_message("Automatic Master IP discovery enabled".$restartMessage, "Great", "countdown");
+                $swalMessage = swal_message_countdown("Automatic Master IP discovery enabled".$restartMessage, 10000);
             }
         } else {
             $ip = filter_var($_POST['master_ip'], FILTER_SANITIZE_STRING);
@@ -45,8 +45,8 @@ function network_update() {
             updateMasterIP($ip);
 
             if(update_with_sql("UPDATE settings SET value = '$ip' WHERE id = 10 AND name = 'master_ip'", [])) {
-                $swalMessage = swal_message("Automatic Master IP discovery disabled, <br>Master IP has changed to :".$ip.
-                    $restartMessage, "Great", "countdown");
+                //$swalMessage = swal_message("Automatic Master IP discovery disabled, <br>Master IP has changed to :".$ip.$restartMessage, "Great", "countdown");
+                $swalMessage = swal_message_countdown("Automatic Master IP discovery disabled, <br>Master IP has changed to :".$ip.$restartMessage, 10000);
             }
         }
     } else {
@@ -57,8 +57,8 @@ function network_update() {
             updateNetworkMakeDHCP();
 
             if(update_with_sql("UPDATE settings SET value = 1 WHERE id = 11 AND name = 'dhcp'", [])) {
-                $swalMessage = swal_message("Network settings have changed to DHCP!".
-                    $restartMessage, "Great", "countdown");
+                //$swalMessage = swal_message("Network settings have changed to DHCP!".$restartMessage, "Great", "countdown");
+                $swalMessage = swal_message_countdown("Network settings have changed to DHCP!".$restartMessage, 10000);
             }
         } else {
             $ip = filter_var($_POST['ip'], FILTER_SANITIZE_STRING);
@@ -71,8 +71,8 @@ function network_update() {
             mylog($result);
 
             if(update_with_sql("UPDATE settings SET value = 0 WHERE id = 11 AND name = 'dhcp'", [])) {
-                $swalMessage = swal_message($result.
-                    $restartMessage, "Great", "countdown");
+                //$swalMessage = swal_message($result.$restartMessage, "Great", "countdown");
+                $swalMessage = swal_message_countdown($result.$restartMessage, 10000);
             }
         }
     }

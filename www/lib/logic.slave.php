@@ -157,7 +157,10 @@ function handleInputLocally($input, $keycode) {
             $inputName = ($input == 3) ? "button_1":"button_2";
             $door = find_door_for_input_device($inputName, $controller->id);
             $action = $inputName.":".$door->name;
-            $result = activateOutput($door->enum, $duration, []);
+            //add Reader led's, getDoorData not availabel
+            $gpios[] = GVAR::$RD1_GLED_PIN;
+            $gpios[] = GVAR::$RD2_GLED_PIN;
+            $result = activateOutput($door->enum, $duration, $gpios);
             //$result = openDoor($door, $controller);
             break;
         default:
