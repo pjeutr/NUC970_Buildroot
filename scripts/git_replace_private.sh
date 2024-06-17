@@ -19,7 +19,7 @@ git config --global http.sslVerify false
 git init .
 git remote add -f origin git@github.com:pjeutr/DuoApp.git
 #git remote set-head origin -a
-git checkout -f main
+git checkout -f multi_timezone
 
 # restart services to empty opcache
 #/scripts/restart_services.sh
