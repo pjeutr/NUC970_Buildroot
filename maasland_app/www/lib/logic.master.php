@@ -293,30 +293,23 @@ function handleUserAccess($user, $readerId, $controller) {
         return "Access has expired: End date = ".$user->end_date;
     }
 
-    //APB, if the user is back within APB time, deny access
+    //keep track when user was last in
     $lastSeen = new DateTime($user->last_seen, new DateTimeZone('UTC')); //always calc with UTC
-    $diff =  $now->getTimestamp() - $lastSeen->getTimestamp();
-    $apb = find_setting_by_name('apb'); //apb is defined in seconds
-    mylog("lastseen=".$lastSeen->format("c")." now=".$now->format("c")." diff=".$diff." seconds");
-    if($diff < $apb && $diff > 0) {
-        return "APB restriction: no access within ".$diff." seconds, must be longer than ".$apb." seconds";
-    }
+    mylog("lastseen=".$lastSeen->format("c"));
 
     //Determine what door to open
     $door = find_door_for_input_device("reader_".$readerId, $controller->id);
-//TODO add door name in return message 
+
     //Don't open the door if it is scheduled to be open
     if(checkDoorSchedule($door)) {
         return "Door is already scheduled to be open: ".$door->name;
     }
 
-    //TODO mag user deze deur wel open maken?
-
     //check if the group/user has access for this door
     $tz = find_timezone_by_group_id($user->group_id, $door->id);
     mylog("tz=".json_encode($tz));
     if(empty($tz)) {
-        return "Door can not be used. No timezone assigned to this door for this group.";
+        return "$door->name can not be used. No timezone assigned to this door for this group.";
     }
     mylog("group=".$user->group_id." door=".$door->id."=".$door->name);
     mylog("name=".$tz->name." start=".$tz->start." end=".$tz->end);
@@ -350,8 +343,17 @@ function handleUserAccess($user, $readerId, $controller) {
     }
 
     //update attendance list, keeping score of who is in or out.
-    if(useLedgerMode()) {
-        update_ledger($user, $readerId);
+    update_ledger($user, $readerId);
+
+    //APB, if user is already -> deny access, unless it's in a 24h group
+    //check only for APB controllers on IN reader 1 
+    mylog("apb check present=".$user->present." tz=".$tz->id);
+    if($user->present == 1 && $tz->id != 1) {
+        if($readerId == 1 && $controller->apb == 1) {
+            return "APB restriction: user is already present";
+        } else {
+            //set user out
+        }
     }
 
     //update last_seen en visit_count
@@ -670,19 +672,6 @@ function available_controllers() {
     //     return json( [["","","","","","","g","h"]] );
     // }   
     return json($result);
-}
-
-/*
-*   Special mode, where users are tracked if they are in or out
-*   - reader1=in 
-*   - reader2=out
-*/
-function useLedgerMode() {
-    $ledger=find_setting_by_name("ledger");
-    if(!empty($ledger) && $ledger=="qwerty") {
-        return true;
-    }
-    return false;
 }
 
 /*
