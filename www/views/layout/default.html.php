@@ -17,21 +17,28 @@ if(! isset($id)) {
 
 //Calculate time for js clock
 $serverTime =  time() * 1000;
-$timezone = date('2'); //+0200
+date_default_timezone_set(getMyTimezone());
+$timezone =  date('O');
 
 //check error message
 $flashMessage = flash_now();
 
+//whitelabel variables
+$dashboard_title = Arrilot\DotEnv\DotEnv::get('WHITELABEL_TITLE', 'maasland');
+$dashboard_favicon = Arrilot\DotEnv\DotEnv::get('WHITELABEL_FAVICON', 'img/favicon.ico');
+$dashboard_logo = Arrilot\DotEnv\DotEnv::get('WHITELABEL_LOGO', 'img/apple-icon.png');
+$dashboard_css = Arrilot\DotEnv\DotEnv::get('WHITELABEL_CSS', 'css/app.css');
+$dashboard_color = Arrilot\DotEnv\DotEnv::get('WHITELABEL_COLOR', 'black');
 ?>
 <!DOCTYPE html>
 <html lang="<?= $_SESSION["lang"] ?>">
 
 <head>
     <meta charset="utf-8" />
-    <link rel="apple-touch-icon" sizes="76x76" href="../../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../../assets/img/favicon.ico">
+    <link rel="apple-touch-icon" sizes="76x76" href="../../assets/<?php echo $dashboard_logo;?>">
+    <link rel="icon" type="image/png" href="../../assets/<?php echo $dashboard_favicon;?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>Maasland Dashboard</title>
+    <title><?php echo $dashboard_title;?> Dashboard</title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
     <!-- CSS Files -->
     <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
@@ -40,16 +47,15 @@ $flashMessage = flash_now();
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
     <link href="/assets/css/light-bootstrap-dashboard.css?v=2.0.4" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="/assets/css/app.css?1.8.6" rel="stylesheet" />
+    <link href="/assets/<?php echo $dashboard_css;?>?1.8.6f" rel="stylesheet" />
     <script type="text/javascript">
         //calculate clock with php server time
         var serverTime = <?php echo $serverTime;?>,
-            timezone = "<?php echo $timezone;?>",
-            timeDiff = serverTime - Date.now();
+            timezone = "<?php echo $timezone;?>";
 
-        //console.log(serverTime+"-"+timezone+"-"+timeDiff);
+        console.log(serverTime+" tz="+timezone);
         setInterval(function () {
-          serverClock.innerHTML= moment().add(timeDiff).utcOffset(timezone).format('DD-MM-Y HH:mm:ss');
+            serverClock.innerHTML= moment.utc().utcOffset(timezone).format('DD-MM-Y HH:mm:ss');
         }, 1000);
 
     </script>    
@@ -60,14 +66,14 @@ $flashMessage = flash_now();
         <div class="loaderImage" style="display: none;">
             <img src="/assets/img/spinner.gif">
         </div>  
-        <div class="sidebar" data-image="../assets/img/sidebar.jpg" data-color="black">
+        <div class="sidebar" data-image="../assets/img/sidebar.jpg" data-color="<?php echo $dashboard_color;?>">
             <div class="sidebar-wrapper">
                 <div class="logo">
                     <a href="./" class="simple-text logo-mini">
-                        <img width="30px" class="rounded" src="../../assets/img/apple-icon.png">
+                        <img width="30px" class="rounded" src="../../assets/<?php echo $dashboard_logo;?>">
                     </a>
                     <a href="./" class="simple-text logo-normal text-left">
-                        Maasland<br>
+                        <?php echo $dashboard_title;?><br>
                     </a>
                 </div>
                 <ul class="nav">
@@ -91,17 +97,24 @@ $flashMessage = flash_now();
                     </li>
                     <li <?php echo ($id == 21) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/holidays">
-                            <i class="nc-icon nc-bullet-list-67"></i>
+                            <i class="nc-icon nc-album-2"></i>
                             <p><?php echo L::holidays; ?></p>
                         </a>
                     </li>
+                    <?php if(useAPBMode()) { ?>
+                        <li <?php echo ($id == 6) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                            <a class="nav-link" href="./?/ledger">
+                                <i class="nc-icon nc-bullet-list-67"></i>
+                                <p><?php echo L::ledger; ?></p>
+                            </a>
+                        </li>
+                    <?php } ?>
                     <li <?php echo ($id == 5) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/reports">
                             <i class="nc-icon nc-notes"></i>
                             <p><?php echo L::reports; ?></p>
                         </a>
                     </li>
-
                     <!-- Admin menu -->
                     <?php if( isAdmin() ) { ?>
                     <hr>
@@ -117,15 +130,6 @@ $flashMessage = flash_now();
                             <p><?php echo L::timezones; ?></p>
                         </a>
                     </li>
-                    <?php if(useLedgerMode()) { ?>
-                        <li <?php echo ($id == 6) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                            <a class="nav-link" href="./?/ledger">
-                                <i class="nc-icon nc-bullet-list-67"></i>
-                                <p><?php echo L::ledger; ?></p>
-                            </a>
-                        </li>
-                    <?php } ?>
-
                     <li <?php echo ($id == 7) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/settings">
                             <i class="nc-icon nc-settings-gear-64"></i>
@@ -257,7 +261,7 @@ $flashMessage = flash_now();
                     <div class="collapse navbar-collapse justify-content-between" id="navigation">
                         <ul class="nav navbar-nav ml-auto">
                             <sub><div id="serverClock"><?= 
-                            (new DateTime("now", new DateTimeZone('Europe/Amsterdam')))
+                            (new DateTime("now", new DateTimeZone(getMyTimezone())))
                             ->format("d-m-Y H:i:s") ?></div></sub>
                         </ul> 
                         <ul class="nav navbar-nav ml-auto">

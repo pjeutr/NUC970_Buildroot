@@ -37,6 +37,18 @@
     <input <?= $isMaster ? "disabled" : "" ?> type="text" class="form-control" name="controller[ip]" id="controller_ip" value="<?php echo h($controller->ip) ?>" placeholder="<?php echo L::generic_sub." ".L::networkaddress; ?>"/>
     <small id="codeHelp" class="form-text text-muted"><?php echo L::networkaddress_remark; ?></small>
   </div>
+
+  <div class="form-group">
+    <div class="form-check">
+        <input type="hidden" name="controller[apb]" value="0">
+        <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" name="controller[apb]" value="1" <?= h($controller->apb) ? "checked" : "" ?>>
+            <span class="form-check-sign"></span>
+            <?=  L("apb_info"); ?>
+        </label>
+    </div>
+  </div> 
+
   <div class="form-group">
     <label><?php echo L::remarks; ?>:</label>
     <!-- TODO https://stackoverflow.com/questions/37629860/automatically-resizing-textarea-in-bootstrap -->

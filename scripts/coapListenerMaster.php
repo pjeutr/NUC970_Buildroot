@@ -169,10 +169,10 @@ $timer = React\EventLoop\Loop::addPeriodicTimer($interval, function () {
 			saveReport($actor, "Older than $days days. $action rows deleted in reports.");
 		}
 		//replicate settings to slave
-		$action = replicate_to_slaves();
-		$action = "Configuration replicated to slave.";
-		mylog($action);
-		saveReport($actor, $action);
+		// $action = replicate_to_slaves();
+		// $action = "Configuration replicated to slave.";
+		// mylog($action);
+		// saveReport($actor, $action);
 	}
 
 	/*
