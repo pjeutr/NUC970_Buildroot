@@ -91,24 +91,17 @@ $flashMessage = flash_now();
                     </li>
                     <li <?php echo ($id == 21) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/holidays">
-                            <i class="nc-icon nc-album-2"></i>
+                            <i class="nc-icon nc-bullet-list-67"></i>
                             <p><?php echo L::holidays; ?></p>
                         </a>
                     </li>
-                    <?php if(useAPBMode()) { ?>
-                        <li <?php echo ($id == 6) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                            <a class="nav-link" href="./?/ledger">
-                                <i class="nc-icon nc-bullet-list-67"></i>
-                                <p><?php echo L::ledger; ?></p>
-                            </a>
-                        </li>
-                    <?php } ?>
                     <li <?php echo ($id == 5) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/reports">
                             <i class="nc-icon nc-notes"></i>
                             <p><?php echo L::reports; ?></p>
                         </a>
                     </li>
+
                     <!-- Admin menu -->
                     <?php if( isAdmin() ) { ?>
                     <hr>
@@ -124,6 +117,15 @@ $flashMessage = flash_now();
                             <p><?php echo L::timezones; ?></p>
                         </a>
                     </li>
+                    <?php if(useLedgerMode()) { ?>
+                        <li <?php echo ($id == 6) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
+                            <a class="nav-link" href="./?/ledger">
+                                <i class="nc-icon nc-bullet-list-67"></i>
+                                <p><?php echo L::ledger; ?></p>
+                            </a>
+                        </li>
+                    <?php } ?>
+
                     <li <?php echo ($id == 7) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
                         <a class="nav-link" href="./?/settings">
                             <i class="nc-icon nc-settings-gear-64"></i>

@@ -182,12 +182,6 @@ function mdnsBrowse($type) {
 /* 
 *   HTML View functions 
 */
-function apbDecorator($apb, $name) {
-    if($apb) {
-        return L("apb")." - ".$name;
-    }
-    return $name;
-}
 function collapseButton($params = null) {
     $params = func_get_args();
     $name = array_shift($params);

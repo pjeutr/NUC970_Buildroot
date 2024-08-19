@@ -56,7 +56,7 @@ set('title', L("settings"));
     }
     if( $row->type == 5) {
         $fieldType = 'text';
-        $fieldAtrribute = useLowNetworkMode() ? 'style="color:green"' : 'style="color:red"';
+        $fieldAtrribute = useLedgerMode()||useLowNetworkMode() ? 'style="color:green"' : 'style="color:red"';
     }
     if( $row->type == 9) {
         $fieldType = 'text';
