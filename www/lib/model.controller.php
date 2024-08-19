@@ -91,34 +91,13 @@ function make_controller_obj($params, $obj = null) {
     return make_model_object($params, $obj);
 }
 
-function useAPBMode() {
-    //if a controller is set to APB, show APB stuff
-    //opt out slaves, to prevent errors in standalone/replicate mode
-    //check for apb field, otherwise dashboard page crashes
-    try {
-        $result = find_object_by_sql("SELECT * FROM controllers WHERE apb=1");
-        mylog($result);
-        if(checkIfMaster() && $result) {
-            return true;
-        } 
-        return false;
-    } catch(PDOException $e) {
-        //Fatal error: Uncaught PDOException: SQLSTATE[HY000]: General error: 1 no such column: apb
-        mylog($e);
-        flash('message', 'No apb fields found, incompatible settings imported');
-        return false;
-    }
-
-
-}
-
 function controller_columns() {
     // Creating a new controller gives these erros, not critical.
     // And currently practical to start/test the error log when logging is disabled
     // PHP Notice:  Undefined property: stdClass::$created_at in /maasland_app/www/lib/db.php on line 79
     // PHP Notice:  Undefined property: stdClass::$updated_at in /maasland_app/www/lib/db.php on line 79
 
-    return array('name', 'ip', 'remarks', 'apb',
+    return array('name', 'ip', 'remarks', 
         'reader_1', 'reader_2', 'button_1', 'button_2', 'sensor_1', 'sensor_2', 
         'created_at', 'updated_at');
 }

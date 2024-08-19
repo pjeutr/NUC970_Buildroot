@@ -15,7 +15,7 @@ set('title', L("users"));
                         <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
                             <thead>
                                 <th><?=  L("id"); ?></th>
-                                <?php if(useAPBMode()) { ?>
+                                <?php if(useLedgerMode()) { ?>
                                     <th><?=  L("presence"); ?></th>
                                 <?php } ?>
                                 <th><?=  L("name"); ?></th>
@@ -29,7 +29,7 @@ set('title', L("users"));
                                 <?php foreach ($users as $row) { ?>
                                 <tr <?= is_user_active($row) ? "" : " class='danger' " ?>>
                                 	<td><?= $row->id ?></td>
-                                    <?php if(useAPBMode()) { ?>
+                                    <?php if(useLedgerMode()) { ?>
                                         <td><?= $row->present ? '<i rel="tooltip" data-original-title="User is present in building" class="fa fa-check text-success"></i>':'<i rel="tooltip" data-original-title="User is not in building" class="fa fa-times text-danger"></i>' ?></td>
                                     <?php } ?>
                                     <td><?= $row->name ?></td>

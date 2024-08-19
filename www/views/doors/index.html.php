@@ -24,7 +24,7 @@ set('title', L("doors"));
                                 <div class="col-sm-4 custom-header-head border-left-0">
                                    <div class="float-left">
                                         <div class="tabsub"><?php echo L::controller; ?></div>
-                                        <?= collapseButton(apbDecorator($controller->apb,$controller->name), 'multiCollapse'.$controller->id, 'btn-link text-white', null) ?>
+                                        <?= collapseButton($controller->name, 'multiCollapse'.$controller->id, 'btn-link text-white', null) ?>
                                     </div>
                                     <div class="float-right">
                                         <?= iconLink_to(L::button_change, 'controllers/'.$controller->id.'/edit', 'btn-link text-white', null) ?>
@@ -38,7 +38,7 @@ set('title', L("doors"));
                                 <div class="col-sm-4 custom-header">
                                     <div class="float-left">
                                         <div class="tabsub"><?php echo L::door; ?></div>
-                                        <?= apbDecorator($row->apb, $row->name) ?> 
+                                        <?= $row->name ?> 
                                     </div>
                                     <div class="float-right">
                                         <?php if(!empty($row->timezone_id)) {  ?> 
@@ -58,8 +58,8 @@ set('title', L("doors"));
                             <input type="hidden" name="_method" id="_method" value="PUT">
 
                             <?php foreach ([
-                                L::term_reader.($controller->apb?" 1 (IN)":" 1"),
-                                L::term_reader.($controller->apb?" 2 (OUT)":" 2"),
+                                L::term_reader.(useLedgerMode()?" 1 (IN)":" 1"),
+                                L::term_reader.(useLedgerMode()?" 2 (OUT)":" 2"),
                                 L::term_button." 1",
                                 L::term_button." 2"] 
                                 as $key=>$value) { 

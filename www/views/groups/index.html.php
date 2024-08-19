@@ -46,9 +46,7 @@ set('title', L("groups"));
                                           data-title="Choose a door" data-style="btn-default btn-outline">
                                             <?php
                                                 foreach ($doors as $door) {
-                                                    echo option_tag($door->id, 
-                                                        apbDecorator($door->apb,$door->name), 
-                                                        $rule->door_id), "\n";
+                                                    echo option_tag($door->id, $door->name, $rule->door_id), "\n";
                                                 }
                                             ?>
                                           </select>    
@@ -89,7 +87,7 @@ set('title', L("groups"));
                                             data-title="Choose a door" data-style="btn-default btn-outline">
                                             <?php
                                                 foreach ($doors as $row2) {
-                                                    echo option_tag($row2->id, apbDecorator($row2->apb, $row2->name), 0), "\n";
+                                                    echo option_tag($row2->id, $row2->name, 0), "\n";
                                                 }
                                             ?>
                                           </select>    

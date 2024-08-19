@@ -21,7 +21,9 @@ set('title', L("ledger"));
                             <thead>
                                 <th><?=  L("key"); ?></th>
                                 <th><?=  L("user"); ?></th>
-                                <th><?=  L("presence"); ?></th>
+                                <?php if(useLedgerMode()) { ?>
+                                    <th><?=  L("presence"); ?></th>
+                                <?php } ?>
                                 <th><?=  L("time_in"); ?></th>
                                 <th><?=  L("time_out"); ?></th>
                             </thead>
@@ -30,9 +32,11 @@ set('title', L("ledger"));
                             <tr>
                                 <td><?= $row->keycode ?></td>
                                 <td><?= $row->name ?></td>
-                                <td><?= $row->present ? '<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' ?></td>
+                                <?php if(useLedgerMode()) { ?>
+                                    <td><?= $row->present ? '<i class="fa fa-check text-success"></i>':'<i class="fa fa-times text-danger"></i>' ?></td>
+                                <?php } ?>
                                 <td><?= print_date($row->time_in) ?></td>
-                                <td><?= print_date($row->time_out) ?></td>
+                                <td><?= $row->time_out ?></td>
                                 <td><?= deleteLink_to(L::button_delete, 'ledger', $row->id) ?></td>
                             </tr> 
                             <?php } ?>
