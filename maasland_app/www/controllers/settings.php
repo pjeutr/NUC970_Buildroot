@@ -121,7 +121,7 @@ function settings_update() {
     $type = filter_var($_POST['setting_type'], FILTER_SANITIZE_STRING);
     $name = filter_var($_POST['setting_name'], FILTER_SANITIZE_STRING);
 
-    if($type == 6) { //checkbox 
+    if($type == 7) { //checkbox 
         $value = isset($_POST[$name])?1:0;
     } else {
         $value = filter_var($_POST[$name], FILTER_SANITIZE_STRING);
@@ -150,7 +150,7 @@ function settings_update() {
 
     if($type == 9) { //system date time 
         //create DateTime from string
-        if($dt = DateTime::createFromFormat(getDateTimeFormat(), $value, new DateTimeZone(getTimezone() ) )) {
+        if($dt = DateTime::createFromFormat(getDateTimeFormat(), $value, new DateTimeZone(getMyTimezone() ) )) {
             //convert local time to utc
             $dt->setTimezone(new DateTimeZone('UTC'));
             //convert to compatible string for system 

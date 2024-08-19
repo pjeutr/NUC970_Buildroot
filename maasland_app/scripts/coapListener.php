@@ -39,7 +39,8 @@ function callApi($input, $key) {
 			} else {
 				mylog("coapCall, return=".json_encode($result));
 
-				//TODO shortcut: if msg is an object, extract data to open the door
+				//TODO if master says "unkown controller", result has not an result var 
+				//PHP Notice:  Trying to get property of non-object in /maasland_app/scripts/coapListener.php on line 43
 				$msg = json_decode($result)->result;
 				if(is_object($msg)) {
 					mylog(json_encode($msg));

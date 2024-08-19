@@ -1,11 +1,6 @@
 <?php
-//TODO get timezone from settings in db
-//date_default_timezone_set('Europe/Amsterdam');
-//date_default_timezone_set('Europe/London');
-//date_default_timezone_set('Australia/Sydney');
-function getTimezone() {
-    return "Europe/Amsterdam";
-}
+
+//Time formatting functions, used 
 function getDateTimeFormat() {
     return 'd/m/Y H:i';
 }
@@ -182,6 +177,12 @@ function mdnsBrowse($type) {
 /* 
 *   HTML View functions 
 */
+function apbDecorator($apb, $name) {
+    if($apb) {
+        return L("apb")." - ".$name;
+    }
+    return $name;
+}
 function collapseButton($params = null) {
     $params = func_get_args();
     $name = array_shift($params);
@@ -260,16 +261,21 @@ function swal_message_countdown($message, $time) {
 }
 
 //Format DateTime and adjust to reflect the local timezone 
+//use only on master, timezone is coming from db
 function print_date($timestamp) {
+    if(empty($timestamp)) {
+        return "";
+    }
     //$tz = "Europe/Amsterdam";
     //https://stackoverflow.com/questions/20288789/php-date-with-timezone
-    //date_default_timezone_set($tz); //bad practic volgen bovenstaande lL("message_changes_saved_title")ink
+    //date_default_timezone_set($tz); 
+    //bad practice volgen bovenstaande link
     //https://stackoverflow.com/questions/3792066/convert-utc-dates-to-local-time-in-php
 
     // create a $dt object with the UTC timezone
     $dt = new DateTime($timestamp, new DateTimeZone('UTC'));
     // change the timezone of the object without changing its time
-    $dt->setTimezone(new DateTimeZone( getTimezone() )); 
+    $dt->setTimezone(new DateTimeZone( getMyTimezone() )); 
     return $dt->format('d-m-Y H:i:s');
 }
 
@@ -278,6 +284,47 @@ function option_tag($id, $title, $act_id) {
     $s .= ($id == $act_id) ? ' selected="true"' : '';
     $s .= '>' . $title . '</option>';
     return $s;
+}
+
+/* 
+*   Create timezone list dynamically
+*   https://stackoverflow.com/questions/1727077/generating-a-drop-down-list-of-timezones-with-php
+*/
+function timezone_list() {
+    static $timezones = null;
+    
+    if ($timezones === null) {
+        $timezones = [];
+        $offsets = [];
+        $now = new DateTime('now', new DateTimeZone('UTC'));
+        
+        foreach (DateTimeZone::listIdentifiers(DateTimeZone::EUROPE |
+            DateTimeZone::AFRICA | DateTimeZone::AMERICA |
+            DateTimeZone::ANTARCTICA | DateTimeZone::ATLANTIC | DateTimeZone::AUSTRALIA |
+            DateTimeZone::INDIAN | DateTimeZone::PACIFIC |
+            DateTimeZone::ASIA) as $timezone) {
+            $now->setTimezone(new DateTimeZone($timezone));
+            $offsets[] = $offset = $now->getOffset();
+            $timezones[$timezone] = '(' . format_GMT_offset($offset) . ') ' . format_timezone_name($timezone);
+        }
+        
+        array_multisort($offsets, $timezones);
+    }
+    
+    return $timezones;
+}
+
+function format_GMT_offset($offset) {
+    $hours = intval($offset / 3600);
+    $minutes = abs(intval($offset % 3600 / 60));
+    return 'GMT' . ($offset!==false ? sprintf('%+03d:%02d', $hours, $minutes) : '');
+}
+
+function format_timezone_name($name) {
+    $name = str_replace('/', ', ', $name);
+    $name = str_replace('_', ' ', $name);
+    $name = str_replace('St ', 'St. ', $name);
+    return $name;
 }
 
 /* 

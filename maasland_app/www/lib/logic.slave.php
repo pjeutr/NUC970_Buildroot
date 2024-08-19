@@ -358,6 +358,8 @@ function configureGPIO() {
     Arrilot\DotEnv\DotEnv::load('/maasland_app/www/.extensions.php');
     $masterIpOverwrite = Arrilot\DotEnv\DotEnv::get('MASTER_IP', false);
 
+    Arrilot\DotEnv\DotEnv::load('/maasland_app/www/.whitelabel.php');
+
     //web loads dynamically scripts need to set this manualy
     mylog("Hardware version=".$hardwareVersion);
     if($hardwareVersion == 1) {

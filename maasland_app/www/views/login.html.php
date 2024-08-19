@@ -1,12 +1,21 @@
+<?php
+
+//whitelabel variables
+$dashboard_title = Arrilot\DotEnv\DotEnv::get('WHITELABEL_TITLE', 'maasland');
+$dashboard_favicon = Arrilot\DotEnv\DotEnv::get('WHITELABEL_FAVICON', 'img/favicon.ico');
+$dashboard_logo = Arrilot\DotEnv\DotEnv::get('WHITELABEL_LOGO', 'img/apple-icon.png');
+$dashboard_css = Arrilot\DotEnv\DotEnv::get('WHITELABEL_CSS', 'css/app.css');
+$dashboard_color = Arrilot\DotEnv\DotEnv::get('WHITELABEL_COLOR', 'black');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
-    <link rel="apple-touch-icon" sizes="76x76" href="../../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../../assets/img/favicon.ico">
+    <link rel="apple-touch-icon" sizes="76x76" href="../../assets/<?php echo $dashboard_logo;?>">
+    <link rel="icon" type="image/png" href="../../assets/<?php echo $dashboard_favicon;?>">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>Maasland</title>
+    <title><?php echo $dashboard_title;?></title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
     <!-- 1 001 593 033 - sgr7v6 Fonts and icons     -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
@@ -15,7 +24,7 @@
     <link href="../../assets/css/bootstrap.min.css" rel="stylesheet" />
     <link href="../../assets/css/light-bootstrap-dashboard.css?v=2.0.1" rel="stylesheet" />
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="../../assets/css/demo.css" rel="stylesheet" />
+    <link href="/assets/<?php echo $dashboard_css;?>?1.8.6f" rel="stylesheet" />
 </head>
 
 <body>
@@ -24,7 +33,7 @@
         <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute">
             <div class="container">
                 <div class="navbar-wrapper">
-                    <a class="navbar-brand" href="#">Maasland</a>
+                    <a class="navbar-brand" href="#"><?php echo $dashboard_title;?></a>
                     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-bar burger-lines"></span>
                         <span class="navbar-toggler-bar burger-lines"></span>

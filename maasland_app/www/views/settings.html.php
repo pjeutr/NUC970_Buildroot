@@ -46,17 +46,32 @@ set('title', L("settings"));
         $fieldType = 'password';
         $fieldAtrribute = 'data-toggle="password"';
     }
+    if( $row->type == 2) {
+        $fieldType = 'select';
+        $select_options = array(
+            1 =>"1 day",
+            7 =>"7 days",
+            14 =>"14 days",
+            30 =>"1 month",
+            182 =>"6 months",
+            365 => "1 year"
+        );
+    }
     if( $row->type == 3) {
         $fieldType = 'number';
         $fieldAtrribute = 'min="1" max="60"';
-    }
+    }    
     if( $row->type == 6) {
+        $fieldType = 'select';
+        $select_options = timezone_list();
+    }    
+    if( $row->type == 7) {    
         $fieldType = 'checkbox';
         $fieldAtrribute = 'data-toggle="switch" '.($row->value ? 'checked=""': '').' data-on-color="info" data-off-color="info" data-eye-open-class="fa-toggle-off"  data-eye-close-class="fa-toggle-on"';
     }
     if( $row->type == 5) {
         $fieldType = 'text';
-        $fieldAtrribute = useLedgerMode()||useLowNetworkMode() ? 'style="color:green"' : 'style="color:red"';
+        $fieldAtrribute = useLowNetworkMode() ? 'style="color:green"' : 'style="color:red"';
     }
     if( $row->type == 9) {
         $fieldType = 'text';
@@ -73,19 +88,9 @@ set('title', L("settings"));
         <div class="flex-row-1 flex-cell first" role="cell"><?= $row->id ?></div>
         <div class="flex-row-3 flex-cell flex-cell" role="cell"><?= L('setting_'.$row->name) ?></div>
         <div class="flex-row-4 flex-cell" role="cell">
-            <?php if( $row->type == 2) { 
-                //TODO fill array with lang variables
-                $select_options = array(
-                  1 =>"1 day",
-                  7 =>"7 days",
-                  14 =>"14 days",
-                  30 =>"1 month",
-                  182 =>"6 months",
-                  365 => "1 year"
-                );
-            ?>
+            <?php if($fieldType == "select") { ?>
             <select name="<?= $row->name ?>" class="form-control" aria-label="Default select example">
-            <?php foreach($select_options as $key => $value) { ?>
+                <?php foreach($select_options as $key => $value) { ?>
                 <option <?= ($row->value == $key)?"selected":"" ?> 
                     value="<?= $key ?>"><?= $value ?></option>
             <?php }?>

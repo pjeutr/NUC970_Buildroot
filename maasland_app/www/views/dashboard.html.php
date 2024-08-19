@@ -12,7 +12,7 @@ $presents = count_presents();
     <div class="container-fluid">
         <!-- <h5><?=  L("dashboard_buttons"); ?></h5> -->
         <div class="row">
-            <?php if(useLedgerMode()) { ?>
+            <?php if(useAPBMode()) { ?>
             <div class="col-lg-3 col-sm-6">
                 <div class="card card-stats">
                     <div class="card-body ">
@@ -61,7 +61,7 @@ $presents = count_presents();
                                 <i class="fa fa-spinner fa-spin"></i>
                             </span>
                             <?= $controller->ip ?> 
-                            <a href="/?/controllers/<?= $controller->id ?>/edit"><?= $controller->name ?></a>
+                            <a href="/?/controllers/<?= $controller->id ?>/edit"><?= apbDecorator($controller->apb, $controller->name) ?></a>
                         <?php } ?> 
                     </div>
                 </div>
@@ -83,7 +83,7 @@ $presents = count_presents();
                                 </div>
                             </div>
                             <div class="col-7">
-                                Master<br>
+                                <?= apbDecorator($doors[0]->apb, $doors[0]->cname) ?><br>
                             </div>
                         </div>
                     </div>
@@ -135,7 +135,7 @@ $presents = count_presents();
                             </div>
                             <div class="col-7">
                                 <!-- <a href="/?/doors/<?= $door->id ?>/edit"><?= $door->cname ?></a><br> -->
-                                <?= $door->cname ?>
+                                <?= apbDecorator($door->apb, $door->cname) ?>
                                 <!-- <sub><?=  L("controller"); ?></sub> -->
                             </div>
                         </div>
