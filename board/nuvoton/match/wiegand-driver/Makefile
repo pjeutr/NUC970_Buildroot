@@ -1,5 +1,5 @@
 #TODO how to get path to kernel LINUX_DIR is not resolving
-KERNELDIR := /home/pjeutr/nuvoton/matchOnNuc/output/build/linux-master/
+KERNELDIR := /home/pjeutr/match/output/build/linux-master/
 CURREN_PATH := $(shell pwd)
 ccflags-y=-g
 #CC=$(CROSS_COMPILE)gnueabi-gcc

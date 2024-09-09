@@ -20,11 +20,12 @@
 #define WG_CMD_MAGIC 		'x'
 #define WG_26_MODE			_IO(WG_CMD_MAGIC, 0x01)
 #define WG_34_MODE			_IO(WG_CMD_MAGIC, 0x02)
-#define WG_66_MODE			_IO(WG_CMD_MAGIC, 0x03)
+#define WG_37_MODE			_IO(WG_CMD_MAGIC, 0x03)
+#define WG_66_MODE			_IO(WG_CMD_MAGIC, 0x06)
 #define WG_UNKNOWN_MODE 	_IO(WG_CMD_MAGIC, 0x07)
 #define DEV_NAME "wiegand"
 #define SYSFS_NAME "wiegand"
-#define DRIVER_VERSION "v1.2"
+#define DRIVER_VERSION "v1.5"
 
 #define RD1_D1_PIN     NUC980_PA1   //reader1 d1 input
 #define RD1_D0_PIN     NUC980_PA0   //reader1 d0 input
@@ -71,7 +72,8 @@ static struct wiegand_io wiegand_set[] = {
 
 static void print_debug(unsigned long *data)
 {
-	printk(KERN_NOTICE "nr=%.5d keycode=%lu reader=%d\n",counter, keycode, last_reader_nr);
+	printk(KERN_NOTICE "nr=%.5d keycode=%lu:%x reader=%d\n",counter, keycode, keycode, last_reader_nr);
+	//printk(KERN_NOTICE "nr=%.5d keycode=%lu reader=%d\n",counter, keycode, last_reader_nr);
 }
 
 static unsigned char wiegand_26_to_keycode(unsigned long *data)
@@ -135,6 +137,73 @@ error:
 
 }
 
+static unsigned char wiegand_x_to_keycode(unsigned long *data, int bits)
+{
+	int i,even,odd,hid,pid;
+	int checkbit_low = bits/2 + (bits % 2 > 0 ? 1 : 0);//17
+	int checkbit_high = bits - 1;//33
+	int hid_mask = bits - 8;//24
+	
+	printk("bits=%d checkbit_low=%d checkbit_high=%d hid_mask=%d\n",bits, checkbit_low, checkbit_high, hid_mask);
+
+	// Even parity  
+	even = 0;    	
+	for(i = 1; i < checkbit_low;i++)    	{
+		if(wiegand_buffer[i] == 1)		 
+			even = (~even) & 0x01;  
+	}
+	
+	if(even != wiegand_buffer[0]){
+		bit_count = 0;	
+		printk("start parity error\n");
+		goto error;      	
+	}		
+
+	// Odd parity    	 
+	odd = 1;    	
+	for(i = checkbit_low; i< checkbit_high;i++) {	    
+		if(wiegand_buffer[i] == 1)		
+			odd = (~odd)& 0x01;	          
+	}   
+
+	if(odd != wiegand_buffer[checkbit_high]) {	
+		bit_count = 0;	
+		printk("end parity error\n");
+		goto error;     	 
+	}	
+
+	// Parity check passed	
+	// hid conversion
+	hid = 0;	
+	for(i = 1 ;i<=8;i++){
+		hid  |= (0x01 & wiegand_buffer[i]) << (8-i);
+	}
+
+	// pid conversion
+	pid = 0;	
+	for(i = 9 ;i<checkbit_high;i++){
+		pid |= (0x01 & wiegand_buffer[i]) << (checkbit_high-i-1);
+	}
+
+	bit_count = 0;	
+
+	*data = (hid << hid_mask) | (pid);
+
+	last_reader_nr = reader_nr;
+
+	print_debug(data);
+
+	//enable readers
+	reader_nr = 0;
+
+	return 0;
+error:	
+	printk("Wiegand Parity Error!\n");	
+	return 0;
+	//return -1;
+
+}
+
 static unsigned char wiegand_unkown_to_keycode(unsigned long *data)
 {
 	int i, pid;
@@ -144,16 +213,16 @@ static unsigned char wiegand_unkown_to_keycode(unsigned long *data)
 	pid = 0;	
 
 	printk("%dbits\n",bit_count);
-	for(i = 1; i<bit_count-1; i++){
+	//for(i = 1; i<bit_count-1; i++){
 		//
-		pid |= (0x01 & wiegand_buffer[i]) << (bit_count-i-2);
-	}
-	bit_count = 0;	
+	//	pid |= (0x01 & wiegand_buffer[i]) << (bit_count-i-2);
+	//}
+	//bit_count = 0;	
 
 	*data = pid;
 
 
-	print_debug(data);
+	//print_debug(data);
 
 	//enable readers
 	reader_nr = 0;
@@ -171,10 +240,12 @@ static void refresh_timer_function(unsigned long data)
 	counter++;
 	if(bit_count== 26){
 		flag_recieve_mode = WG_26_MODE;
-	// }else if(bit_count== 34){
-	// 	flag_recive_mode = WG_34_MODE;
+	}else if(bit_count== 34){
+	 	flag_recieve_mode = WG_34_MODE;
+	}else if(bit_count== 37){
+	 	flag_recieve_mode = WG_37_MODE;
 	// }else if(bit_count== 66){
-	// 	flag_recive_mode = WG_66_MODE;
+	// 	flag_recieve_mode = WG_66_MODE;
 	}else{
 		flag_recieve_mode = WG_UNKNOWN_MODE;
 	}
@@ -194,12 +265,18 @@ static void recieve_data_convert(void)
 		convert_finish_flag = 1;
 		wake_up_interruptible(&read_waitq);  
 		break;
-	// case WG_34_MODE:
-	// 	//printk("WG_34_MODE\n");
-	// 	wiegand_34_to_keycode(&keycode);
-	// 	convert_finish_flag = 1;
-	// 	wake_up_interruptible(&read_waitq); 
-	// 	break;		
+	case WG_34_MODE:
+		printk(KERN_NOTICE "Wiegand 34 bits with parity \n");
+		wiegand_x_to_keycode(&keycode, 34);
+		convert_finish_flag = 1;
+		wake_up_interruptible(&read_waitq); 
+		break;
+	// case WG_37_MODE:
+	//	printk(KERN_NOTICE "Wiegand 37 bits with parity \n");
+	//	wiegand_x_to_keycode(&keycode, 37);
+	//	convert_finish_flag = 1;
+	//	wake_up_interruptible(&read_waitq); 
+	//	break;
 	// case WG_66_MODE:
 	// 	//printk("WG_66_MODE\n");
 	// 	wiegand_66_to_keycode(&keycode_66);
@@ -208,7 +285,7 @@ static void recieve_data_convert(void)
 	// 	break;
 	case WG_UNKNOWN_MODE:
 		// no parity check, just convert to get a number
-		printk(KERN_NOTICE "\nWiegand skip parity - ");
+		printk(KERN_NOTICE "Wiegand not compatible :");
 		wiegand_unkown_to_keycode(&keycode);
 		convert_finish_flag = 1;
 		wake_up_interruptible(&read_waitq);  
@@ -231,7 +308,7 @@ static irqreturn_t wiegand_irq0(int irq, void *dev_id) //   data 1
 	if(flag_timeout){
 		flag_timeout = 0;
 	}
-	//printk("1");
+	printk("1");
 	reader_nr = 1;
 	wiegand_buffer[bit_count] = 1;
 	bit_count++;
@@ -256,7 +333,7 @@ static irqreturn_t wiegand_irq1(int irq, void *dev_id)  // data 0
 	if(flag_timeout){
 		flag_timeout = 0;
 	}
-	//printk("0");
+	printk("0");
 	reader_nr = 1;
 	wiegand_buffer[bit_count] = 0;
 	bit_count++;
@@ -280,7 +357,7 @@ static irqreturn_t wiegand_irq2(int irq, void *dev_id)  // data 1
 	if(flag_timeout){
 		flag_timeout = 0;
 	}
-	//printk("1");
+	printk("1");
 	reader_nr = 2;
 	wiegand_buffer[bit_count] = 1;
 	bit_count++;
@@ -304,7 +381,7 @@ static irqreturn_t wiegand_irq3(int irq, void *dev_id)  // data 0
 	if(flag_timeout){
 		flag_timeout = 0;
 	}
-	//printk("0");
+	printk("0");
 	reader_nr = 2;
 	wiegand_buffer[bit_count] = 0;
 	bit_count++;
@@ -547,3 +624,4 @@ module_exit(wiegand_exit);
 MODULE_AUTHOR ("Maasland");
 MODULE_DESCRIPTION("Wiegand driver");
 MODULE_LICENSE("GPL");
+
