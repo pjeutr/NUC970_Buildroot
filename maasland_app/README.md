@@ -25,6 +25,9 @@ composer require
 calcinai/rubberneck -> pjeutr/php-notify (restructuring + adding EpollWait)
 arrilot/dotenv-php -> pjeutr/dotenv-php (allow optional use / no .env.pho in production)
 
+v2.2.1 - role auth improved
+v2.2.0 - add new driver, ignore other keys than 26 and 34 bit
+v2.1.9 - replicate button moved, basic role auth, cleanup
 v2.0.0 - APB remake
 v1.8.9 - fix offline slave not updating, improve countdown dialog, dashboard open led signal on reader
 v1.8.8 - fix setting with validate is not saving bug.

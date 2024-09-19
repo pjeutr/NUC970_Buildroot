@@ -41,14 +41,10 @@ $wiegandObserver->onModify(function($file_name) {
 	$keycode = $parts[1];
 	$reader = $parts[2];
 	mylog("Wiegand:". $reader.":".$keycode);
-
-	$result = handleInput("127.0.0.1", $reader, $keycode);
-
-	//TODO shortcut: open door directly
-	//$data = getDoorData($door, "1");
-	//$result = activateOutput($data->enum, $data->duration, $data->gpios);
-
-	mylog(json_encode($result));
+	if(!empty($keycode)) { //Do not handle empty or 0 value, wiegand driver gives 0 for incompatible keys/data
+		$result = handleInput("127.0.0.1", $reader, $keycode);
+    	mylog(json_encode($result));
+	}
 });	
 
 $lastMicrotime = 0;

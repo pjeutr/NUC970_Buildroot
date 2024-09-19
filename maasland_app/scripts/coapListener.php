@@ -84,8 +84,10 @@ $wiegandObserver->onModify(function($file_name){
 	$keycode = $parts[1];
 	$reader = $parts[2];
 	mylog("Wiegand:". $reader.":".$keycode);
-	$result = callApi($reader, $keycode);
-    mylog(json_encode($result));
+	if(!empty($keycode)) { //Do not handle empty or 0 value, wiegand driver gives 0 for incompatible keys/data
+		$result = callApi($reader, $keycode);
+    	mylog(json_encode($result));
+	}
 });	
 
 $lastMicrotime = 0;

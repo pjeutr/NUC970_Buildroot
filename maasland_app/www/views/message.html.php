@@ -70,7 +70,9 @@
                         <form class="form" method="POST" action="<?= url_for('login') ?>">
                             <div class="card card-login card-hidden">
                                 <div class="card-header ">
-                                    <h3 class="header text-center">Error</h3>
+                                    <h3 class="header text-center">
+                                        <?= isset($title) ? $title : "" ?>
+                                    </h3>
                                 </div>
 
                                 <div class="card-body ">

@@ -55,7 +55,6 @@ $presents = count_presents();
                         <?php foreach ($controllers as $controller) {  ?> 
                             <hr>
                             <span class="statusIcon" 
-                                data-url2="http://<?= $controller->ip ?>/?/api/version"
                                 data-url="http://<?= $controller->ip ?>/?/api/overview"
                                 >
                                 <i class="fa fa-spinner fa-spin"></i>

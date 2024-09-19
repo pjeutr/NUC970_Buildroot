@@ -91,20 +91,20 @@ function report_csv() {
 }
 
 //ajax
-function last_reports() {
-    return (json(find_reports()));
+function overview_page() {
+    //TODO waarom nodig Access-Control-Allow-Origin
+    header('Access-Control-Allow-Origin: *');
+    header('Content-Type: application/x-javascript; charset='.strtolower(option('encoding')));
+    return json_encode([
+      "version" => GVAR::$DASHBOARD_VERSION,
+      "1" => getOutputStatus(1),
+      "2" => getOutputStatus(2),
+      "3" => getOutputStatus(3),
+      "4" => getOutputStatus(4)
+    ]);
 }
 function last_scanned_key() {
     return get_last_scanned_key();
-}
-function gpio_key() {
-	return (rand(0, 1)) ? "button on" : "button off";
-}
-function gpio_state() {
-	$id = filter_var(params('id'), FILTER_VALIDATE_INT);
-	$state = filter_var(params('state'), FILTER_VALIDATE_INT);
-	$r = setGPIO($id, $state);
-    return (json(array($r)));
 }
 function door_open() { //<- dash pulse button
 	$doorId = filter_var(params('door'), FILTER_VALIDATE_INT);
@@ -123,17 +123,6 @@ function switchOutput() { //<- dash open/close
     $controller = find_controller_by_id($controllerId);
     $result = changeOutputState($outputEnum, $controller, $door, $state);
     return (json(array($result)));
-}
-function checkCleanupReports() {
-    //delete rows older than x days in reports
-    $days = 7;
-    $action = cleanupReports($days);
-    mylog($action);
-    if($action > 0) {
-        saveReport("WebAdmin", "Older than $days days. $action rows deleted in reports.");
-    }
-    $result = getOutputStatus($outputId);
-    return json($result);
 }
 function outputStatus() {
     $outputId = filter_var(params('door'), FILTER_VALIDATE_INT);

@@ -9,26 +9,6 @@
     3,4 are alarms
 */
 
-# GET /controller/:id/input/:input/
-/* 
-    Incoming input from other conrollers, 
-    Determine what door needs to open or alarm activate and call action on controller 
-    Door 1 = http://controller_ip/?/door/1
-    Alarm 1 = http://controller_ip/?/door/3
-*/
-function controller_input() {
-    //http://maasland/?/controller/2/input/6
-    $id = filter_var(params('id'), FILTER_VALIDATE_INT);
-    $input = filter_var(params('input'), FILTER_VALIDATE_INT);
-    error_log("controller=".$id." input=".$input);
-    error_log(print_r($_POST, true));
-    set('message', 'incomming!');
-
-    //find what door to open, for this input
-
-    redirect('door/1');
-}
-
 # PUT /controller/:id
 /* Change input values, happens on doors form */
 function input_update() {

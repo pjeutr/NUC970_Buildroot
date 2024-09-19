@@ -1033,9 +1033,9 @@ function request_uri($env = null)
  *
  * @return void
  */
-function dispatch($path_or_array, $function)
+function dispatch($path_or_array, $function, $role = 0)
 {
-  dispatch_get($path_or_array, $function);
+  dispatch_get($path_or_array, $function, $role);
 }
 
 /**
@@ -1045,10 +1045,10 @@ function dispatch($path_or_array, $function)
  * @param string $function 
  * @return void
  */
-function dispatch_get($path_or_array, $function)
+function dispatch_get($path_or_array, $function, $role = 0)
 {
-  route("GET", $path_or_array, $function);
-  route("HEAD", $path_or_array, $function);
+  route("GET", $path_or_array, $function, $role);
+  route("HEAD", $path_or_array, $function, $role);
 }
 
 /**
@@ -1058,9 +1058,9 @@ function dispatch_get($path_or_array, $function)
  * @param string $function 
  * @return void
  */
-function dispatch_post($path_or_array, $function)
+function dispatch_post($path_or_array, $function, $role = 0)
 {
-  route("POST", $path_or_array, $function);
+  route("POST", $path_or_array, $function, $role);
 }
 
 /**
@@ -1070,9 +1070,9 @@ function dispatch_post($path_or_array, $function)
  * @param string $function 
  * @return void
  */
-function dispatch_put($path_or_array, $function)
+function dispatch_put($path_or_array, $function, $role = 0)
 {
-  route("PUT", $path_or_array, $function);
+  route("PUT", $path_or_array, $function, $role);
 }
 
 /**
@@ -1082,9 +1082,9 @@ function dispatch_put($path_or_array, $function)
  * @param string $function 
  * @return void
  */
-function dispatch_delete($path_or_array, $function)
+function dispatch_delete($path_or_array, $function, $role = 0)
 {
-  route("DELETE", $path_or_array, $function);
+  route("DELETE", $path_or_array, $function, $role);
 }
 
 
@@ -1113,8 +1113,8 @@ function route()
       $method        = $args[0];
       $path_or_array = $args[1];
       $func          = $args[2];
-
-      $routes[] = route_build($method, $path_or_array, $func);
+      $role          = $args[3];
+      $routes[] = route_build($method, $path_or_array, $func, $role);
     }
   }
   return $routes;
@@ -1138,9 +1138,10 @@ function route_reset()
  * @param string $method 
  * @param string $path_or_array 
  * @param string $func
+ * @param string $role
  * @return array
  */
-function route_build($method, $path_or_array, $func)
+function route_build($method, $path_or_array, $func, $role)
 {
   $method = strtoupper($method);
   if(!in_array($method, request_methods())) 
@@ -1231,7 +1232,8 @@ function route_build($method, $path_or_array, $func)
   return array( "method"       => $method,
                 "pattern"      => $pattern,
                 "names"        => $names,
-                "function"     => $func     );
+                "function"     => $func, 
+                "role"         => $role     );
 }
 
 /**
