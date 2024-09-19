@@ -8,8 +8,11 @@ set('title', L("users"));
         <div class="row">
             <div class="col-xs-12 col-sm-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header" id="initMyForm"><!-- initMyForm necessary to fire js config -->
                     	<?= iconLink_to(L::button_new." ".L::user, 'users/new', 'btn-outline', 'fa-user') ?>
+
+                        <button class="btn btn-success btn-outline" type="button" rel="tooltip" title="<?=  L("button_replicate_tip"); ?>" id="replicate_button">
+                        <i class="fa fa fa-link"></i><?=  L("button_replicate"); ?></button>
                     </div>
                     <div class="card-body table-responsive">
                         <table id="datatables" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
@@ -50,4 +53,15 @@ set('title', L("users"));
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    function initMyForm(id) {
+        console.log("initMyForm");
 
+        $("#replicate_button").click(function () {
+            app.addSpinnerWithLinkToButton(this, true, "Replicate","/?/settings_replicate");
+            var self = this;
+        });
+
+
+    }
+</script> 

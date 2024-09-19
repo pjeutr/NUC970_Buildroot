@@ -97,7 +97,7 @@ function useAPBMode() {
     //check for apb field, otherwise dashboard page crashes
     try {
         $result = find_object_by_sql("SELECT * FROM controllers WHERE apb=1");
-        mylog($result);
+        //mylog($result);
         if(checkIfMaster() && $result) {
             return true;
         } 

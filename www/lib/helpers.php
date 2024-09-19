@@ -330,11 +330,18 @@ function format_timezone_name($name) {
 /* 
 *   User Role functions  
 */
+class ROLE
+{
+    //inputs
+    public static $USER = 1;
+    public static $ADMIN = 5;
+    public static $SUPER = 9;
+}
 function isAdmin() {
-    return isset($_SESSION["login"]) && ($_SESSION['login'] == "admin" || $_SESSION['login'] == "super");    
+    return isset($_SESSION["login"]) && $_SESSION['login'] >= ROLE::$ADMIN;
 }
 function isSuper(){
-    return isset($_SESSION["login"]) && $_SESSION['login'] == "super";
+    return isset($_SESSION["login"]) && $_SESSION['login'] >= ROLE::$SUPER;
 }
 function showOpenCloseButtons($door){
     //if user isAdmin show extra buttons

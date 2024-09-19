@@ -143,13 +143,13 @@ $dashboard_color = Arrilot\DotEnv\DotEnv::get('WHITELABEL_COLOR', 'black');
                         </a>
                     </li>
                     <li <?php echo ($id == 9) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/views/9/status.php">
+                        <a class="nav-link" href="./?/views/status">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Status test</p>
                         </a>
                     </li>
                     <li <?php echo ($id == 10) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/views/10/network.sh">
+                        <a class="nav-link" href="./?/views/network">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Network test</p>
                         </a>
@@ -166,25 +166,25 @@ $dashboard_color = Arrilot\DotEnv\DotEnv::get('WHITELABEL_COLOR', 'black');
                         </a>
                     </li>
                     <li <?php echo ($id == 12) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/manage/cleanup_db">
+                        <a class="nav-link" href="./?/super/cleanup_db">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Prune reports</p>
                         </a>
                     </li>
                     <li <?php echo ($id == 13) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/tests/stat.sh/20">
+                        <a class="nav-link" href="./?/super/stat.sh/20">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Logs for master</p>
                         </a>
                     </li>
                     <li <?php echo ($id == 14) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/tests/analysis.sh/2">
+                        <a class="nav-link" href="./?/super/analysis.sh/2">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Logs for all (WARNING!)</p>
                         </a>
                     </li>
                     <li <?php echo ($id == 15) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/manage/update_firmware">
+                        <a class="nav-link" href="./?/super/update_firmware">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Update firmware (WARNING!)</p>
                         </a>
@@ -201,7 +201,7 @@ $dashboard_color = Arrilot\DotEnv\DotEnv::get('WHITELABEL_COLOR', 'black');
                         </a>
                     </li>
                     <li <?php echo ($id == 11) ? 'class="nav-item active"' : 'class="nav-item "' ?>>
-                        <a class="nav-link" href="./?/manage/opcache_reset">
+                        <a class="nav-link" href="./?/super/opcache_reset">
                             <i class="nc-icon nc-settings-90"></i>
                             <p>Opcache reset</p>
                         </a>
